@@ -30,6 +30,7 @@
             </div>
             
             <div class="flex items-center gap-2">
+                <!-- PROFIL TUGMASI -->
                 <button onclick="openProfileModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3 py-2 rounded-xl shadow flex items-center gap-1.5 transition">
                     <i class="fa-solid fa-user"></i> <span id="profileBtnText">Profil</span>
                 </button>
@@ -44,28 +45,25 @@
 
         <!-- ASOSIY EKRAN: FAQAT TOVARLAR VA QIDIRUV -->
         <div id="section-client" class="space-y-4">
-            <!-- Qidiruv -->
             <div class="relative">
                 <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Mahsulot yoki do'kon qidirish..." 
                        class="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm text-sm">
                 <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-gray-400 text-base"></i>
             </div>
 
-            <!-- Mahsulotlar Grid -->
             <div>
                 <h2 class="text-sm font-bold text-gray-700 mb-3">Vodil Do'konlari Mahsulotlari</h2>
                 <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
             </div>
         </div>
 
-        <!-- ADMIN PANEL (Yashirin rejim, profildan yoki maxsus tugmadan ochiladi) -->
+        <!-- ADMIN PANEL -->
         <div id="section-admin" class="space-y-4 hidden">
             <div class="bg-emerald-800 text-white p-4 rounded-2xl flex justify-between items-center shadow">
                 <h2 class="font-extrabold text-sm"><i class="fa-solid fa-shield-halved mr-1"></i> Admin Boshqaruv Paneli</h2>
                 <button onclick="closeAdminPanel()" class="bg-emerald-700 hover:bg-emerald-600 px-3 py-1 rounded-xl text-xs font-bold">Chiqish</button>
             </div>
 
-            <!-- Admin Navigatsiyasi -->
             <div class="bg-white p-2 rounded-2xl shadow-sm border flex gap-1 text-xs font-bold text-gray-600">
                 <button onclick="switchAdminTab('orders')" id="admTab-orders" class="flex-1 py-2 rounded-xl bg-emerald-600 text-white shadow">Buyurtmalar</button>
                 <button onclick="switchAdminTab('users')" id="admTab-users" class="flex-1 py-2 rounded-xl hover:bg-gray-100">Mijozlar (<span id="userCount">0</span>)</button>
@@ -73,19 +71,16 @@
                 <button onclick="switchAdminTab('settings')" id="admTab-settings" class="flex-1 py-2 rounded-xl hover:bg-gray-100">Sozlamalar</button>
             </div>
 
-            <!-- 1. Buyurtmalar Bo'limi -->
             <div id="admContent-orders" class="space-y-3">
                 <h3 class="font-bold text-xs text-gray-500 uppercase">Barcha Kelgan Buyurtmalar</h3>
                 <div id="adminOrdersList" class="space-y-2"></div>
             </div>
 
-            <!-- 2. Foydalanuvchilar (Mijozlar) Bo'limi -->
             <div id="admContent-users" class="space-y-3 hidden">
                 <h3 class="font-bold text-xs text-gray-500 uppercase">Tizimga Kirgan Barcha Mijozlar</h3>
                 <div id="adminUsersList" class="space-y-2"></div>
             </div>
 
-            <!-- 3. Mahsulotlar Bo'limi (Qo'shish/O'chirish) -->
             <div id="admContent-products" class="space-y-3 hidden">
                 <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
                     <h3 class="font-bold text-xs text-gray-800 border-b pb-2">Yangi Mahsulot Qo'shish</h3>
@@ -101,12 +96,11 @@
                 </div>
             </div>
 
-            <!-- 4. Sozlamalar Bo'limi -->
             <div id="admContent-settings" class="space-y-3 hidden">
                 <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3 text-xs">
-                    <h3 class="font-bold text-sm text-gray-800 border-b pb-2">Dostavka va Tizim Sozlamalari</h3>
+                    <h3 class="font-bold text-sm text-gray-800 border-b pb-2">Dostavka Sozlamalari</h3>
                     <div>
-                        <label class="block font-semibold mb-1">Zakas qilingan km narxi (so'm):</label>
+                        <label class="block font-semibold mb-1">Zakas km narxi (so'm):</label>
                         <input type="number" id="setOrderRate" value="4000" class="w-full p-2.5 border rounded-xl">
                     </div>
                     <div>
@@ -120,7 +114,7 @@
 
     </main>
 
-    <!-- PROFIL MODALI (Ism va Buyurtmalarni ko'rish) -->
+    <!-- PROFIL MODALI -->
     <div id="profileModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-2">
@@ -128,13 +122,22 @@
                 <button onclick="closeProfileModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
 
+            <!-- Kirilmagan bo'lsa Ro'yxatdan o'tish -->
             <div id="profileFormView" class="space-y-3 text-xs">
-                <p class="text-gray-500">Iltimos, ilovadan foydalanish uchun o'z ma'lumotlaringizni kiriting:</p>
+                <p class="text-gray-500">Iltimos, ismingiz va telefon raqamingizni kiriting:</p>
                 <input type="text" id="userNameInput" placeholder="Ism Familiyangiz" class="w-full p-3 border rounded-xl">
                 <input type="tel" id="userPhoneInput" placeholder="Telefon raqamingiz (+998...)" class="w-full p-3 border rounded-xl">
                 <button onclick="saveProfile()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">Saqlash va Kirish</button>
+                
+                <!-- Parolsiz to'g'ridan-to'g'ri Admin Panelga o'tish tugmasi -->
+                <div class="pt-3 border-t text-center">
+                    <button onclick="openAdminPanel()" class="text-slate-800 font-bold underline hover:text-emerald-600">
+                        ⚙️ Admin Bo'lib Kirish
+                    </button>
+                </div>
             </div>
 
+            <!-- Kirilgan bo'lsa Profil Ma'lumotlari -->
             <div id="profileInfoView" class="space-y-3 text-xs hidden">
                 <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-200">
                     <p class="font-bold text-emerald-900 text-sm" id="dispUserName"></p>
@@ -145,8 +148,7 @@
                 <div id="userOrdersHistory" class="space-y-2 max-h-40 overflow-y-auto"></div>
 
                 <div class="pt-2 border-t flex gap-2">
-                    <button onclick="logoutProfile()" class="bg-red-50 text-red-600 font-bold py-2 px-4 rounded-xl flex-1">Hisobdan chiqish</button>
-                    <!-- Admin panelga kirish maxsus tugmasi -->
+                    <button onclick="logoutProfile()" class="bg-red-50 text-red-600 font-bold py-2 px-4 rounded-xl flex-1">Chiqish</button>
                     <button onclick="openAdminPanel()" class="bg-slate-900 text-white font-bold py-2 px-4 rounded-xl flex-1">⚙️ Admin Panel</button>
                 </div>
             </div>
@@ -178,7 +180,6 @@
                 <button onclick="closeCheckoutModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
 
-            <!-- Xarita -->
             <div>
                 <div id="map" class="w-full h-40 rounded-2xl border-2 border-emerald-500"></div>
                 <button type="button" onclick="getCurrentLocation()" class="mt-2 w-full bg-slate-100 py-2 rounded-xl text-xs font-bold text-slate-700">
