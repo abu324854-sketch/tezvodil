@@ -75,6 +75,7 @@
                 <button onclick="closeVendorPanel()" class="bg-emerald-700 hover:bg-emerald-600 px-3 py-1.5 rounded-xl text-xs font-bold transition">Chiqish</button>
             </div>
 
+            <!-- Mahsulot Qo'shish Formasi -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
                 <h3 class="font-bold text-xs text-slate-800 border-b pb-2">Do'konga Yangi Mahsulot Qo'shish</h3>
                 <form onsubmit="addNewVendorProduct(event)" class="space-y-3 text-xs">
@@ -152,7 +153,7 @@
 
     </main>
 
-    <!-- MAHSULOT BAFURSA KO'RISH MODALI -->
+    <!-- MAHSULOT MODALI -->
     <div id="productDetailModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center hidden p-0 sm:p-4 transition-all">
         <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl space-y-0 max-h-[90vh] flex flex-col">
             <div class="relative bg-slate-900 w-full h-72 sm:h-80 flex items-center justify-center overflow-hidden">
@@ -207,7 +208,7 @@
             </div>
 
             <div id="vForm-register" class="space-y-3 text-xs hidden">
-                <p class="text-slate-500">Yangi sotuvchi sifatida o'zingizga shaxsiy parol belgilaysiz:</p>
+                <p class="text-slate-500">Yangi sotuvchi sifatida do'kon nomi va parolni kiriting:</p>
                 <div>
                     <label class="block font-semibold mb-1 text-slate-600">Do'koningiz Nomi</label>
                     <input type="text" id="vRegStoreName" placeholder="Masalan: Vodil Kantselyariya" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
@@ -313,8 +314,8 @@
 
         let settings = JSON.parse(localStorage.getItem('tv_settings')) || { orderRate: 4000, extraRate: 1600 };
         let products = JSON.parse(localStorage.getItem('tv_products')) || [
-            { id: 1, name: "Sut 1L (Tabiiy)", store: "Fayz Market", price: 11000, images: ["https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500"] },
-            { id: 2, name: "Qora Daftar 36v", store: "Bilim Kantselyariya", price: 4000, images: ["https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500"] }
+            { id: 1, name: "Sut 1L (Tabiiy)", store: "Fayz Market", storeCoords: { lat: 40.1764, lng: 71.7258 }, price: 11000, images: ["https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500"] },
+            { id: 2, name: "Qora Daftar 36v", store: "Bilim Kantselyariya", storeCoords: { lat: 40.1780, lng: 71.7270 }, price: 4000, images: ["https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500"] }
         ];
         let cart = [];
         let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
@@ -440,7 +441,7 @@
                 return alert("Bu nomli do'kon allaqachon mavjud!");
             }
 
-            const newVendor = { storeName, password };
+            const newVendor = { storeName, password, coords: VODIL_CENTER };
             vendorsList.push(newVendor);
             localStorage.setItem('tv_vendors', JSON.stringify(vendorsList));
 
@@ -485,7 +486,14 @@
             const price = parseInt(document.getElementById('vPPrice').value);
             const imgs = selectedBase64Images.length > 0 ? [...selectedBase64Images] : ["https://via.placeholder.com/500"];
 
-            const newProduct = { id: Date.now(), name, price, store: currentVendor.storeName, images: imgs };
+            const newProduct = { 
+                id: Date.now(), 
+                name, 
+                price, 
+                store: currentVendor.storeName, 
+                storeCoords: currentVendor.coords || VODIL_CENTER,
+                images: imgs 
+            };
             products.push(newProduct);
             localStorage.setItem('tv_products', JSON.stringify(products));
 
@@ -587,21 +595,22 @@
             renderProducts(products.filter(p => p.name.toLowerCase().includes(q) || p.store.toLowerCase().includes(q)));
         }
 
-        // BUYURTMA SUBMIT (SOTUVCHI / DO'KON NOMI BILAN BIRGA SAQLAYMIZ)
+        // BUYURTMA SUBMIT (DO'KON LOKATSIYASI BILAN BIRGA)
         function submitOrder(e) {
             e.preventDefault();
             const address = document.getElementById('custAddress').value;
             orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
 
-            // Savatdagi mahsulotlardan qaysi do'konlardan olinishini ajratib olamiz
             const storesList = [...new Set(cart.map(item => item.store))].join(', ');
+            const firstStoreCoords = cart.length > 0 && cart[0].storeCoords ? cart[0].storeCoords : VODIL_CENTER;
 
             const newOrder = {
                 id: Date.now(),
                 customer: currentUser.name,
                 phone: currentUser.phone,
                 address: address,
-                stores: storesList, // Olish joyi (Do'konlar)
+                stores: storesList,
+                storeCoords: firstStoreCoords, // Magazin lokatsiyasi
                 coords: userCoords,
                 distanceKM: calculatedDistance,
                 deliveryFee: calculatedDeliveryFee,
