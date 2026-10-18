@@ -645,7 +645,24 @@
             const q = document.getElementById('searchInput').value.toLowerCase();
             renderProducts(products.filter(p => p.name.toLowerCase().includes(q) || p.store.toLowerCase().includes(q)));
         }
+function openCheckoutModal() {
+            const modal = document.getElementById('checkoutModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                if (typeof map !== 'undefined' && map !== null) {
+                    setTimeout(() => {
+                        map.invalidateSize();
+                    }, 200);
+                }
+            }
+        }
 
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkoutModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
         // PROFIL FUNKSIYALARI (100% ISHLAYDIGAN QILIB TUZATILDI)
         function openProfileModal() {
             document.getElementById('profileModal').classList.remove('hidden');
