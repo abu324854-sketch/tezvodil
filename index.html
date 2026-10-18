@@ -24,7 +24,7 @@
 </head>
 <body class="bg-slate-50 text-gray-800 pb-28 antialiased selection:bg-emerald-500 selection:text-white">
 
-    <!-- HEADER (Faqat Brend va Admin) -->
+    <!-- HEADER (Brend, O'rnatish va Admin tugmalari) -->
     <header class="bg-emerald-600 text-white sticky top-0 z-40 shadow-md backdrop-blur-md bg-emerald-600/95">
         <div class="max-w-2xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-2.5 cursor-pointer" onclick="openDeveloperModal()">
@@ -37,7 +37,12 @@
                 </div>
             </div>
             
-            <div>
+            <div class="flex items-center gap-2">
+                <!-- EKRAN BURCHAKDAGI O'RNATISH TUGMASI -->
+                <button id="installAppBtn" onclick="installPWAApp()" class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white font-extrabold text-xs px-3 py-2 rounded-xl shadow-md flex items-center gap-1.5 transition border border-emerald-400/40">
+                    <i class="fa-solid fa-download text-yellow-300"></i> <span>O'rnatish</span>
+                </button>
+
                 <button onclick="checkAdminPassword()" class="bg-slate-900 hover:bg-slate-800 active:scale-95 text-amber-400 font-extrabold text-xs px-3 py-2 rounded-xl shadow-md flex items-center gap-1.5 transition border border-amber-400/30">
                     <i class="fa-solid fa-shield-halved"></i> <span>Admin</span>
                 </button>
@@ -294,7 +299,6 @@
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
             
-            <!-- MAHALLIY FAYLDAN YUKLANADIGAN RASMINGIZ -->
             <div class="relative w-36 h-44 mx-auto rounded-2xl overflow-hidden border-4 border-emerald-500 shadow-xl bg-slate-100">
                 <img id="modalDevPhoto" src="dev.jpg" alt="Fattoxov Abdulloh" class="w-full h-full object-cover">
             </div>
@@ -478,6 +482,36 @@
     </div>
 
     <script>
+        // PWA O'RNATISH UCHUN SCRIPT
+        let deferredPrompt = null;
+        const installBtn = document.getElementById('installAppBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.classList.remove('hidden'); // Tugmani ko'rsatish
+        });
+
+        async function installPWAApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('Foydalanuvchi ilovani o\'rnatdi');
+                }
+                deferredPrompt = null;
+                installBtn.classList.add('hidden');
+            } else {
+                alert("Ilova allaqachon o'rnatilgan yoki brauzeringiz bu qurilmada avtomatik o'rnatishni qo'llab-quvvatlamaydi. Brauzer menyusidan 'Asosiy ekranga qo'shish' yoki 'Ustanovit prilojenie'ni tanlang.");
+            }
+        }
+
+        window.addEventListener('appinstalled', () => {
+            installBtn.classList.add('hidden');
+            deferredPrompt = null;
+            console.log('PWA muvaffaqiyatli o\'rnatildi');
+        });
+
         const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
         let map = null, marker = null;
         let userCoords = { lat: 40.1764, lng: 71.7258 };
@@ -529,14 +563,12 @@
             document.getElementById('setOrderRate').value = settings.orderRate || 4000;
             document.getElementById('setExtraRate').value = settings.extraRate || 1600;
 
-            // Developer sozlamalari
             document.getElementById('setDevName').value = settings.devName || "Fattoxov Abdulloh";
             document.getElementById('setDevPhoto').value = settings.devPhoto || "dev.jpg";
             document.getElementById('setDevEducation').value = settings.devEducation || "Toshkent menejment va iqtisodiyot instituti Fargʻona filiali (Bakalavr)";
             document.getElementById('setDevPhone').value = settings.devPhone || "+998 90 123 45 67";
             document.getElementById('setDevLegalText').value = settings.devLegalText || "";
 
-            // Developer Modali
             document.getElementById('modalDevName').innerText = settings.devName || "Fattoxov Abdulloh";
             document.getElementById('modalDevPhoto').src = settings.devPhoto || "dev.jpg";
             document.getElementById('modalDevEducation').innerText = settings.devEducation || "Toshkent menejment va iqtisodiyot instituti Fargʻona filiali (Bakalavr)";
@@ -1149,7 +1181,6 @@
             settings.orderRate = parseInt(document.getElementById('setOrderRate').value) || 4000;
             settings.extraRate = parseInt(document.getElementById('setExtraRate').value) || 1600;
 
-            // Developer sozlamalarini saqlash
             settings.devName = document.getElementById('setDevName').value.trim() || "Fattoxov Abdulloh";
             settings.devPhoto = document.getElementById('setDevPhoto').value.trim() || "dev.jpg";
             settings.devEducation = document.getElementById('setDevEducation').value.trim() || "Toshkent menejment va iqtisodiyot instituti Fargʻona filiali (Bakalavr)";
