@@ -30,11 +30,9 @@
             </div>
             
             <div class="flex items-center gap-2">
-                <!-- SOTUVCHI TUGMASI -->
                 <button onclick="openVendorModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-2.5 py-2 rounded-xl shadow flex items-center gap-1 transition">
                     <i class="fa-solid fa-store"></i> <span>Sotuvchi</span>
                 </button>
-                <!-- PROFIL TUGMASI -->
                 <button onclick="openProfileModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-2.5 py-2 rounded-xl shadow flex items-center gap-1 transition">
                     <i class="fa-solid fa-user"></i> <span id="profileBtnText">Profil</span>
                 </button>
@@ -74,11 +72,33 @@
             <!-- Mahsulot Qo'shish Formasi -->
             <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
                 <h3 class="font-bold text-xs text-gray-800 border-b pb-2">Do'konga Yangi Mahsulot Qo'shish</h3>
-                <form onsubmit="addNewVendorProduct(event)" class="space-y-2.5 text-xs">
-                    <input type="text" id="vPName" required placeholder="Mahsulot nomi (Masalan: Sut 1L)" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                    <input type="number" id="vPPrice" required placeholder="Narxi (so'm)" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                    <input type="url" id="vPImage" required placeholder="Rasm URL havolasi (https://...)" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                    <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-2.5 rounded-xl shadow hover:bg-emerald-700 transition">Katalogga Saqlash</button>
+                <form onsubmit="addNewVendorProduct(event)" class="space-y-3 text-xs">
+                    <div>
+                        <label class="block font-semibold mb-1">Mahsulot nomi:</label>
+                        <input type="text" id="vPName" required placeholder="Masalan: Sut 1L" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Narxi (so'm):</label>
+                        <input type="number" id="vPPrice" required placeholder="11000" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    
+                    <!-- KAMERA VA FAYLDAN RASM YUKLASH (MAX 3 TA) -->
+                    <div>
+                        <label class="block font-semibold mb-1">Mahsulot rasmlari (Kamera yoki Galereyadan 3 tagacha):</label>
+                        <input type="file" id="vPImagesInput" accept="image/*" multiple capture="environment" onchange="handleImageSelection(event)" class="hidden">
+                        
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="document.getElementById('vPImagesInput').click()" class="bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-3 py-2.5 rounded-xl flex items-center gap-2 hover:bg-emerald-200 transition">
+                                <i class="fa-solid fa-camera text-base"></i> Rasmga Olish / Tanlash
+                            </button>
+                            <span id="imgCountBadge" class="text-[11px] text-gray-500 font-semibold">0/3 rasm tanlandi</span>
+                        </div>
+
+                        <!-- Yuklangan Rasmlar Prevyusi -->
+                        <div id="imagePreviewContainer" class="flex gap-2 mt-2.5 overflow-x-auto"></div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow hover:bg-emerald-700 transition">Katalogga Saqlash</button>
                 </form>
             </div>
 
@@ -138,13 +158,11 @@
                 <button onclick="closeVendorModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
 
-            <!-- Tablar: Kirish / Yangi Do'kon Yaratish -->
             <div class="flex bg-gray-100 p-1 rounded-xl text-xs font-bold">
                 <button onclick="switchVendorAuthTab('login')" id="vAuthTab-login" class="flex-1 py-2 rounded-lg bg-emerald-600 text-white shadow">Kirish</button>
                 <button onclick="switchVendorAuthTab('register')" id="vAuthTab-register" class="flex-1 py-2 rounded-lg hover:bg-gray-200 text-gray-600">Yangi Do'kon Ochish</button>
             </div>
 
-            <!-- 1. Kirish Formasi -->
             <div id="vForm-login" class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold mb-1">Do'koningiz Nomi</label>
@@ -157,7 +175,6 @@
                 <button onclick="loginVendor()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow hover:bg-emerald-700 transition">Kabinetga Kirish</button>
             </div>
 
-            <!-- 2. Yangi Do'kon Yaratish Formasi -->
             <div id="vForm-register" class="space-y-3 text-xs hidden">
                 <p class="text-gray-500">Yangi sotuvchi sifatida o'zingizga shaxsiy parol belgilaysiz:</p>
                 <div>
@@ -264,15 +281,17 @@
         let calculatedDistance = 0;
         let calculatedDeliveryFee = 5600;
 
+        let selectedBase64Images = []; // Yuklangan rasmlar (max 3 ta)
+
         let settings = JSON.parse(localStorage.getItem('tv_settings')) || { orderRate: 4000, extraRate: 1600 };
         let products = JSON.parse(localStorage.getItem('tv_products')) || [
-            { id: 1, name: "Sut 1L (Tabiiy)", store: "Fayz Market", price: 11000, image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=300" },
-            { id: 2, name: "Qora Daftar 36v", store: "Bilim Kantselyariya", price: 4000, image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300" }
+            { id: 1, name: "Sut 1L (Tabiiy)", store: "Fayz Market", price: 11000, images: ["https://images.unsplash.com/photo-1563636619-e9143da7973b?w=300"] },
+            { id: 2, name: "Qora Daftar 36v", store: "Bilim Kantselyariya", price: 4000, images: ["https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300"] }
         ];
         let cart = [];
         let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
         let usersList = JSON.parse(localStorage.getItem('tv_users')) || [];
-        let vendorsList = JSON.parse(localStorage.getItem('tv_vendors')) || []; // Sotuvchilar va ularning shaxsiy parollari
+        let vendorsList = JSON.parse(localStorage.getItem('tv_vendors')) || [];
 
         let currentUser = JSON.parse(localStorage.getItem('tv_current_user')) || null;
         let currentVendor = JSON.parse(localStorage.getItem('tv_current_vendor')) || null;
@@ -282,7 +301,48 @@
             updateProfileUI();
         });
 
-        // --- SOTUVCHILAR TIZIMI (PAROL VA SHAXSIY KABINET) ---
+        // KAMERA / FAYLDAN RASMLARNI O'QISH VA QAYTA ISHLASH (MAX 3)
+        function handleImageSelection(event) {
+            const files = Array.from(event.target.files);
+            if (files.length + selectedBase64Images.length > 3) {
+                alert("Maksimal 3 tagacha rasm yuklashingiz mumkin!");
+                return;
+            }
+
+            files.forEach(file => {
+                if (selectedBase64Images.length >= 3) return;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedBase64Images.push(e.target.result);
+                    renderImagePreviews();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderImagePreviews() {
+            const container = document.getElementById('imagePreviewContainer');
+            const badge = document.getElementById('imgCountBadge');
+            if (badge) badge.innerText = `${selectedBase64Images.length}/3 rasm tanlandi`;
+            if (!container) return;
+
+            container.innerHTML = '';
+            selectedBase64Images.forEach((imgSrc, index) => {
+                container.innerHTML += `
+                    <div class="relative w-16 h-16 rounded-xl border overflow-hidden flex-shrink-0">
+                        <img src="${imgSrc}" class="w-full h-full object-cover">
+                        <button type="button" onclick="removeSelectedImage(${index})" class="absolute top-0.5 right-0.5 bg-red-600 text-white w-4 h-4 rounded-full text-[10px] flex items-center justify-center">×</button>
+                    </div>
+                `;
+            });
+        }
+
+        function removeSelectedImage(index) {
+            selectedBase64Images.splice(index, 1);
+            renderImagePreviews();
+        }
+
+        // --- SOTUVCHILAR TIZIMI ---
         function openVendorModal() {
             if (currentVendor) {
                 openVendorPanel();
@@ -310,7 +370,6 @@
             }
         }
 
-        // Yangi Sotuvchi va Parol Yaratish
         function registerVendor() {
             const storeName = document.getElementById('vRegStoreName').value.trim();
             const password = document.getElementById('vRegPassword').value.trim();
@@ -320,9 +379,8 @@
                 return;
             }
 
-            // Do'kon nomi bandligini tekshirish
             if (vendorsList.some(v => v.storeName.toLowerCase() === storeName.toLowerCase())) {
-                alert("Bu nomli do'kon allaqachon ro'yxatdan o'tgan! Kirish bo'limidan kiring.");
+                alert("Bu nomli do'kon allaqachon ro'yxatdan o'tgan!");
                 return;
             }
 
@@ -338,7 +396,6 @@
             alert(`Xush kelibsiz! "${storeName}" do'koni va parolingiz saqlandi.`);
         }
 
-        // Sotuvchi Kirishi
         function loginVendor() {
             const storeName = document.getElementById('vLoginStoreName').value.trim();
             const password = document.getElementById('vLoginPassword').value.trim();
@@ -368,28 +425,29 @@
             document.getElementById('section-client').classList.remove('hidden');
         }
 
-        // Sotuvchining O'z Mahsulotini Qo'shishi
         function addNewVendorProduct(e) {
             e.preventDefault();
             const name = document.getElementById('vPName').value;
             const price = parseInt(document.getElementById('vPPrice').value);
-            const image = document.getElementById('vPImage').value;
+
+            const imgs = selectedBase64Images.length > 0 ? selectedBase64Images : ["https://via.placeholder.com/300"];
 
             const newProduct = {
                 id: Date.now(),
                 name: name,
                 price: price,
                 store: currentVendor.storeName,
-                image: image
+                images: imgs
             };
 
             products.push(newProduct);
             localStorage.setItem('tv_products', JSON.stringify(products));
 
-            alert("Mahsulot do'koningizga qo'shildi!");
+            alert("Mahsulot do'konga qo'shildi!");
             document.getElementById('vPName').value = '';
             document.getElementById('vPPrice').value = '';
-            document.getElementById('vPImage').value = '';
+            selectedBase64Images = [];
+            renderImagePreviews();
 
             renderVendorProducts();
             renderProducts(products);
@@ -408,13 +466,14 @@
 
             container.innerHTML = '';
             myProds.forEach(p => {
+                const mainImg = p.images ? p.images[0] : p.image;
                 container.innerHTML += `
                     <div class="flex justify-between items-center border p-2.5 rounded-xl bg-gray-50 text-xs">
                         <div class="flex items-center gap-2">
-                            <img src="${p.image}" class="w-10 h-10 object-cover rounded-lg">
+                            <img src="${mainImg}" class="w-10 h-10 object-cover rounded-lg">
                             <div>
                                 <p class="font-bold text-gray-800">${p.name}</p>
-                                <p class="text-emerald-700 font-bold">${p.price.toLocaleString()} so'm</p>
+                                <p class="text-emerald-700 font-bold">${p.price.toLocaleString()} so'm (${p.images ? p.images.length : 1} rasm)</p>
                             </div>
                         </div>
                         <button onclick="deleteProduct(${p.id})" class="text-red-500 hover:text-red-700 p-2"><i class="fa-solid fa-trash"></i></button>
@@ -432,14 +491,64 @@
             }
         }
 
-        // --- BOSH ADMIN PANEL (tezvodil2026) ---
+        // --- BUYURTMA BERISH (KURYER UCHUN MUKAMMAL SAQLASH) ---
+        function submitOrder(e) {
+            e.preventDefault();
+            const address = document.getElementById('custAddress').value;
+
+            // Mavjud buyurtmalarni qayta yuklash
+            orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
+
+            const newOrder = {
+                id: Date.now(),
+                customer: currentUser.name,
+                phone: currentUser.phone,
+                address: address,
+                coords: userCoords,
+                distanceKM: calculatedDistance,
+                deliveryFee: calculatedDeliveryFee,
+                items: [...cart],
+                total: cart.reduce((s, i) => s + (i.price * i.qty), 0),
+                status: 'Kutilmoqda'
+            };
+
+            orders.push(newOrder);
+            localStorage.setItem('tv_orders', JSON.stringify(orders));
+
+            alert("Buyurtmangiz muvaffaqiyatli qabul qilindi! Kuryerlar panelida ham aks etdi.");
+            cart = [];
+            updateCartUI();
+            closeCheckoutModal();
+        }
+
+        // --- MAHSULOTLARNI CHIQARISH ---
+        function renderProducts(items) {
+            const grid = document.getElementById('productsGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            items.forEach(p => {
+                const mainImg = p.images ? p.images[0] : p.image;
+                grid.innerHTML += `
+                    <div class="bg-white border rounded-2xl p-2.5 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <img src="${mainImg}" class="w-full h-24 object-cover rounded-xl mb-2">
+                            <span class="text-[9px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-full">${p.store}</span>
+                            <h3 class="font-bold text-xs mt-1">${p.name}</h3>
+                        </div>
+                        <div class="mt-2 flex items-center justify-between">
+                            <span class="text-xs font-black text-emerald-700">${p.price.toLocaleString()} so'm</span>
+                            <button onclick="addToCart(${p.id})" class="bg-emerald-600 text-white w-7 h-7 rounded-lg text-xs"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- PROFIL VA ADMIN BO'LIMLARI ---
         function checkAdminPassword() {
             const pass = prompt("Bosh Admin parolini kiriting:");
-            if (pass === "tezvodil2026") {
-                openAdminPanel();
-            } else if (pass !== null) {
-                alert("Parol noto'g'ri!");
-            }
+            if (pass === "tezvodil2026") openAdminPanel();
+            else if (pass !== null) alert("Parol noto'g'ri!");
         }
 
         function openAdminPanel() {
@@ -469,12 +578,10 @@
             const container = document.getElementById('adminUsersList');
             document.getElementById('userCount').innerText = usersList.length;
             if (!container) return;
-
             if (usersList.length === 0) {
                 container.innerHTML = `<p class="text-gray-400 text-center py-4">Hozircha ro'yxatdan o'tgan mijozlar yo'q</p>`;
                 return;
             }
-
             container.innerHTML = '';
             usersList.forEach((u, index) => {
                 container.innerHTML += `
@@ -496,7 +603,6 @@
             alert("Sozlamalar saqlandi!");
         }
 
-        // --- PROFIL FUNKSIYALARI ---
         function openProfileModal() {
             document.getElementById('profileModal').classList.remove('hidden');
             if (currentUser) {
@@ -518,20 +624,16 @@
         function saveProfile() {
             const name = document.getElementById('userNameInput').value.trim();
             const phone = document.getElementById('userPhoneInput').value.trim();
-
             if (!name || !phone) {
                 alert("Iltimos, ismingiz va telefon raqamingizni kiriting!");
                 return;
             }
-
             currentUser = { name, phone, joinedDate: new Date().toLocaleDateString() };
             localStorage.setItem('tv_current_user', JSON.stringify(currentUser));
-
             if (!usersList.some(u => u.phone === phone)) {
                 usersList.push(currentUser);
                 localStorage.setItem('tv_users', JSON.stringify(usersList));
             }
-
             updateProfileUI();
             openProfileModal();
         }
@@ -545,12 +647,10 @@
 
         function updateProfileUI() {
             const btnText = document.getElementById('profileBtnText');
-            if (btnText) {
-                btnText.innerText = currentUser ? currentUser.name.split(' ')[0] : "Profil";
-            }
+            if (btnText) btnText.innerText = currentUser ? currentUser.name.split(' ')[0] : "Profil";
         }
 
-        // --- XARITA VA MASOFA ---
+        // --- XARITA VA DOKONLALIK ---
         function calculateDistance(lat1, lon1, lat2, lon2) {
             const R = 6371;
             const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -612,32 +712,6 @@
             document.getElementById('checkoutModal').classList.add('hidden');
         }
 
-        function submitOrder(e) {
-            e.preventDefault();
-            const address = document.getElementById('custAddress').value;
-
-            const newOrder = {
-                id: Date.now(),
-                customer: currentUser.name,
-                phone: currentUser.phone,
-                address: address,
-                coords: userCoords,
-                distanceKM: calculatedDistance,
-                deliveryFee: calculatedDeliveryFee,
-                items: [...cart],
-                total: cart.reduce((s, i) => s + (i.price * i.qty), 0),
-                status: 'Kutilmoqda'
-            };
-
-            orders.push(newOrder);
-            localStorage.setItem('tv_orders', JSON.stringify(orders));
-
-            alert("Buyurtmangiz muvaffaqiyatli qabul qilindi!");
-            cart = [];
-            updateCartUI();
-            closeCheckoutModal();
-        }
-
         function renderUserOrdersHistory() {
             const container = document.getElementById('userOrdersHistory');
             if (!currentUser || !container) return;
@@ -677,27 +751,6 @@
                         </div>
                         <p>📍 Manzil: ${o.address} (${o.distanceKM} km)</p>
                         <p>💰 Summa: ${o.total.toLocaleString()} so'm | Dostavka: ${o.deliveryFee} so'm</p>
-                    </div>
-                `;
-            });
-        }
-
-        function renderProducts(items) {
-            const grid = document.getElementById('productsGrid');
-            if (!grid) return;
-            grid.innerHTML = '';
-            items.forEach(p => {
-                grid.innerHTML += `
-                    <div class="bg-white border rounded-2xl p-2.5 shadow-sm flex flex-col justify-between">
-                        <div>
-                            <img src="${p.image}" class="w-full h-24 object-cover rounded-xl mb-2">
-                            <span class="text-[9px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-full">${p.store}</span>
-                            <h3 class="font-bold text-xs mt-1">${p.name}</h3>
-                        </div>
-                        <div class="mt-2 flex items-center justify-between">
-                            <span class="text-xs font-black text-emerald-700">${p.price.toLocaleString()} so'm</span>
-                            <button onclick="addToCart(${p.id})" class="bg-emerald-600 text-white w-7 h-7 rounded-lg text-xs"><i class="fa-solid fa-plus"></i></button>
-                        </div>
                     </div>
                 `;
             });
