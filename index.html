@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title id="pageTitle">TezVodil - Onlayn Do'kon</title>
+    <title>TezVodil - Onlayn Do'kon</title>
     
+    <!-- PWA va Ilova Logotipi (Yangi Chaqmoq Logotipi) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23059669'/><path d='M55 15 L25 55 L48 55 L40 85 L75 45 L52 45 Z' fill='%23FACC15'/></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23059669'/><path d='M55 15 L25 55 L48 55 L40 85 L75 45 L52 45 Z' fill='%23FACC15'/></svg>">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#059669">
 
@@ -68,7 +70,7 @@
             </div>
         </div>
 
-        <!-- SOTUVCHI SHAXSIY PANELI VA TUSHUM STATISTIKASI -->
+        <!-- SOTUVCHI SHAXSIY PANELI -->
         <div id="section-vendor-panel" class="space-y-4 hidden">
             <div class="bg-emerald-800 text-white p-4 rounded-2xl flex justify-between items-center shadow-lg">
                 <div>
@@ -78,7 +80,6 @@
                 <button onclick="closeVendorPanel()" class="bg-emerald-700 hover:bg-emerald-600 px-3 py-1.5 rounded-xl text-xs font-bold transition">Chiqish</button>
             </div>
 
-            <!-- SOTUVCHI SAVDO VA TUSHUM KARTASI -->
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-1">
                     <p class="text-[10px] font-bold uppercase text-slate-400">Jami Savdo Tushumi</p>
@@ -90,7 +91,6 @@
                 </div>
             </div>
 
-            <!-- ENG KO'P SOTILGAN MAHSULOTLAR (TOP SALES) -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
                 <h3 class="font-bold text-xs text-slate-800 border-b pb-2 flex items-center gap-1.5">
                     <i class="fa-solid fa-fire text-orange-500"></i> Eng Ommabop (Xit) Mahsulotlaringiz
@@ -98,7 +98,6 @@
                 <div id="vendorTopProductsList" class="space-y-2 text-xs"></div>
             </div>
 
-            <!-- Mahsulot Qo'shish Formasi -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
                 <h3 class="font-bold text-xs text-slate-800 border-b pb-2">Do'konga Yangi Mahsulot Qo'shish</h3>
                 <form onsubmit="addNewVendorProduct(event)" class="space-y-3 text-xs">
@@ -129,21 +128,19 @@
                 </form>
             </div>
 
-            <!-- Sotuvchining O'z Mahsulotlari Ro'yxati -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
                 <h3 class="font-bold text-xs text-slate-800 border-b pb-2">Mening Mahsulotlarim</h3>
                 <div id="vendorProductsList" class="space-y-2"></div>
             </div>
         </div>
 
-        <!-- BOSH ADMIN PANELI VA TO'LIQ SOZLAMALAR -->
+        <!-- BOSH ADMIN PANELI -->
         <div id="section-admin" class="space-y-4 hidden">
             <div class="bg-slate-900 text-white p-4 rounded-2xl flex justify-between items-center shadow-lg">
                 <h2 class="font-extrabold text-sm"><i class="fa-solid fa-shield-halved mr-1 text-amber-400"></i> Bosh Admin Paneli</h2>
                 <button onclick="closeAdminPanel()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold">Chiqish</button>
             </div>
 
-            <!-- BOSH ADMIN ANALITIKASI -->
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
                 <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
                     <p class="text-[10px] font-bold text-slate-400 uppercase">Jami Platforma Savdosi</p>
@@ -165,13 +162,11 @@
                 <button onclick="switchAdminTab('settings')" id="admTab-settings" class="flex-1 py-2 rounded-xl hover:bg-slate-100">⚙️ Sozlamalar</button>
             </div>
 
-            <!-- BUYURTMALAR BO'LIMI -->
             <div id="admContent-orders" class="space-y-3">
                 <h3 class="font-bold text-xs text-slate-400 uppercase">Barcha Kelgan Buyurtmalar</h3>
                 <div id="adminOrdersList" class="space-y-2"></div>
             </div>
 
-            <!-- TOP TOVARLAR ANALITIKASI -->
             <div id="admContent-top" class="space-y-3 hidden">
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
                     <h3 class="font-bold text-xs text-slate-800 border-b pb-2 flex items-center gap-1.5">
@@ -181,7 +176,6 @@
                 </div>
             </div>
 
-            <!-- TIZIM SOZLAMALARI (TO'LIQ BOSHGARUV) -->
             <div id="admContent-settings" class="space-y-3 hidden">
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
                     <h3 class="font-bold text-sm text-slate-800 border-b pb-2">Platformani Tahrirlash va Sozlamalar</h3>
@@ -453,7 +447,6 @@
             document.getElementById('developerModal').classList.add('hidden');
         }
 
-        // SOTUVCHI TUSHUMI VA ANALITIKASI
         function renderVendorAnalytics() {
             if (!currentVendor) return;
 
@@ -513,7 +506,6 @@
             });
         }
 
-        // BOSH ADMIN ANALITIKASI
         function renderAdminAnalytics() {
             let totalSales = 0;
             let totalDeliveryFee = 0;
