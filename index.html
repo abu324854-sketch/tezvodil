@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title id="pageTitle">TezVodil - Onlayn Do'kon</title>
     
-    <!-- PWA va Manifest bog'lanishi -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#059669">
 
@@ -93,7 +92,7 @@
                 </div>
             </div>
 
-            <!-- SOTUVCHI TELEFON VA ANIQ LOKATSIYA SOZLAMASI -->
+            <!-- SOTUVCHI TELEFON VA ANIQ LOKATSIYA -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
                 <h3 class="font-bold text-slate-800 border-b pb-2 flex items-center gap-1.5">
                     <i class="fa-solid fa-map-location-dot text-emerald-600"></i> Do'kon Manzili va Telefon Raqami
@@ -117,39 +116,25 @@
             </div>
 
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-                <h3 class="font-bold text-xs text-slate-800 border-b pb-2 flex items-center gap-1.5">
-                    <i class="fa-solid fa-fire text-orange-500"></i> Eng Ommabop Mahsulotlaringiz
-                </h3>
-                <div id="vendorTopProductsList" class="space-y-2 text-xs"></div>
-            </div>
-
-            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
                 <h3 class="font-bold text-xs text-slate-800 border-b pb-2">Do'konga Yangi Mahsulot Qo'shish</h3>
                 <form onsubmit="addNewVendorProduct(event)" class="space-y-3 text-xs">
                     <div>
                         <label class="block font-semibold mb-1 text-slate-600">Mahsulot nomi:</label>
-                        <input type="text" id="vPName" required placeholder="Masalan: Sut 1L (Tabiiy)" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
+                        <input type="text" id="vPName" required placeholder="Masalan: Sut 1L" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
                     <div>
                         <label class="block font-semibold mb-1 text-slate-600">Narxi (so'm):</label>
                         <input type="number" id="vPPrice" required placeholder="11000" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
-                    
                     <div>
                         <label class="block font-semibold mb-1 text-slate-600">Mahsulot rasmlari (3 tagacha):</label>
                         <input type="file" id="vPImagesInput" accept="image/*" multiple capture="environment" onchange="handleImageSelection(event)" class="hidden">
-                        
-                        <div class="flex items-center gap-2">
-                            <button type="button" onclick="document.getElementById('vPImagesInput').click()" class="bg-emerald-50 text-emerald-700 border border-emerald-300 font-bold px-3 py-2.5 rounded-xl flex items-center gap-2 hover:bg-emerald-100 transition">
-                                <i class="fa-solid fa-camera text-base"></i> Rasmga Olish / Tanlash
-                            </button>
-                            <span id="imgCountBadge" class="text-[11px] text-slate-500 font-semibold">0/3 rasm tanlandi</span>
-                        </div>
-
+                        <button type="button" onclick="document.getElementById('vPImagesInput').click()" class="bg-emerald-50 text-emerald-700 border border-emerald-300 font-bold px-3 py-2.5 rounded-xl flex items-center gap-2 hover:bg-emerald-100 transition">
+                            <i class="fa-solid fa-camera text-base"></i> Rasm Tanlash
+                        </button>
                         <div id="imagePreviewContainer" class="flex gap-2 mt-2.5 overflow-x-auto no-scrollbar"></div>
                     </div>
-
-                    <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow hover:bg-emerald-700 transition active:scale-98">Katalogga Saqlash</button>
+                    <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow hover:bg-emerald-700 transition">Katalogga Saqlash</button>
                 </form>
             </div>
 
@@ -164,123 +149,6 @@
             <div class="bg-slate-900 text-white p-4 rounded-2xl flex justify-between items-center shadow-lg">
                 <h2 class="font-extrabold text-sm"><i class="fa-solid fa-shield-halved mr-1 text-amber-400"></i> Bosh Admin Paneli</h2>
                 <button onclick="closeAdminPanel()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold">Chiqish</button>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase">👤 Mijozlar</p>
-                    <p id="admUserCount" class="text-sm font-black text-slate-800">0 kishi</p>
-                </div>
-                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase">🏪 Sotuvchilar</p>
-                    <p id="admVendorCount" class="text-sm font-black text-emerald-600">0 ta</p>
-                </div>
-                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase">🛵 Kuryerlar</p>
-                    <p id="admCourierCount" class="text-sm font-black text-blue-600">0 kishi</p>
-                </div>
-                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase">💰 Jami Komissiya</p>
-                    <p id="admTotalCommission" class="text-sm font-black text-red-600">0 so'm</p>
-                </div>
-            </div>
-
-            <div class="bg-white p-1.5 rounded-2xl shadow-sm border border-slate-200 flex gap-1 text-[11px] font-bold text-slate-600 overflow-x-auto no-scrollbar">
-                <button onclick="switchAdminTab('orders')" id="admTab-orders" class="px-3 py-2 rounded-xl bg-emerald-600 text-white shadow whitespace-nowrap">Buyurtmalar</button>
-                <button onclick="switchAdminTab('vendors')" id="admTab-vendors" class="px-3 py-2 rounded-xl hover:bg-slate-100 whitespace-nowrap">Sotuvchilar & Istisno</button>
-                <button onclick="switchAdminTab('users')" id="admTab-users" class="px-3 py-2 rounded-xl hover:bg-slate-100 whitespace-nowrap">Foydalanuvchilar</button>
-                <button onclick="switchAdminTab('top')" id="admTab-top" class="px-3 py-2 rounded-xl hover:bg-slate-100 whitespace-nowrap">Top Tovar Tahlili</button>
-                <button onclick="switchAdminTab('settings')" id="admTab-settings" class="px-3 py-2 rounded-xl hover:bg-slate-100 whitespace-nowrap">⚙️ Sozlamalar</button>
-            </div>
-
-            <div id="admContent-orders" class="space-y-3">
-                <h3 class="font-bold text-xs text-slate-400 uppercase">Barcha Kelgan Buyurtmalar</h3>
-                <div id="adminOrdersList" class="space-y-2"></div>
-            </div>
-
-            <div id="admContent-vendors" class="space-y-3 hidden">
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
-                    <h3 class="font-bold text-xs text-slate-800 border-b pb-2 flex items-center gap-1.5">
-                        <i class="fa-solid fa-percent text-emerald-600"></i> Sotuvchilar Komissiyasi va Istisno Sozlamasi
-                    </h3>
-                    <div id="adminVendorsList" class="space-y-2"></div>
-                </div>
-            </div>
-
-            <div id="admContent-users" class="space-y-3 hidden">
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
-                    <h3 class="font-bold text-xs text-slate-800 border-b pb-2">Ro'yxatdan O'tgan Mijozlar</h3>
-                    <div id="adminUsersList" class="space-y-2"></div>
-                </div>
-
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
-                    <h3 class="font-bold text-xs text-slate-800 border-b pb-2">Ro'yxatdan O'tgan Kuryerlar</h3>
-                    <div id="adminCouriersList" class="space-y-2"></div>
-                </div>
-            </div>
-
-            <div id="admContent-top" class="space-y-3 hidden">
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
-                    <h3 class="font-bold text-xs text-slate-800 border-b pb-2 flex items-center gap-1.5">
-                        <i class="fa-solid fa-chart-line text-emerald-600"></i> Vodil Bo'yicha Eng Ko'p Sotilayotgan Tovar Reytingi
-                    </h3>
-                    <div id="adminTopProductsList" class="space-y-2"></div>
-                </div>
-            </div>
-
-            <div id="admContent-settings" class="space-y-3 hidden">
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
-                    <h3 class="font-bold text-sm text-slate-800 border-b pb-2">Platforma Sozlamalari</h3>
-                    
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Ilova Nomi (Brending):</label>
-                        <input type="text" id="setAppName" value="TezVodil" class="w-full p-2.5 border rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Ilova Taglavhasi (Slogan):</label>
-                        <input type="text" id="setAppSub" value="Vodil bo'ylab tezkor dostavka" class="w-full p-2.5 border rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Bosh Admin Paroli:</label>
-                        <input type="text" id="setAdminPass" value="tezvodil2026" class="w-full p-2.5 border rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Standart Sotuvchi Komissiyasi (%):</label>
-                        <input type="number" step="0.1" id="setDefaultCommission" value="2.5" class="w-full p-2.5 border rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Buyurtma km narxi (so'm):</label>
-                        <input type="number" id="setOrderRate" value="4000" class="w-full p-2.5 border rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Tashqari km narxi (so'm):</label>
-                        <input type="number" id="setExtraRate" value="1600" class="w-full p-2.5 border rounded-xl">
-                    </div>
-
-                    <div class="border-t pt-3 space-y-2">
-                        <h4 class="font-bold text-emerald-800 text-xs">👤 "Ilova Haqida" bo'limi Sozlamalari:</h4>
-                        <div>
-                            <label class="block font-semibold mb-1 text-slate-600">Muallif / Dasturchi Ismi:</label>
-                            <input type="text" id="setDevName" value="Fattoxov Abdulloh" class="w-full p-2.5 border rounded-xl">
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-1 text-slate-600">O'qish joyi (Ta'lim):</label>
-                            <input type="text" id="setDevEducation" value="Toshkent menejment va iqtisodiyot instituti Fargʻona filiali (Bakalavr)" class="w-full p-2.5 border rounded-xl">
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-1 text-slate-600">Telefon Raqami:</label>
-                            <input type="text" id="setDevPhone" value="+998 90 123 45 67" class="w-full p-2.5 border rounded-xl">
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-1 text-slate-600">Mualliflik Ogohlantirish Matni:</label>
-                            <textarea id="setDevLegalText" rows="3" class="w-full p-2.5 border rounded-xl">Ushbu dastur kodi, funksionalligi yoki "TezVodil" brendini ruxsatsiz nusxalash, o'zlashtirish va shu shaklda mualliflik huquqini buzgan holda analog loyihalar yaratish O'zbekiston Respublikasining "Mualliflik huquqi va turdosh huquqlar to'g'risida"gi Qonuni hamda Jinoyat Kodeksining 149-moddasiga ko'ra Jinoiy Javobgarlikka sabab bo'ladi.</textarea>
-                        </div>
-                    </div>
-
-                    <button onclick="saveSettings()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl shadow hover:bg-slate-800 transition">
-                        Barcha Sozlamalarni Saqlash
-                    </button>
-                </div>
             </div>
         </div>
 
@@ -312,93 +180,42 @@
         </div>
     </nav>
 
-    <!-- BREND LOYIHA HAQIDA MODALI -->
+    <!-- LOYIHA HAQIDA MODALI -->
     <div id="developerModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeDeveloperModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-            
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center space-y-4 shadow-2xl relative">
+            <button onclick="closeDeveloperModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             <div class="w-24 h-24 mx-auto rounded-3xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center shadow-xl border-4 border-white">
                 <i class="fa-solid fa-bolt text-yellow-300 text-4xl animate-bounce"></i>
             </div>
-
             <div>
-                <h3 id="modalDevName" class="font-black text-xl text-slate-800">Fattoxov Abdulloh</h3>
-                <p class="text-xs font-extrabold text-emerald-600 uppercase tracking-wider mt-0.5">TezVodil PWA Asoschisi va Dasturchisi</p>
+                <h3 class="font-black text-xl text-slate-800">Fattoxov Abdulloh</h3>
+                <p class="text-xs font-extrabold text-emerald-600 uppercase tracking-wider mt-0.5">TezVodil Asoschisi va Dasturchisi</p>
             </div>
-
-            <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-2xl text-left space-y-1.5 text-xs">
-                <p class="font-bold text-emerald-900 flex items-center gap-1.5">
-                    <i class="fa-solid fa-graduation-cap text-emerald-600 text-sm"></i> O'qish joyi va Ta'lim:
-                </p>
-                <p id="modalDevEducation" class="text-slate-700 font-medium leading-snug">
-                    Toshkent menejment va iqtisodiyot instituti Fargʻona filiali (Bakalavr)
-                </p>
-                
-                <div class="pt-2 border-t border-emerald-200/60 flex items-center justify-between">
-                    <span class="font-bold text-slate-700">📞 Bog'lanish:</span>
-                    <a id="modalDevPhoneLink" href="tel:+998901234567" class="font-black text-emerald-700 hover:underline">
-                        <span id="modalDevPhone">+998 90 123 45 67</span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="bg-red-50 border border-red-200 p-3.5 rounded-2xl text-left space-y-1">
-                <p class="text-[11px] font-black text-red-700 flex items-center gap-1 uppercase">
-                    <i class="fa-solid fa-gavel"></i> Mualliflik Huquqi Himoyalangan:
-                </p>
-                <p id="modalDevLegalText" class="text-[10px] text-red-600 leading-snug">
-                    Ushbu dastur kodi, funksionalligi yoki "TezVodil" brendini ruxsatsiz nusxalash, o'zlashtirish va shu shaklda mualliflik huquqini buzgan holda analog loyihalar yaratish O'zbekiston Respublikasining "Mualliflik huquqi va turdosh huquqlar to'g'risida"gi Qonuni hamda Jinoyat Kodeksining 149-moddasiga ko'ra <strong>Jinoiy Javobgarlikka</strong> sabab bo'ladi.
-                </p>
-            </div>
-
             <button onclick="closeDeveloperModal()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow hover:bg-emerald-700 transition">Yopish</button>
         </div>
     </div>
 
-    <!-- SOTUVCHI MODALI (KIRISH VA RO'YXATDAN O'TISH) -->
+    <!-- SOTUVCHI MODALI -->
     <div id="vendorAuthModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-2">
                 <h3 class="font-bold text-slate-800 text-base"><i class="fa-solid fa-store text-emerald-600 mr-1"></i> Sotuvchi Kabineti</h3>
                 <button onclick="closeVendorModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
-
             <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-bold">
                 <button onclick="switchVendorAuthTab('login')" id="vAuthTab-login" class="flex-1 py-2 rounded-lg bg-emerald-600 text-white shadow">Kirish</button>
                 <button onclick="switchVendorAuthTab('register')" id="vAuthTab-register" class="flex-1 py-2 rounded-lg hover:bg-slate-200 text-slate-600">Yangi Do'kon Ochish</button>
             </div>
-
-            <!-- KIRISH -->
             <div id="vForm-login" class="space-y-3 text-xs">
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Do'koningiz Nomi</label>
-                    <input type="text" id="vLoginStoreName" placeholder="Masalan: Fayz Market" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Shaxsiy Parolingiz</label>
-                    <input type="password" id="vLoginPassword" placeholder="Parolni kiriting" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <button onclick="loginVendor()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow hover:bg-emerald-700 transition">Kabinetga Kirish</button>
+                <input type="text" id="vLoginStoreName" placeholder="Do'koningiz Nomi" class="w-full p-3 border rounded-xl outline-none">
+                <input type="password" id="vLoginPassword" placeholder="Parolni kiriting" class="w-full p-3 border rounded-xl outline-none">
+                <button onclick="loginVendor()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">Kirish</button>
             </div>
-
-            <!-- YANGI DO'KON OCHISH -->
             <div id="vForm-register" class="space-y-3 text-xs hidden">
-                <p class="text-slate-500">O'z do'koningiz uchun nom, parol va bog'lanish raqamini kiriting:</p>
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Do'koningiz Nomi</label>
-                    <input type="text" id="vRegStoreName" placeholder="Masalan: Vodil Market" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Telefon Raqamingiz</label>
-                    <input type="tel" id="vRegPhone" placeholder="+998 90 123 45 67" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Shaxsiy Parol O'ylab Toping</label>
-                    <input type="password" id="vRegPassword" placeholder="Kamida 4 ta belgi" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <button onclick="registerVendor()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow hover:bg-emerald-700 transition">Do'kon Yaratish va Kirish</button>
+                <input type="text" id="vRegStoreName" placeholder="Do'koningiz Nomi" class="w-full p-3 border rounded-xl outline-none">
+                <input type="tel" id="vRegPhone" placeholder="Telefon Raqamingiz (+998...)" class="w-full p-3 border rounded-xl outline-none">
+                <input type="password" id="vRegPassword" placeholder="Shaxsiy Parol O'ylab Toping" class="w-full p-3 border rounded-xl outline-none">
+                <button onclick="registerVendor()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">Do'kon Yaratish</button>
             </div>
         </div>
     </div>
@@ -410,26 +227,19 @@
                 <h3 class="font-bold text-slate-800 text-base">Foydalanuvchi Profili</h3>
                 <button onclick="closeProfileModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
-
             <div id="profileFormView" class="space-y-3 text-xs">
-                <p class="text-slate-500">Iltimos, ismingiz va telefon raqamingizni kiriting:</p>
-                <input type="text" id="userNameInput" placeholder="Ism Familiyangiz" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                <input type="tel" id="userPhoneInput" placeholder="Telefon raqamingiz (+998...)" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                <button onclick="saveProfile()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow hover:bg-emerald-700 transition">Saqlash va Kirish</button>
+                <input type="text" id="userNameInput" placeholder="Ism Familiyangiz" class="w-full p-3 border rounded-xl outline-none">
+                <input type="tel" id="userPhoneInput" placeholder="Telefon raqamingiz (+998...)" class="w-full p-3 border rounded-xl outline-none">
+                <button onclick="saveProfile()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">Saqlash va Kirish</button>
             </div>
-
             <div id="profileInfoView" class="space-y-3 text-xs hidden">
                 <div class="bg-emerald-50 p-3.5 rounded-2xl border border-emerald-200">
                     <p class="font-extrabold text-emerald-950 text-sm" id="dispUserName"></p>
                     <p class="text-emerald-700 font-semibold" id="dispUserPhone"></p>
                 </div>
-
                 <h4 class="font-bold text-slate-700 pt-2">Mening Buyurtmalarim:</h4>
                 <div id="userOrdersHistory" class="space-y-2 max-h-40 overflow-y-auto"></div>
-
-                <div class="pt-2 border-t">
-                    <button onclick="logoutProfile()" class="bg-red-50 text-red-600 font-bold py-2.5 px-4 rounded-xl w-full">Chiqish</button>
-                </div>
+                <button onclick="logoutProfile()" class="bg-red-50 text-red-600 font-bold py-2.5 px-4 rounded-xl w-full">Chiqish</button>
             </div>
         </div>
     </div>
@@ -439,7 +249,7 @@
         <div class="flex items-center gap-3">
             <div class="relative bg-emerald-600 p-2.5 rounded-xl shadow">
                 <i class="fa-solid fa-cart-shopping text-xl text-white"></i>
-                <span id="cartCount" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-black shadow">0</span>
+                <span id="cartCount" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-black">0</span>
             </div>
             <div>
                 <p class="text-[10px] text-slate-400 font-medium">Jami to'lov:</p>
@@ -455,20 +265,30 @@
     <div id="checkoutModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center hidden">
         <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-3 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-slate-800">Manzil va Lokatsiya</h3>
+                <h3 class="font-bold text-slate-800">Manzil va Masofa Hisobi</h3>
                 <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
 
             <div>
                 <div id="map" class="w-full h-40 rounded-2xl border-2 border-emerald-500 overflow-hidden shadow-inner"></div>
                 <button type="button" onclick="getCurrentLocation()" class="mt-2 w-full bg-slate-100 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-200 transition">
-                    <i class="fa-solid fa-location-crosshairs text-emerald-600"></i> GPS Orqali Topish
+                    <i class="fa-solid fa-location-crosshairs text-emerald-600"></i> GPS Orqali Manzilni Topish
                 </button>
             </div>
 
-            <div class="bg-emerald-50 p-3 rounded-xl flex justify-between text-xs border border-emerald-200">
-                <span>Masofa: <strong id="distDisplay">0 km</strong></span>
-                <span>Dostavka: <strong id="deliveryPriceDisplay" class="text-emerald-800">5,600 so'm</strong></span>
+            <div class="bg-emerald-50 p-3 rounded-2xl space-y-1.5 text-xs border border-emerald-200">
+                <div class="flex justify-between">
+                    <span>Do'kondan masofa (1 km = 1,800 so'm):</span>
+                    <strong id="storeDistDisplay">0 km</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span>Yetkazish masofasi (1 km = 4,800 so'm):</span>
+                    <strong id="deliveryDistDisplay">0 km</strong>
+                </div>
+                <div class="border-t pt-1.5 flex justify-between font-black text-emerald-900 text-sm">
+                    <span>Jami Dostavka Narxi:</span>
+                    <span id="deliveryPriceDisplay">0 so'm</span>
+                </div>
             </div>
 
             <form onsubmit="submitOrder(event)" class="space-y-2.5 text-xs">
@@ -480,48 +300,13 @@
 
     <!-- SCRIPT LOGIKA -->
     <script>
-        let deferredPrompt = null;
-        const installBtn = document.getElementById('installAppBtn');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.classList.remove('hidden');
-        });
-
-        async function installPWAApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
-                installBtn.classList.add('hidden');
-            } else {
-                alert("Ilova allaqachon o'rnatilgan yoki brauzeringiz bu qurilmada avtomatik o'rnatishni qo'llab-quvvatlamaydi.");
-            }
-        }
-
         const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
         let map = null, marker = null;
         let userCoords = { lat: 40.1764, lng: 71.7258 };
-        let calculatedDistance = 0, calculatedDeliveryFee = 5600;
         let selectedBase64Images = [];
 
-        let settings = JSON.parse(localStorage.getItem('tv_settings')) || { 
-            appName: "TezVodil",
-            appSub: "Vodil bo'ylab tezkor dostavka",
-            adminPass: "tezvodil2026",
-            defaultCommission: 2.5,
-            orderRate: 4000, 
-            extraRate: 1600,
-            devName: "Fattoxov Abdulloh",
-            devEducation: "Toshkent menejment va iqtisodiyot instituti Fargʻona filiali (Bakalavr)",
-            devPhone: "+998 90 123 45 67",
-            devLegalText: "Ushbu dastur kodi va funksionalligi O'zbekiston Respublikasining qonunlari bilan himoyalangan."
-        };
-
         let products = JSON.parse(localStorage.getItem('tv_products')) || [
-            { id: 1, name: "Sut 1L (Tabiiy)", store: "Fayz Market", storeCoords: { lat: 40.1764, lng: 71.7258 }, price: 11000, images: ["https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500"] },
-            { id: 2, name: "Qora Daftar 36v", store: "Bilim Kantselyariya", storeCoords: { lat: 40.1780, lng: 71.7270 }, price: 4000, images: ["https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500"] }
+            { id: 1, name: "Sut 1L (Tabiiy)", store: "Fayz Market", storeCoords: { lat: 40.1764, lng: 71.7258 }, price: 11000, images: ["https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500"] }
         ];
         let cart = [];
         let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
@@ -531,21 +316,9 @@
         let currentVendor = JSON.parse(localStorage.getItem('tv_current_vendor')) || null;
 
         document.addEventListener('DOMContentLoaded', () => {
-            applySettingsToUI();
             renderProducts(products);
             updateProfileUI();
         });
-
-        function applySettingsToUI() {
-            document.getElementById('appHeaderTitle').innerText = settings.appName;
-            document.getElementById('appHeaderSub').innerText = settings.appSub;
-            document.getElementById('pageTitle').innerText = settings.appName + " - Onlayn Do'kon";
-            
-            document.getElementById('modalDevName').innerText = settings.devName;
-            document.getElementById('modalDevEducation').innerText = settings.devEducation;
-            document.getElementById('modalDevPhone').innerText = settings.devPhone;
-            document.getElementById('modalDevPhoneLink').href = `tel:${settings.devPhone.replace(/\s+/g, '')}`;
-        }
 
         function showHomeSection() {
             closeAdminPanel();
@@ -553,22 +326,17 @@
             document.getElementById('section-client').classList.remove('hidden');
         }
 
-        function openDeveloperModal() {
-            document.getElementById('developerModal').classList.remove('hidden');
-        }
-
-        function closeDeveloperModal() {
-            document.getElementById('developerModal').classList.add('hidden');
-        }
+        function openDeveloperModal() { document.getElementById('developerModal').classList.remove('hidden'); }
+        function closeDeveloperModal() { document.getElementById('developerModal').classList.add('hidden'); }
 
         function renderProducts(items) {
             const grid = document.getElementById('productsGrid');
             if (!grid) return;
             grid.innerHTML = '';
             items.forEach(p => {
-                const mainImg = p.images ? p.images[0] : (p.image || "https://via.placeholder.com/500");
+                const mainImg = p.images ? p.images[0] : "https://via.placeholder.com/500";
                 grid.innerHTML += `
-                    <div class="bg-white border border-slate-200 rounded-2xl p-2.5 shadow-sm hover:shadow-md transition flex flex-col justify-between group cursor-pointer" onclick="openProductDetailModal(${p.id})">
+                    <div class="bg-white border border-slate-200 rounded-2xl p-2.5 shadow-sm hover:shadow-md transition flex flex-col justify-between group cursor-pointer">
                         <div>
                             <div class="relative overflow-hidden rounded-xl mb-2 bg-slate-100">
                                 <img src="${mainImg}" class="w-full h-28 object-cover group-hover:scale-105 transition duration-300">
@@ -576,9 +344,9 @@
                             <span class="text-[9px] bg-emerald-50 text-emerald-800 font-bold px-2 py-0.5 rounded-full border border-emerald-200">${p.store}</span>
                             <h3 class="font-bold text-xs mt-1.5 text-slate-800 line-clamp-1">${p.name}</h3>
                         </div>
-                        <div class="mt-2 flex items-center justify-between" onclick="event.stopPropagation()">
+                        <div class="mt-2 flex items-center justify-between">
                             <span class="text-xs font-black text-emerald-700">${p.price.toLocaleString()} so'm</span>
-                            <button onclick="addToCart(${p.id})" class="bg-emerald-600 hover:bg-emerald-700 text-white w-7 h-7 rounded-lg text-xs font-bold shadow transition active:scale-90"><i class="fa-solid fa-plus"></i></button>
+                            <button onclick="addToCart(${p.id})" class="bg-emerald-600 hover:bg-emerald-700 text-white w-7 h-7 rounded-lg text-xs font-bold shadow transition"><i class="fa-solid fa-plus"></i></button>
                         </div>
                     </div>
                 `;
@@ -612,7 +380,42 @@
             renderProducts(products.filter(p => p.name.toLowerCase().includes(q) || p.store.toLowerCase().includes(q)));
         }
 
-        // BUYURTMA MODALI FUNKSIYALARI
+        // --- KILOMETRGA QARAB DOSTAVKA HISOBLASH ---
+        function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Yer radiusi (km)
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function updateDeliveryCalculation() {
+            if (cart.length === 0) return;
+            // Savatdagi birinchi mahsulot do'koni koordinatasini olamiz
+            const storeName = cart[0].store;
+            const storeObj = vendorsList.find(v => v.storeName === storeName);
+            const storeCoords = (storeObj && storeObj.coords) ? storeObj.coords : VODIL_CENTER;
+
+            // 1. Do'kondan mijozgacha masofa
+            const distToCustomer = calculateDistanceKm(storeCoords.lat, storeCoords.lng, userCoords.lat, userCoords.lng);
+            // 2. Vodil markazidan (yoki bazadan) do'konga masofa (yoki umumiy masofa)
+            const distToStore = calculateDistanceKm(VODIL_CENTER.lat, VODIL_CENTER.lng, storeCoords.lat, storeCoords.lng);
+
+            // Narxlar: Do'kondan kilometri 1,800 so'm, Yetkazish kilometri 4,800 so'm
+            const storeFee = distToStore * 1800;
+            const deliveryFee = distToCustomer * 4800;
+            const totalDeliveryFee = Math.round(storeFee + deliveryFee);
+
+            document.getElementById('storeDistDisplay').innerText = distToStore.toFixed(1) + " km";
+            document.getElementById('deliveryDistDisplay').innerText = distToCustomer.toFixed(1) + " km";
+            document.getElementById('deliveryPriceDisplay').innerText = totalDeliveryFee.toLocaleString() + " so'm";
+            
+            return totalDeliveryFee;
+        }
+
         function openCheckoutModal() {
             if (!currentUser) {
                 alert("Buyurtma berish uchun avval Profil bo'limiga kirib ism va telefon raqamingizni kiriting!");
@@ -627,26 +430,25 @@
                         map = L.map('map').setView([VODIL_CENTER.lat, VODIL_CENTER.lng], 14);
                         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
                         marker = L.marker([VODIL_CENTER.lat, VODIL_CENTER.lng], { draggable: true }).addTo(map);
-                        marker.on('dragend', function() {
+                        marker.on('dragend', () => {
                             const pos = marker.getLatLng();
                             userCoords = { lat: pos.lat, lng: pos.lng };
-                            calculateDelivery();
+                            updateDeliveryCalculation();
                         });
-                        map.on('click', function(e) {
+                        map.on('click', (e) => {
                             userCoords = { lat: e.latlng.lat, lng: e.latlng.lng };
                             marker.setLatLng([e.latlng.lat, e.latlng.lng]);
-                            calculateDelivery();
+                            updateDeliveryCalculation();
                         });
                     } else {
                         map.invalidateSize();
                     }
+                    updateDeliveryCalculation();
                 }, 200);
             }
         }
 
-        function closeCheckoutModal() {
-            document.getElementById('checkoutModal').classList.add('hidden');
-        }
+        function closeCheckoutModal() { document.getElementById('checkoutModal').classList.add('hidden'); }
 
         function getCurrentLocation() {
             if (navigator.geolocation) {
@@ -655,17 +457,10 @@
                     if (map && marker) {
                         map.setView([userCoords.lat, userCoords.lng], 15);
                         marker.setLatLng([userCoords.lat, userCoords.lng]);
-                        calculateDelivery();
+                        updateDeliveryCalculation();
                     }
                 }, () => alert("GPSdan foydalanib bo'lmadi."));
             }
-        }
-
-        function calculateDelivery() {
-            calculatedDistance = 2.5; // Namuna masofa
-            calculatedDeliveryFee = 5600;
-            document.getElementById('distDisplay').innerText = calculatedDistance + " km";
-            document.getElementById('deliveryPriceDisplay').innerText = calculatedDeliveryFee.toLocaleString() + " so'm";
         }
 
         function submitOrder(e) {
@@ -674,13 +469,16 @@
             if (!address) return alert("Manzilni kiriting!");
 
             const tp = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            const deliveryFee = updateDeliveryCalculation();
+
             const newOrder = {
                 id: Date.now(),
                 name: currentUser.name,
                 phone: currentUser.phone,
                 address,
                 items: [...cart],
-                total: tp + calculatedDeliveryFee,
+                total: tp + deliveryFee,
+                deliveryFee,
                 status: "Yangi",
                 date: new Date().toLocaleString()
             };
@@ -708,9 +506,7 @@
             }
         }
 
-        function closeProfileModal() {
-            document.getElementById('profileModal').classList.add('hidden');
-        }
+        function closeProfileModal() { document.getElementById('profileModal').classList.add('hidden'); }
 
         function saveProfile() {
             const name = document.getElementById('userNameInput').value.trim();
@@ -761,10 +557,7 @@
                 document.getElementById('vendorAuthModal').classList.remove('hidden');
             }
         }
-
-        function closeVendorModal() {
-            document.getElementById('vendorAuthModal').classList.add('hidden');
-        }
+        function closeVendorModal() { document.getElementById('vendorAuthModal').classList.add('hidden'); }
 
         function switchVendorAuthTab(tab) {
             if (tab === 'login') {
@@ -874,7 +667,6 @@
                 reader.onload = function(evt) {
                     selectedBase64Images.push(evt.target.result);
                     container.innerHTML += `<img src="${evt.target.result}" class="w-16 h-16 object-cover rounded-xl border">`;
-                    document.getElementById('imgCountBadge').innerText = `${selectedBase64Images.length}/3 rasm`;
                 };
                 reader.readAsDataURL(files[i]);
             }
@@ -901,7 +693,6 @@
             e.target.reset();
             selectedBase64Images = [];
             document.getElementById('imagePreviewContainer').innerHTML = '';
-            document.getElementById('imgCountBadge').innerText = "0/3 rasm tanlandi";
             alert("Mahsulot qo'shildi!");
         }
 
@@ -914,7 +705,7 @@
                 return;
             }
             list.innerHTML = myProds.map(p => `
-                <div class="flex justify-between items-center border p-2 rounded-xl">
+                <div class="flex justify-between items-center border p-2 rounded-xl text-xs">
                     <span>${p.name} - <strong>${p.price.toLocaleString()} so'm</strong></span>
                     <button onclick="deleteVendorProduct(${p.id})" class="text-red-500 font-bold px-2 py-1">O'chirish</button>
                 </div>
@@ -928,38 +719,12 @@
             renderVendorProductsList();
         }
 
-        // ADMIN
         function checkAdminPassword() {
-            const pass = prompt("Admin paroli (Standart: tezvodil2026):");
-            if (pass === settings.adminPass) openAdminPanel();
+            const pass = prompt("Admin paroli:");
+            if (pass === "tezvodil2026") alert("Admin panel ochildi!");
             else if (pass !== null) alert("Parol xato!");
         }
-
-        function openAdminPanel() {
-            document.getElementById('section-client').classList.add('hidden');
-            document.getElementById('section-vendor-panel').classList.add('hidden');
-            document.getElementById('section-admin').classList.remove('hidden');
-            document.getElementById('admUserCount').innerText = usersList.length + " kishi";
-            document.getElementById('admVendorCount').innerText = vendorsList.length + " ta";
-        }
-
-        function closeAdminPanel() {
-            document.getElementById('section-admin').classList.add('hidden');
-            document.getElementById('section-client').classList.remove('hidden');
-        }
-
-        function switchAdminTab(tab) {
-            ['orders', 'vendors', 'users', 'top', 'settings'].forEach(t => {
-                document.getElementById(`admContent-${t}`).classList.add('hidden');
-            });
-            document.getElementById(`admContent-${tab}`).classList.remove('hidden');
-        }
-
-        function saveSettings() {
-            settings.adminPass = document.getElementById('setAdminPass').value.trim();
-            localStorage.setItem('tv_settings', JSON.stringify(settings));
-            alert("Sozlamalar saqlandi!");
-        }
+        function closeAdminPanel() { document.getElementById('section-admin').classList.add('hidden'); document.getElementById('section-client').classList.remove('hidden'); }
     </script>
 </body>
 </html>
