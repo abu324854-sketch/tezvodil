@@ -5,10 +5,7 @@ let userCoords = { lat: 40.1764, lng: 71.7258 };
 let calculatedDistance = 0;
 let calculatedDeliveryFee = 5600;
 
-// Dinamik sozlamalar
 let settings = JSON.parse(localStorage.getItem('tv_settings')) || { orderRate: 4000, extraRate: 1600 };
-
-// Ma'lumotlar bazasi
 let products = JSON.parse(localStorage.getItem('tv_products')) || [
     { id: 1, name: "Sut 1L (Tabiiy)", store: "Fayz Market", price: 11000, image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=300" },
     { id: 2, name: "Qora Daftar 36v", store: "Bilim Kantselyariya", price: 4000, image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300" }
@@ -16,15 +13,48 @@ let products = JSON.parse(localStorage.getItem('tv_products')) || [
 let cart = [];
 let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
 let usersList = JSON.parse(localStorage.getItem('tv_users')) || [];
-
 let currentUser = JSON.parse(localStorage.getItem('tv_current_user')) || null;
 
+// HODISALARNI XATOSIZ BIRIKTIRISH
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('productsGrid')) renderProducts(products);
     updateProfileUI();
+
+    // Event Listeners (To'g'ridan-to'g'ri biriktirish)
+    bindClick('profileBtn', openProfileModal);
+    bindClick('closeProfileBtn', closeProfileModal);
+    bindClick('saveProfileBtn', saveProfile);
+    bindClick('logoutProfileBtn', logoutProfile);
+    bindClick('directAdminBtn', openAdminPanel);
+    bindClick('openAdminFromInfoBtn', openAdminPanel);
+    bindClick('closeAdminBtn', closeAdminPanel);
+
+    bindClick('checkoutBarBtn', openCheckoutModal);
+    bindClick('closeCheckoutBtn', closeCheckoutModal);
+    bindClick('getGpsBtn', getCurrentLocation);
+    bindClick('saveSettingsBtn', saveSettings);
+
+    bindClick('admTabBtn-orders', () => switchAdminTab('orders'));
+    bindClick('admTabBtn-users', () => switchAdminTab('users'));
+    bindClick('admTabBtn-products', () => switchAdminTab('products'));
+    bindClick('admTabBtn-settings', () => switchAdminTab('settings'));
+
+    const searchElem = document.getElementById('searchInput');
+    if (searchElem) searchElem.addEventListener('keyup', searchProducts);
+
+    const addPForm = document.getElementById('addProductForm');
+    if (addPForm) addPForm.addEventListener('submit', addNewProduct);
+
+    const orderForm = document.getElementById('orderSubmitForm');
+    if (orderForm) orderForm.addEventListener('submit', submitOrder);
 });
 
-// --- PROFIL TIZIMI ---
+function bindClick(id, func) {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', func);
+}
+
+// PROFIL
 function openProfileModal() {
     const modal = document.getElementById('profileModal');
     if (!modal) return;
@@ -34,14 +64,14 @@ function openProfileModal() {
     const infoView = document.getElementById('profileInfoView');
 
     if (currentUser) {
-        formView.classList.add('hidden');
-        infoView.classList.remove('hidden');
+        if (formView) formView.classList.add('hidden');
+        if (infoView) infoView.classList.remove('hidden');
         document.getElementById('dispUserName').innerText = currentUser.name;
         document.getElementById('dispUserPhone').innerText = currentUser.phone;
         renderUserOrdersHistory();
     } else {
-        formView.classList.remove('hidden');
-        infoView.classList.add('hidden');
+        if (formView) formView.classList.remove('hidden');
+        if (infoView) infoView.classList.add('hidden');
     }
 }
 
@@ -55,14 +85,13 @@ function saveProfile() {
     const phone = document.getElementById('userPhoneInput').value.trim();
 
     if (!name || !phone) {
-        alert("Iltimos, ism va telefon raqamingizni kiriting!");
+        alert("Iltimos, ismingiz va telefon raqamingizni kiriting!");
         return;
     }
 
     currentUser = { name, phone, joinedDate: new Date().toLocaleDateString() };
     localStorage.setItem('tv_current_user', JSON.stringify(currentUser));
 
-    // Admin uchun barcha kirgan foydalanuvchilarni saqlab borish
     if (!usersList.some(u => u.phone === phone)) {
         usersList.push(currentUser);
         localStorage.setItem('tv_users', JSON.stringify(usersList));
@@ -86,32 +115,41 @@ function updateProfileUI() {
     }
 }
 
-// --- ADMIN PANEL ---
+// ADMIN PANEL
 function openAdminPanel() {
     closeProfileModal();
-    document.getElementById('section-client').classList.add('hidden');
-    document.getElementById('section-admin').classList.remove('hidden');
+    const secClient = document.getElementById('section-client');
+    const secAdmin = document.getElementById('section-admin');
+    if (secClient) secClient.classList.add('hidden');
+    if (secAdmin) secAdmin.classList.remove('hidden');
     renderAdminOrders();
     renderAdminUsers();
 }
 
 function closeAdminPanel() {
-    document.getElementById('section-admin').classList.add('hidden');
-    document.getElementById('section-client').classList.remove('hidden');
+    const secClient = document.getElementById('section-client');
+    const secAdmin = document.getElementById('section-admin');
+    if (secAdmin) secAdmin.classList.add('hidden');
+    if (secClient) secClient.classList.remove('hidden');
 }
 
 function switchAdminTab(tab) {
     ['orders', 'users', 'products', 'settings'].forEach(t => {
-        document.getElementById(`admContent-${t}`).classList.add('hidden');
-        document.getElementById(`admTab-${t}`).className = "flex-1 py-2 rounded-xl hover:bg-gray-100";
+        const content = document.getElementById(`admContent-${t}`);
+        const btn = document.getElementById(`admTabBtn-${t}`);
+        if (content) content.classList.add('hidden');
+        if (btn) btn.className = "flex-1 py-2 rounded-xl hover:bg-gray-100";
     });
-    document.getElementById(`admContent-${tab}`).classList.remove('hidden');
-    document.getElementById(`admTab-${tab}`).className = "flex-1 py-2 rounded-xl bg-emerald-600 text-white shadow";
+    const selContent = document.getElementById(`admContent-${tab}`);
+    const selBtn = document.getElementById(`admTabBtn-${tab}`);
+    if (selContent) selContent.classList.remove('hidden');
+    if (selBtn) selBtn.className = "flex-1 py-2 rounded-xl bg-emerald-600 text-white shadow";
 }
 
 function renderAdminUsers() {
     const container = document.getElementById('adminUsersList');
-    document.getElementById('userCount').innerText = usersList.length;
+    const userCountElem = document.getElementById('userCount');
+    if (userCountElem) userCountElem.innerText = usersList.length;
     if (!container) return;
 
     if (usersList.length === 0) {
@@ -137,10 +175,10 @@ function saveSettings() {
     settings.orderRate = parseInt(document.getElementById('setOrderRate').value) || 4000;
     settings.extraRate = parseInt(document.getElementById('setExtraRate').value) || 1600;
     localStorage.setItem('tv_settings', JSON.stringify(settings));
-    alert("Sozlamalar muvaffaqiyatli saqlandi!");
+    alert("Sozlamalar saqlandi!");
 }
 
-// --- MASOFA VA TARIFF ---
+// MAP VA BUYURTMA
 function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -156,18 +194,16 @@ function calculateDeliveryFee(storeToCustomerKm) {
 
 function initMap() {
     const mapDiv = document.getElementById('map');
-    if (!mapDiv) return;
-    if (!map) {
-        map = L.map('map').setView([VODIL_CENTER.lat, VODIL_CENTER.lng], 14);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}z/{x}/{y}.png').addTo(map);
-        marker = L.marker([VODIL_CENTER.lat, VODIL_CENTER.lng], { draggable: true }).addTo(map);
+    if (!mapDiv || map) return;
+    map = L.map('map').setView([VODIL_CENTER.lat, VODIL_CENTER.lng], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    marker = L.marker([VODIL_CENTER.lat, VODIL_CENTER.lng], { draggable: true }).addTo(map);
 
-        marker.on('dragend', (e) => updateLoc(e.target.getLatLng().lat, e.target.getLatLng().lng));
-        map.on('click', (e) => {
-            if (marker) marker.setLatLng(e.latlng);
-            updateLoc(e.latlng.lat, e.latlng.lng);
-        });
-    }
+    marker.on('dragend', (e) => updateLoc(e.target.getLatLng().lat, e.target.getLatLng().lng));
+    map.on('click', (e) => {
+        if (marker) marker.setLatLng(e.latlng);
+        updateLoc(e.latlng.lat, e.latlng.lng);
+    });
 }
 
 function updateLoc(lat, lng) {
@@ -175,8 +211,10 @@ function updateLoc(lat, lng) {
     calculatedDistance = calculateDistance(VODIL_CENTER.lat, VODIL_CENTER.lng, lat, lng);
     calculatedDeliveryFee = calculateDeliveryFee(calculatedDistance);
 
-    document.getElementById('distDisplay').innerText = `${calculatedDistance} km`;
-    document.getElementById('deliveryPriceDisplay').innerText = `${calculatedDeliveryFee.toLocaleString()} so'm`;
+    const dDisp = document.getElementById('distDisplay');
+    const pDisp = document.getElementById('deliveryPriceDisplay');
+    if (dDisp) dDisp.innerText = `${calculatedDistance} km`;
+    if (pDisp) pDisp.innerText = `${calculatedDeliveryFee.toLocaleString()} so'm`;
 }
 
 function getCurrentLocation() {
@@ -197,15 +235,16 @@ function openCheckoutModal() {
         openProfileModal();
         return;
     }
-    document.getElementById('checkoutModal').classList.remove('hidden');
+    const modal = document.getElementById('checkoutModal');
+    if (modal) modal.classList.remove('hidden');
     setTimeout(() => { initMap(); if (map) map.invalidateSize(); }, 250);
 }
 
 function closeCheckoutModal() {
-    document.getElementById('checkoutModal').classList.add('hidden');
+    const modal = document.getElementById('checkoutModal');
+    if (modal) modal.classList.add('hidden');
 }
 
-// --- BUYURTMA BERISH ---
 function submitOrder(e) {
     e.preventDefault();
     const address = document.getElementById('custAddress').value;
@@ -276,7 +315,6 @@ function renderAdminOrders() {
     });
 }
 
-// --- MAHSULOTLAR ---
 function renderProducts(items) {
     const grid = document.getElementById('productsGrid');
     if (!grid) return;
