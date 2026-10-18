@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TezVodil - Onlayn Do'kon va Sotuvchi</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#059669">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet Xarita -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 pb-24 antialiased">
+
+    <!-- HEADER -->
+    <header class="bg-emerald-600 text-white sticky top-0 z-40 shadow-md">
+        <div class="max-w-2xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="bg-white/20 p-2 rounded-xl backdrop-blur-sm">
+                    <i class="fa-solid fa-bolt text-yellow-300 text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold tracking-wide">TezVodil</h1>
+                    <p class="text-[10px] text-emerald-100 font-medium">Mijoz & Do'kon Paneli</p>
+                </div>
+            </div>
+            <a href="courier.html" class="bg-slate-900 text-emerald-400 font-bold text-xs px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
+                <i class="fa-solid fa-motorcycle"></i> Kuryer Ilovasi
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-2xl mx-auto p-4 space-y-4">
+
+        <!-- REJIMNI TANLASH -->
+        <div class="bg-white p-1 rounded-2xl shadow-sm border flex gap-1 text-xs font-bold text-gray-500">
+            <button onclick="switchMode('client')" id="btn-client" class="flex-1 py-2.5 rounded-xl text-center bg-emerald-600 text-white shadow transition">
+                <i class="fa-solid fa-bag-shopping mr-1"></i> Xarid qilish (Mijoz)
+            </button>
+            <button onclick="switchMode('vendor')" id="btn-vendor" class="flex-1 py-2.5 rounded-xl text-center hover:bg-gray-50 transition">
+                <i class="fa-solid fa-store mr-1"></i> Magazinim (Sotuvchi)
+            </button>
+        </div>
+
+        <!-- 1. MIJOZ QISMI -->
+        <div id="section-client" class="space-y-4">
+            <!-- Qidiruv -->
+            <div class="relative">
+                <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Mahsulot yoki do'kon qidirish..." 
+                       class="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm text-sm">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-gray-400 text-base"></i>
+            </div>
+
+            <!-- Mahsulotlar Grid -->
+            <div>
+                <h2 class="text-sm font-bold text-gray-700 mb-3">Vodil Do'konlari Mahsulotlari</h2>
+                <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+            </div>
+
+            <!-- Buyurtmalarim va Timeline Holati -->
+            <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
+                <h2 class="font-bold text-sm text-gray-800 border-b pb-2"><i class="fa-solid fa-clock-rotate-left text-emerald-600 mr-1"></i> Mening Buyurtmalarim</h2>
+                <div id="clientOrdersList" class="space-y-3 text-xs">
+                    <p class="text-gray-400 text-center py-2">Hozircha faol buyurtmalar yo'q</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. SOTUVCHI / DO'KON EGASI QISMI -->
+        <div id="section-vendor" class="space-y-4 hidden">
+            <div class="bg-white p-5 rounded-2xl border shadow-sm space-y-4">
+                <h2 class="font-bold text-sm text-gray-800 border-b pb-2"><i class="fa-solid fa-shop text-emerald-600 mr-1"></i> Do'konga Mahsulot Qo'shish</h2>
+                <form onsubmit="addNewProduct(event)" class="space-y-3 text-xs">
+                    <div>
+                        <label class="block font-semibold mb-1">Mahsulot Nomi</label>
+                        <input type="text" id="vName" required placeholder="Masalan: Non 3000 so'm" class="w-full p-2.5 border rounded-xl">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block font-semibold mb-1">Narxi (so'm)</label>
+                            <input type="number" id="vPrice" required placeholder="5000" class="w-full p-2.5 border rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Do'koningiz Nomi</label>
+                            <input type="text" id="vStore" required placeholder="Fayz Market" class="w-full p-2.5 border rounded-xl">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Rasm Havolasi (URL)</label>
+                        <input type="url" id="vImage" required placeholder="https://..." class="w-full p-2.5 border rounded-xl">
+                    </div>
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow">
+                        Katalogga Qo'shish
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FLOATING CART -->
+    <div id="cartBar" class="fixed bottom-4 left-4 right-4 max-w-2xl mx-auto bg-emerald-600 text-white rounded-2xl p-3 shadow-2xl flex justify-between items-center hidden z-30">
+        <div class="flex items-center gap-3">
+            <div class="relative bg-emerald-700 p-2.5 rounded-xl">
+                <i class="fa-solid fa-cart-shopping text-xl"></i>
+                <span id="cartCount" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+            </div>
+            <div>
+                <p class="text-[10px] text-emerald-100">Jami:</p>
+                <p id="cartTotal" class="text-sm font-extrabold">0 so'm</p>
+            </div>
+        </div>
+        <button onclick="openCheckoutModal()" class="bg-white text-emerald-800 px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-emerald-50 transition">
+            Buyurtma Berish <i class="fa-solid fa-arrow-right ml-1"></i>
+        </button>
+    </div>
+
+    <!-- BUYURTMA VA GPS MODALI -->
+    <div id="checkoutModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center hidden">
+        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-3 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-bold text-gray-800">Manzil va Lokatsiya</h3>
+                <button onclick="closeCheckoutModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <!-- Xarita -->
+            <div>
+                <div id="map" class="w-full h-40 rounded-2xl border-2 border-emerald-500"></div>
+                <button type="button" onclick="getCurrentLocation()" class="mt-2 w-full bg-slate-100 py-2 rounded-xl text-xs font-bold text-slate-700">
+                    <i class="fa-solid fa-location-crosshairs text-emerald-600"></i> GPS Orqali Topish
+                </button>
+            </div>
+
+            <div class="bg-emerald-50 p-2.5 rounded-xl flex justify-between text-xs">
+                <span>Masofa: <strong id="distDisplay">0 km</strong></span>
+                <span>Dostavka: <strong id="deliveryPriceDisplay">5,600 so'm</strong></span>
+            </div>
+
+            <form onsubmit="submitOrder(event)" class="space-y-2.5 text-xs">
+                <input type="text" id="custName" required placeholder="Ismingiz" class="w-full p-2.5 border rounded-xl">
+                <input type="tel" id="custPhone" required placeholder="Telefon raqam (+998...)" class="w-full p-2.5 border rounded-xl">
+                <input type="text" id="custAddress" required placeholder="Mo'ljal" class="w-full p-2.5 border rounded-xl">
+                <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">Tasdiqlash</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
