@@ -20,12 +20,12 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-slate-50 text-gray-800 pb-24 antialiased selection:bg-emerald-500 selection:text-white">
+<body class="bg-slate-50 text-gray-800 pb-28 antialiased selection:bg-emerald-500 selection:text-white">
 
     <!-- HEADER -->
     <header class="bg-emerald-600 text-white sticky top-0 z-40 shadow-md backdrop-blur-md bg-emerald-600/95">
         <div class="max-w-2xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-2.5 cursor-pointer" onclick="openDeveloperModal()">
                 <div class="bg-white/20 p-2 rounded-2xl backdrop-blur-md shadow-inner">
                     <i class="fa-solid fa-bolt text-yellow-300 text-xl animate-pulse"></i>
                 </div>
@@ -38,6 +38,9 @@
             <div class="flex items-center gap-1.5">
                 <button onclick="openVendorModal()" class="bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white font-bold text-xs px-2.5 py-2 rounded-xl shadow flex items-center gap-1 transition">
                     <i class="fa-solid fa-store"></i> <span class="hidden sm:inline">Sotuvchi</span>
+                </button>
+                <button onclick="checkAdminPassword()" class="bg-slate-900 hover:bg-slate-800 active:scale-95 text-amber-400 font-bold text-xs px-2.5 py-2 rounded-xl shadow flex items-center gap-1 transition">
+                    <i class="fa-solid fa-shield-halved"></i> <span class="hidden sm:inline">Admin</span>
                 </button>
                 <button onclick="openProfileModal()" class="bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white font-bold text-xs px-2.5 py-2 rounded-xl shadow flex items-center gap-1 transition">
                     <i class="fa-solid fa-user"></i> <span id="profileBtnText">Profil</span>
@@ -75,7 +78,6 @@
                 <button onclick="closeVendorPanel()" class="bg-emerald-700 hover:bg-emerald-600 px-3 py-1.5 rounded-xl text-xs font-bold transition">Chiqish</button>
             </div>
 
-            <!-- Mahsulot Qo'shish Formasi -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
                 <h3 class="font-bold text-xs text-slate-800 border-b pb-2">Do'konga Yangi Mahsulot Qo'shish</h3>
                 <form onsubmit="addNewVendorProduct(event)" class="space-y-3 text-xs">
@@ -115,7 +117,7 @@
         <!-- ADMIN PANEL -->
         <div id="section-admin" class="space-y-4 hidden">
             <div class="bg-slate-900 text-white p-4 rounded-2xl flex justify-between items-center shadow-lg">
-                <h2 class="font-extrabold text-sm"><i class="fa-solid fa-shield-halved mr-1 text-emerald-400"></i> Bosh Admin Paneli</h2>
+                <h2 class="font-extrabold text-sm"><i class="fa-solid fa-shield-halved mr-1 text-amber-400"></i> Bosh Admin Paneli</h2>
                 <button onclick="closeAdminPanel()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold">Chiqish</button>
             </div>
 
@@ -152,6 +154,45 @@
         </div>
 
     </main>
+
+    <!-- FOOTERDA YARATUVCHI HAQIDA MA'LUMOT VA HUQUQIY OGOHLANTIRISH -->
+    <footer class="text-center py-6 border-t border-slate-200 mt-8 text-xs text-slate-500 space-y-2 px-4 max-w-2xl mx-auto">
+        <button onclick="openDeveloperModal()" class="hover:text-emerald-600 transition flex items-center justify-center gap-1.5 mx-auto font-semibold">
+            <i class="fa-solid fa-code text-emerald-600"></i> Dastur yaratuvchisi: <span class="font-bold text-slate-800 underline">Fattoxov Abdulloh</span>
+        </button>
+        <p class="text-[10px] text-red-500/80 font-medium">
+            ⚠️ <strong>DIQQAT:</strong> Ushbu platforma kodi, dizayni va brend nomidan muallif ruxsatisiz nusxalash yoki o'xshash loyiha yaratish O'zR JK 149-moddasiga binoan <strong>Jinoiy Javobgarlikka</strong> tortiladi.
+        </p>
+    </footer>
+
+    <!-- DASTUR YARATUVCHISI (DEVELOPER) VA HUQUQIY OGOHLANTIRISH MODALI -->
+    <div id="developerModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center space-y-4 shadow-2xl relative">
+            <button onclick="closeDeveloperModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            
+            <div class="relative w-28 h-28 mx-auto rounded-full overflow-hidden border-4 border-emerald-500 shadow-lg">
+                <img id="devPhoto" src="https://via.placeholder.com/150?text=Fattoxov+Abdulloh" alt="Fattoxov Abdulloh" class="w-full h-full object-cover">
+            </div>
+
+            <div>
+                <h3 class="font-black text-lg text-slate-800">Fattoxov Abdulloh</h3>
+                <p class="text-xs font-bold text-emerald-600">TezVodil PWA Asoschisi va Dasturchisi</p>
+            </div>
+
+            <div class="bg-red-50 border border-red-200 p-3 rounded-2xl text-left space-y-1">
+                <p class="text-[11px] font-black text-red-700 flex items-center gap-1 uppercase">
+                    <i class="fa-solid fa-gavel"></i> Mualliflik Huquqi Himoyalangan:
+                </p>
+                <p class="text-[10px] text-red-600 leading-snug">
+                    Ushbu dastur kodi, funksionalligi yoki "TezVodil" brendini ruxsatsiz nusxalash, o'zlashtirish va shu shaklda mualliflik huquqini buzgan holda analog loyihalar yaratish O'zbekiston Respublikasining "Mualliflik huquqi va turdosh huquqlar to'g'risida"gi Qonuni hamda Jinoyat Kodeksining 149-moddasiga ko'ra <strong>jinoiy javobgarlikka</strong> sabab bo'ladi.
+                </p>
+            </div>
+
+            <button onclick="closeDeveloperModal()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">Yopish</button>
+        </div>
+    </div>
 
     <!-- MAHSULOT MODALI -->
     <div id="productDetailModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center hidden p-0 sm:p-4 transition-all">
@@ -235,12 +276,6 @@
                 <input type="text" id="userNameInput" placeholder="Ism Familiyangiz" class="w-full p-3 border rounded-xl">
                 <input type="tel" id="userPhoneInput" placeholder="Telefon raqamingiz (+998...)" class="w-full p-3 border rounded-xl">
                 <button onclick="saveProfile()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">Saqlash va Kirish</button>
-                
-                <div class="pt-3 border-t text-center">
-                    <button onclick="checkAdminPassword()" class="text-slate-800 font-bold underline hover:text-emerald-600">
-                        ⚙️ Bosh Admin Bo'lib Kirish
-                    </button>
-                </div>
             </div>
 
             <div id="profileInfoView" class="space-y-3 text-xs hidden">
@@ -252,9 +287,8 @@
                 <h4 class="font-bold text-slate-700 pt-2">Mening Buyurtmalarim:</h4>
                 <div id="userOrdersHistory" class="space-y-2 max-h-40 overflow-y-auto"></div>
 
-                <div class="pt-2 border-t flex gap-2">
-                    <button onclick="logoutProfile()" class="bg-red-50 text-red-600 font-bold py-2.5 px-4 rounded-xl flex-1">Chiqish</button>
-                    <button onclick="checkAdminPassword()" class="bg-slate-900 text-white font-bold py-2.5 px-4 rounded-xl flex-1">⚙️ Bosh Admin</button>
+                <div class="pt-2 border-t">
+                    <button onclick="logoutProfile()" class="bg-red-50 text-red-600 font-bold py-2.5 px-4 rounded-xl w-full">Chiqish</button>
                 </div>
             </div>
         </div>
@@ -329,6 +363,14 @@
             renderProducts(products);
             updateProfileUI();
         });
+
+        function openDeveloperModal() {
+            document.getElementById('developerModal').classList.remove('hidden');
+        }
+
+        function closeDeveloperModal() {
+            document.getElementById('developerModal').classList.add('hidden');
+        }
 
         function openProductDetailModal(id) {
             const p = products.find(x => x.id === id);
@@ -595,7 +637,6 @@
             renderProducts(products.filter(p => p.name.toLowerCase().includes(q) || p.store.toLowerCase().includes(q)));
         }
 
-        // BUYURTMA SUBMIT (DO'KON LOKATSIYASI BILAN BIRGA)
         function submitOrder(e) {
             e.preventDefault();
             const address = document.getElementById('custAddress').value;
@@ -610,7 +651,7 @@
                 phone: currentUser.phone,
                 address: address,
                 stores: storesList,
-                storeCoords: firstStoreCoords, // Magazin lokatsiyasi
+                storeCoords: firstStoreCoords,
                 coords: userCoords,
                 distanceKM: calculatedDistance,
                 deliveryFee: calculatedDeliveryFee,
