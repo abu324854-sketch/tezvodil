@@ -199,7 +199,6 @@
                 </div>
             </div>
 
-            <!-- SOZLAMALAR (DASTURCHI VA MUALLIFLIK SOZLAMASI BILAN) -->
             <div id="admContent-settings" class="space-y-3 hidden">
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
                     <h3 class="font-bold text-sm text-slate-800 border-b pb-2">Platforma Sozlamalari</h3>
@@ -229,7 +228,6 @@
                         <input type="number" id="setExtraRate" value="1600" class="w-full p-2.5 border rounded-xl">
                     </div>
 
-                    <!-- DASTURCHI VA MUALLIFLIK HUQUQI SOZLAMALARI -->
                     <div class="border-t pt-3 space-y-2">
                         <h4 class="font-bold text-emerald-800 text-xs">👤 "Ilova Haqida" bo'limi Sozlamalari:</h4>
                         <div>
@@ -237,8 +235,8 @@
                             <input type="text" id="setDevName" value="Fattoxov Abdulloh" class="w-full p-2.5 border rounded-xl">
                         </div>
                         <div>
-                            <label class="block font-semibold mb-1 text-slate-600">Dasturchi Rasmi (URL link):</label>
-                            <input type="text" id="setDevPhoto" value="https://i.ibb.co/68v8T3x/fattoxov-abdulloh.jpg" class="w-full p-2.5 border rounded-xl">
+                            <label class="block font-semibold mb-1 text-slate-600">Dasturchi Rasmi Fayli (Masalan: dev.jpg):</label>
+                            <input type="text" id="setDevPhoto" value="dev.jpg" class="w-full p-2.5 border rounded-xl">
                         </div>
                         <div>
                             <label class="block font-semibold mb-1 text-slate-600">O'qish joyi (Ta'lim):</label>
@@ -266,45 +264,39 @@
     <!-- 📱 BOTTOM BAR -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-2xl z-40 px-2 py-2">
         <div class="max-w-md mx-auto flex justify-around items-center">
-            
             <button onclick="showHomeSection()" class="flex flex-col items-center gap-0.5 text-emerald-600 font-bold transition active:scale-95">
                 <i class="fa-solid fa-house text-lg"></i>
                 <span class="text-[10px]">Asosiy</span>
             </button>
-
             <button onclick="openVendorModal()" class="flex flex-col items-center gap-0.5 text-slate-600 hover:text-emerald-600 font-bold transition active:scale-95">
                 <i class="fa-solid fa-store text-lg"></i>
                 <span class="text-[10px]">Sotuvchi</span>
             </button>
-
             <a href="courier.html" class="flex flex-col items-center gap-0.5 text-slate-600 hover:text-emerald-600 font-bold transition active:scale-95">
                 <i class="fa-solid fa-motorcycle text-lg"></i>
                 <span class="text-[10px]">Kuryer</span>
             </a>
-
             <button onclick="openProfileModal()" class="flex flex-col items-center gap-0.5 text-slate-600 hover:text-emerald-600 font-bold transition active:scale-95">
                 <i class="fa-solid fa-user text-lg"></i>
                 <span id="bottomProfileText" class="text-[10px]">Profil</span>
             </button>
-
             <button onclick="openDeveloperModal()" class="flex flex-col items-center gap-0.5 text-slate-600 hover:text-emerald-600 font-bold transition active:scale-95">
                 <i class="fa-solid fa-circle-info text-lg text-emerald-600"></i>
                 <span class="text-[10px]">Ilova haqida</span>
             </button>
-
         </div>
     </nav>
 
-    <!-- 👤 DASTUR YARATUVCHISI (DEVELOPER) VA ILOVA HAQIDA MODALI -->
+    <!-- 👤 DASTUR YARATUVCHISI VA ILOVA HAQIDA MODALI -->
     <div id="developerModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeDeveloperModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
             
-            <!-- RASMINGIZ JOYLASHTIRILDI -->
-            <div class="relative w-36 h-44 mx-auto rounded-2xl overflow-hidden border-4 border-emerald-500 shadow-xl">
-                <img id="modalDevPhoto" src="https://i.ibb.co/68v8T3x/fattoxov-abdulloh.jpg" alt="Fattoxov Abdulloh" class="w-full h-full object-cover">
+            <!-- MAHALLIY FAYLDAN YUKLANADIGAN RASMINGIZ -->
+            <div class="relative w-36 h-44 mx-auto rounded-2xl overflow-hidden border-4 border-emerald-500 shadow-xl bg-slate-100">
+                <img id="modalDevPhoto" src="dev.jpg" alt="Fattoxov Abdulloh" class="w-full h-full object-cover">
             </div>
 
             <div>
@@ -312,7 +304,6 @@
                 <p class="text-xs font-extrabold text-emerald-600 uppercase tracking-wider mt-0.5">TezVodil PWA Asoschisi va Dasturchisi</p>
             </div>
 
-            <!-- O'QISH JOYI VA TA'LIM -->
             <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-2xl text-left space-y-1.5 text-xs">
                 <p class="font-bold text-emerald-900 flex items-center gap-1.5">
                     <i class="fa-solid fa-graduation-cap text-emerald-600 text-sm"></i> O'qish joyi va Ta'lim:
@@ -329,7 +320,6 @@
                 </div>
             </div>
 
-            <!-- HUQUQIY OGOHLANTIRISH -->
             <div class="bg-red-50 border border-red-200 p-3.5 rounded-2xl text-left space-y-1">
                 <p class="text-[11px] font-black text-red-700 flex items-center gap-1 uppercase">
                     <i class="fa-solid fa-gavel"></i> Mualliflik Huquqi Himoyalangan:
@@ -503,7 +493,7 @@
             orderRate: 4000, 
             extraRate: 1600,
             devName: "Fattoxov Abdulloh",
-            devPhoto: "https://i.ibb.co/68v8T3x/fattoxov-abdulloh.jpg",
+            devPhoto: "dev.jpg",
             devEducation: "Toshkent menejment va iqtisodiyot instituti Fargʻona filiali (Bakalavr)",
             devPhone: "+998 90 123 45 67",
             devLegalText: "Ushbu dastur kodi, funksionalligi yoki \"TezVodil\" brendini ruxsatsiz nusxalash, o'zlashtirish va shu shaklda mualliflik huquqini buzgan holda analog loyihalar yaratish O'zbekiston Respublikasining \"Mualliflik huquqi va turdosh huquqlar to'g'risida\"gi Qonuni hamda Jinoyat Kodeksining 149-moddasiga ko'ra Jinoiy Javobgarlikka sabab bo'ladi."
@@ -539,16 +529,16 @@
             document.getElementById('setOrderRate').value = settings.orderRate || 4000;
             document.getElementById('setExtraRate').value = settings.extraRate || 1600;
 
-            // Developer sozlamalarini UI'ga bog'lash
+            // Developer sozlamalari
             document.getElementById('setDevName').value = settings.devName || "Fattoxov Abdulloh";
-            document.getElementById('setDevPhoto').value = settings.devPhoto || "https://i.ibb.co/68v8T3x/fattoxov-abdulloh.jpg";
+            document.getElementById('setDevPhoto').value = settings.devPhoto || "dev.jpg";
             document.getElementById('setDevEducation').value = settings.devEducation || "Toshkent menejment va iqtisodiyot instituti Fargʻona filiali (Bakalavr)";
             document.getElementById('setDevPhone').value = settings.devPhone || "+998 90 123 45 67";
             document.getElementById('setDevLegalText').value = settings.devLegalText || "";
 
-            // Developer Modalini yangilash
+            // Developer Modali
             document.getElementById('modalDevName').innerText = settings.devName || "Fattoxov Abdulloh";
-            document.getElementById('modalDevPhoto').src = settings.devPhoto || "https://i.ibb.co/68v8T3x/fattoxov-abdulloh.jpg";
+            document.getElementById('modalDevPhoto').src = settings.devPhoto || "dev.jpg";
             document.getElementById('modalDevEducation').innerText = settings.devEducation || "Toshkent menejment va iqtisodiyot instituti Fargʻona filiali (Bakalavr)";
             document.getElementById('modalDevPhone').innerText = settings.devPhone || "+998 90 123 45 67";
             document.getElementById('modalDevPhoneLink').href = `tel:${(settings.devPhone || "").replace(/\s+/g, '')}`;
@@ -1161,7 +1151,7 @@
 
             // Developer sozlamalarini saqlash
             settings.devName = document.getElementById('setDevName').value.trim() || "Fattoxov Abdulloh";
-            settings.devPhoto = document.getElementById('setDevPhoto').value.trim() || "https://i.ibb.co/68v8T3x/fattoxov-abdulloh.jpg";
+            settings.devPhoto = document.getElementById('setDevPhoto').value.trim() || "dev.jpg";
             settings.devEducation = document.getElementById('setDevEducation').value.trim() || "Toshkent menejment va iqtisodiyot instituti Fargʻona filiali (Bakalavr)";
             settings.devPhone = document.getElementById('setDevPhone').value.trim() || "+998 90 123 45 67";
             settings.devLegalText = document.getElementById('setDevLegalText').value.trim();
