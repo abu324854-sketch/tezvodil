@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TezVodil - Onlayn Do'kon</title>
+    <title id="pageTitle">TezVodil - Onlayn Do'kon</title>
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23059669'/><path d='M55 15 L25 55 L48 55 L40 85 L75 45 L52 45 Z' fill='%23FACC15'/></svg>">
     <link rel="manifest" href="manifest.json">
@@ -30,8 +30,8 @@
                     <i class="fa-solid fa-bolt text-yellow-300 text-xl animate-pulse"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg font-black tracking-wide leading-tight">TezVodil</h1>
-                    <p class="text-[10px] text-emerald-100 font-medium">Vodil bo'ylab tezkor dostavka</p>
+                    <h1 id="appHeaderTitle" class="text-lg font-black tracking-wide leading-tight">TezVodil</h1>
+                    <p id="appHeaderSub" class="text-[10px] text-emerald-100 font-medium">Vodil bo'ylab tezkor dostavka</p>
                 </div>
             </div>
             
@@ -68,16 +68,37 @@
             </div>
         </div>
 
-        <!-- SOTUVCHI SHAXSIY PANELI -->
+        <!-- SOTUVCHI SHAXSIY PANELI VA TUSHUM STATISTIKASI -->
         <div id="section-vendor-panel" class="space-y-4 hidden">
             <div class="bg-emerald-800 text-white p-4 rounded-2xl flex justify-between items-center shadow-lg">
                 <div>
                     <h2 class="font-extrabold text-sm flex items-center gap-1.5"><i class="fa-solid fa-shop text-yellow-300"></i> <span id="vPanelStoreName">Do'kon Boshqaruvi</span></h2>
-                    <p class="text-[10px] text-emerald-200">Sotuvchi Kabineti</p>
+                    <p class="text-[10px] text-emerald-200">Sotuvchi Kabineti & Savdo Tahlili</p>
                 </div>
                 <button onclick="closeVendorPanel()" class="bg-emerald-700 hover:bg-emerald-600 px-3 py-1.5 rounded-xl text-xs font-bold transition">Chiqish</button>
             </div>
 
+            <!-- SOTUVCHI SAVDO VA TUSHUM KARTASI -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+                    <p class="text-[10px] font-bold uppercase text-slate-400">Jami Savdo Tushumi</p>
+                    <p id="vTotalSalesDisplay" class="text-base font-black text-emerald-700">0 so'm</p>
+                </div>
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+                    <p class="text-[10px] font-bold uppercase text-slate-400">Sotilgan Mahsulotlar</p>
+                    <p id="vTotalItemsSoldDisplay" class="text-base font-black text-slate-800">0 ta</p>
+                </div>
+            </div>
+
+            <!-- ENG KO'P SOTILGAN MAHSULOTLAR (TOP SALES) -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                <h3 class="font-bold text-xs text-slate-800 border-b pb-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-fire text-orange-500"></i> Eng Ommabop (Xit) Mahsulotlaringiz
+                </h3>
+                <div id="vendorTopProductsList" class="space-y-2 text-xs"></div>
+            </div>
+
+            <!-- Mahsulot Qo'shish Formasi -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
                 <h3 class="font-bold text-xs text-slate-800 border-b pb-2">Do'konga Yangi Mahsulot Qo'shish</h3>
                 <form onsubmit="addNewVendorProduct(event)" class="space-y-3 text-xs">
@@ -108,54 +129,94 @@
                 </form>
             </div>
 
+            <!-- Sotuvchining O'z Mahsulotlari Ro'yxati -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
                 <h3 class="font-bold text-xs text-slate-800 border-b pb-2">Mening Mahsulotlarim</h3>
                 <div id="vendorProductsList" class="space-y-2"></div>
             </div>
         </div>
 
-        <!-- ADMIN PANEL -->
+        <!-- BOSH ADMIN PANELI VA TO'LIQ SOZLAMALAR -->
         <div id="section-admin" class="space-y-4 hidden">
             <div class="bg-slate-900 text-white p-4 rounded-2xl flex justify-between items-center shadow-lg">
                 <h2 class="font-extrabold text-sm"><i class="fa-solid fa-shield-halved mr-1 text-amber-400"></i> Bosh Admin Paneli</h2>
                 <button onclick="closeAdminPanel()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold">Chiqish</button>
             </div>
 
-            <div class="bg-white p-2 rounded-2xl shadow-sm border border-slate-200 flex gap-1 text-xs font-bold text-slate-600">
-                <button onclick="switchAdminTab('orders')" id="admTab-orders" class="flex-1 py-2 rounded-xl bg-emerald-600 text-white shadow">Buyurtmalar</button>
-                <button onclick="switchAdminTab('users')" id="admTab-users" class="flex-1 py-2 rounded-xl hover:bg-slate-100">Mijozlar (<span id="userCount">0</span>)</button>
-                <button onclick="switchAdminTab('settings')" id="admTab-settings" class="flex-1 py-2 rounded-xl hover:bg-slate-100">Sozlamalar</button>
+            <!-- BOSH ADMIN ANALITIKASI -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Jami Platforma Savdosi</p>
+                    <p id="admTotalSales" class="text-sm font-black text-emerald-600">0 so'm</p>
+                </div>
+                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Kuryerlik Tushumi</p>
+                    <p id="admDeliverySales" class="text-sm font-black text-blue-600">0 so'm</p>
+                </div>
+                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm col-span-2 sm:col-span-1">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Barcha Buyurtmalar</p>
+                    <p id="admTotalOrdersCount" class="text-sm font-black text-slate-800">0 ta</p>
+                </div>
             </div>
 
+            <div class="bg-white p-2 rounded-2xl shadow-sm border border-slate-200 flex gap-1 text-xs font-bold text-slate-600">
+                <button onclick="switchAdminTab('orders')" id="admTab-orders" class="flex-1 py-2 rounded-xl bg-emerald-600 text-white shadow">Buyurtmalar</button>
+                <button onclick="switchAdminTab('top')" id="admTab-top" class="flex-1 py-2 rounded-xl hover:bg-slate-100">Top Tovar Tahlili</button>
+                <button onclick="switchAdminTab('settings')" id="admTab-settings" class="flex-1 py-2 rounded-xl hover:bg-slate-100">⚙️ Sozlamalar</button>
+            </div>
+
+            <!-- BUYURTMALAR BO'LIMI -->
             <div id="admContent-orders" class="space-y-3">
                 <h3 class="font-bold text-xs text-slate-400 uppercase">Barcha Kelgan Buyurtmalar</h3>
                 <div id="adminOrdersList" class="space-y-2"></div>
             </div>
 
-            <div id="admContent-users" class="space-y-3 hidden">
-                <h3 class="font-bold text-xs text-slate-400 uppercase">Tizimga Kirgan Mijozlar</h3>
-                <div id="adminUsersList" class="space-y-2"></div>
+            <!-- TOP TOVARLAR ANALITIKASI -->
+            <div id="admContent-top" class="space-y-3 hidden">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
+                    <h3 class="font-bold text-xs text-slate-800 border-b pb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-chart-line text-emerald-600"></i> Vodil Bo'yicha Eng Ko'p Sotilayotgan Tovar Reytingi
+                    </h3>
+                    <div id="adminTopProductsList" class="space-y-2"></div>
+                </div>
             </div>
 
+            <!-- TIZIM SOZLAMALARI (TO'LIQ BOSHGARUV) -->
             <div id="admContent-settings" class="space-y-3 hidden">
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
-                    <h3 class="font-bold text-sm text-slate-800 border-b pb-2">Dostavka Sozlamalari</h3>
+                    <h3 class="font-bold text-sm text-slate-800 border-b pb-2">Platformani Tahrirlash va Sozlamalar</h3>
+                    
                     <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Zakas km narxi (so'm):</label>
+                        <label class="block font-semibold mb-1 text-slate-600">Ilova Nomi (Brending):</label>
+                        <input type="text" id="setAppName" value="TezVodil" class="w-full p-2.5 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1 text-slate-600">Ilova Taglavhasi (Slogan):</label>
+                        <input type="text" id="setAppSub" value="Vodil bo'ylab tezkor dostavka" class="w-full p-2.5 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1 text-slate-600">Bosh Admin Paroli:</label>
+                        <input type="text" id="setAdminPass" value="tezvodil2026" class="w-full p-2.5 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1 text-slate-600">Buyurtma km narxi (so'm):</label>
                         <input type="number" id="setOrderRate" value="4000" class="w-full p-2.5 border rounded-xl">
                     </div>
                     <div>
                         <label class="block font-semibold mb-1 text-slate-600">Tashqari km narxi (so'm):</label>
                         <input type="number" id="setExtraRate" value="1600" class="w-full p-2.5 border rounded-xl">
                     </div>
-                    <button onclick="saveSettings()" class="w-full bg-slate-900 text-white font-bold py-2.5 rounded-xl">Sozlamalarni Saqlash</button>
+
+                    <button onclick="saveSettings()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl shadow hover:bg-slate-800 transition">
+                        Barcha Sozlamalarni Saqlash
+                    </button>
                 </div>
             </div>
         </div>
 
     </main>
 
-    <!-- FOOTERDA YARATUVCHI HAQIDA MA'LUMOT VA HUQUQIY OGOHLANTIRISH -->
+    <!-- FOOTER -->
     <footer class="text-center py-6 border-t border-slate-200 mt-8 text-xs text-slate-500 space-y-2 px-4 max-w-2xl mx-auto">
         <button onclick="openDeveloperModal()" class="hover:text-emerald-600 transition flex items-center justify-center gap-1.5 mx-auto font-semibold">
             <i class="fa-solid fa-code text-emerald-600"></i> Dastur yaratuvchisi: <span class="font-bold text-slate-800 underline">Fattoxov Abdulloh</span>
@@ -165,7 +226,7 @@
         </p>
     </footer>
 
-    <!-- DASTUR YARATUVCHISI (DEVELOPER) VA HUQUQIY OGOHLANTIRISH MODALI -->
+    <!-- DEVELOPER MODALI -->
     <div id="developerModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center space-y-4 shadow-2xl relative">
             <button onclick="closeDeveloperModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
@@ -346,7 +407,14 @@
 
         let selectedBase64Images = [];
 
-        let settings = JSON.parse(localStorage.getItem('tv_settings')) || { orderRate: 4000, extraRate: 1600 };
+        let settings = JSON.parse(localStorage.getItem('tv_settings')) || { 
+            appName: "TezVodil",
+            appSub: "Vodil bo'ylab tezkor dostavka",
+            adminPass: "tezvodil2026",
+            orderRate: 4000, 
+            extraRate: 1600 
+        };
+
         let products = JSON.parse(localStorage.getItem('tv_products')) || [
             { id: 1, name: "Sut 1L (Tabiiy)", store: "Fayz Market", storeCoords: { lat: 40.1764, lng: 71.7258 }, price: 11000, images: ["https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500"] },
             { id: 2, name: "Qora Daftar 36v", store: "Bilim Kantselyariya", storeCoords: { lat: 40.1780, lng: 71.7270 }, price: 4000, images: ["https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500"] }
@@ -360,9 +428,22 @@
         let currentVendor = JSON.parse(localStorage.getItem('tv_current_vendor')) || null;
 
         document.addEventListener('DOMContentLoaded', () => {
+            applySettingsToUI();
             renderProducts(products);
             updateProfileUI();
         });
+
+        function applySettingsToUI() {
+            document.getElementById('appHeaderTitle').innerText = settings.appName || "TezVodil";
+            document.getElementById('appHeaderSub').innerText = settings.appSub || "Vodil bo'ylab tezkor dostavka";
+            document.getElementById('pageTitle').innerText = (settings.appName || "TezVodil") + " - Onlayn Do'kon";
+            
+            document.getElementById('setAppName').value = settings.appName || "TezVodil";
+            document.getElementById('setAppSub').value = settings.appSub || "Vodil bo'ylab tezkor dostavka";
+            document.getElementById('setAdminPass').value = settings.adminPass || "tezvodil2026";
+            document.getElementById('setOrderRate').value = settings.orderRate || 4000;
+            document.getElementById('setExtraRate').value = settings.extraRate || 1600;
+        }
 
         function openDeveloperModal() {
             document.getElementById('developerModal').classList.remove('hidden');
@@ -372,82 +453,121 @@
             document.getElementById('developerModal').classList.add('hidden');
         }
 
-        function openProductDetailModal(id) {
-            const p = products.find(x => x.id === id);
-            if (!p) return;
+        // SOTUVCHI TUSHUMI VA ANALITIKASI
+        function renderVendorAnalytics() {
+            if (!currentVendor) return;
 
-            const modal = document.getElementById('productDetailModal');
-            const mainImg = document.getElementById('pDetailMainImage');
-            const thumbsContainer = document.getElementById('pDetailGalleryThumbs');
+            const myOrders = orders.filter(o => o.items && o.items.some(i => i.store.toLowerCase() === currentVendor.storeName.toLowerCase()));
 
-            const imgs = p.images && p.images.length > 0 ? p.images : [p.image || "https://via.placeholder.com/500"];
+            let totalSales = 0;
+            let totalItemsSold = 0;
+            const productSalesMap = {};
 
-            mainImg.src = imgs[0];
-            document.getElementById('pDetailTitle').innerText = p.name;
-            document.getElementById('pDetailStore').innerText = p.store;
-            document.getElementById('pDetailPrice').innerText = `${p.price.toLocaleString()} so'm`;
+            myOrders.forEach(o => {
+                o.items.forEach(item => {
+                    if (item.store.toLowerCase() === currentVendor.storeName.toLowerCase()) {
+                        const itemTotal = item.price * item.qty;
+                        totalSales += itemTotal;
+                        totalItemsSold += item.qty;
 
-            thumbsContainer.innerHTML = '';
-            if (imgs.length > 1) {
-                imgs.forEach((imgSrc) => {
-                    thumbsContainer.innerHTML += `<img src="${imgSrc}" onclick="setDetailMainImage('${imgSrc}')" class="w-10 h-10 object-cover rounded-xl border-2 border-white/80 cursor-pointer shadow">`;
+                        if (!productSalesMap[item.name]) {
+                            productSalesMap[item.name] = { qty: 0, sum: 0 };
+                        }
+                        productSalesMap[item.name].qty += item.qty;
+                        productSalesMap[item.name].sum += itemTotal;
+                    }
                 });
-            }
+            });
 
-            document.getElementById('pDetailAddToCartBtn').onclick = function() {
-                addToCart(p.id);
-                closeProductDetailModal();
-            };
+            document.getElementById('vTotalSalesDisplay').innerText = `${totalSales.toLocaleString()} so'm`;
+            document.getElementById('vTotalItemsSoldDisplay').innerText = `${totalItemsSold} ta`;
 
-            modal.classList.remove('hidden');
-        }
+            const topContainer = document.getElementById('vendorTopProductsList');
+            if (!topContainer) return;
 
-        function setDetailMainImage(src) {
-            document.getElementById('pDetailMainImage').src = src;
-        }
+            const sortedProducts = Object.keys(productSalesMap).map(name => ({
+                name,
+                qty: productSalesMap[name].qty,
+                sum: productSalesMap[name].sum
+            })).sort((a, b) => b.qty - a.qty);
 
-        function closeProductDetailModal() {
-            document.getElementById('productDetailModal').classList.add('hidden');
-        }
-
-        function handleImageSelection(event) {
-            const files = Array.from(event.target.files);
-            if (files.length + selectedBase64Images.length > 3) {
-                alert("Maksimal 3 tagacha rasm yuklashingiz mumkin!");
+            if (sortedProducts.length === 0) {
+                topContainer.innerHTML = `<p class="text-slate-400 text-center py-2">Hali savdo amalga oshirilmadi</p>`;
                 return;
             }
 
-            files.forEach(file => {
-                if (selectedBase64Images.length >= 3) return;
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    selectedBase64Images.push(e.target.result);
-                    renderImagePreviews();
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function renderImagePreviews() {
-            const container = document.getElementById('imagePreviewContainer');
-            const badge = document.getElementById('imgCountBadge');
-            if (badge) badge.innerText = `${selectedBase64Images.length}/3 rasm tanlandi`;
-            if (!container) return;
-
-            container.innerHTML = '';
-            selectedBase64Images.forEach((imgSrc, index) => {
-                container.innerHTML += `
-                    <div class="relative w-16 h-16 rounded-xl border overflow-hidden flex-shrink-0 shadow-sm">
-                        <img src="${imgSrc}" class="w-full h-full object-cover">
-                        <button type="button" onclick="removeSelectedImage(${index})" class="absolute top-0.5 right-0.5 bg-red-600 text-white w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold">×</button>
+            topContainer.innerHTML = '';
+            sortedProducts.forEach((p, index) => {
+                topContainer.innerHTML += `
+                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                        <div class="flex items-center gap-2">
+                            <span class="w-5 h-5 bg-emerald-600 text-white rounded-full flex items-center justify-center font-bold text-[10px]">${index + 1}</span>
+                            <span class="font-bold text-slate-800">${p.name}</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-black text-emerald-700">${p.qty} ta sotildi</span>
+                            <p class="text-[10px] text-slate-500">${p.sum.toLocaleString()} so'm</p>
+                        </div>
                     </div>
                 `;
             });
         }
 
-        function removeSelectedImage(index) {
-            selectedBase64Images.splice(index, 1);
-            renderImagePreviews();
+        // BOSH ADMIN ANALITIKASI
+        function renderAdminAnalytics() {
+            let totalSales = 0;
+            let totalDeliveryFee = 0;
+            const globalProductMap = {};
+
+            orders.forEach(o => {
+                totalSales += (o.total || 0);
+                totalDeliveryFee += (o.deliveryFee || 0);
+
+                if (o.items) {
+                    o.items.forEach(i => {
+                        if (!globalProductMap[i.name]) {
+                            globalProductMap[i.name] = { qty: 0, store: i.store, sum: 0 };
+                        }
+                        globalProductMap[i.name].qty += i.qty;
+                        globalProductMap[i.name].sum += (i.price * i.qty);
+                    });
+                }
+            });
+
+            document.getElementById('admTotalSales').innerText = `${totalSales.toLocaleString()} so'm`;
+            document.getElementById('admDeliverySales').innerText = `${totalDeliveryFee.toLocaleString()} so'm`;
+            document.getElementById('admTotalOrdersCount').innerText = `${orders.length} ta`;
+
+            const topContainer = document.getElementById('adminTopProductsList');
+            if (!topContainer) return;
+
+            const sortedProducts = Object.keys(globalProductMap).map(name => ({
+                name,
+                store: globalProductMap[name].store,
+                qty: globalProductMap[name].qty,
+                sum: globalProductMap[name].sum
+            })).sort((a, b) => b.qty - a.qty);
+
+            if (sortedProducts.length === 0) {
+                topContainer.innerHTML = `<p class="text-slate-400 text-center py-2">Hozircha buyurtmalar tahlili yo'q</p>`;
+                return;
+            }
+
+            topContainer.innerHTML = '';
+            sortedProducts.forEach((p, index) => {
+                topContainer.innerHTML += `
+                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                        <div>
+                            <span class="font-bold text-slate-800">${index + 1}. ${p.name}</span>
+                            <span class="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full ml-1">${p.store}</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-black text-emerald-700">${p.qty} ta sotildi</span>
+                            <p class="text-[10px] text-slate-500">${p.sum.toLocaleString()} so'm</p>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
         function openVendorModal() {
@@ -515,6 +635,7 @@
             document.getElementById('section-vendor-panel').classList.remove('hidden');
             document.getElementById('vPanelStoreName').innerText = currentVendor.storeName;
             renderVendorProducts();
+            renderVendorAnalytics();
         }
 
         function closeVendorPanel() {
@@ -610,6 +731,84 @@
             });
         }
 
+        function openProductDetailModal(id) {
+            const p = products.find(x => x.id === id);
+            if (!p) return;
+
+            const modal = document.getElementById('productDetailModal');
+            const mainImg = document.getElementById('pDetailMainImage');
+            const thumbsContainer = document.getElementById('pDetailGalleryThumbs');
+
+            const imgs = p.images && p.images.length > 0 ? p.images : [p.image || "https://via.placeholder.com/500"];
+
+            mainImg.src = imgs[0];
+            document.getElementById('pDetailTitle').innerText = p.name;
+            document.getElementById('pDetailStore').innerText = p.store;
+            document.getElementById('pDetailPrice').innerText = `${p.price.toLocaleString()} so'm`;
+
+            thumbsContainer.innerHTML = '';
+            if (imgs.length > 1) {
+                imgs.forEach((imgSrc) => {
+                    thumbsContainer.innerHTML += `<img src="${imgSrc}" onclick="setDetailMainImage('${imgSrc}')" class="w-10 h-10 object-cover rounded-xl border-2 border-white/80 cursor-pointer shadow">`;
+                });
+            }
+
+            document.getElementById('pDetailAddToCartBtn').onclick = function() {
+                addToCart(p.id);
+                closeProductDetailModal();
+            };
+
+            modal.classList.remove('hidden');
+        }
+
+        function setDetailMainImage(src) {
+            document.getElementById('pDetailMainImage').src = src;
+        }
+
+        function closeProductDetailModal() {
+            document.getElementById('productDetailModal').classList.add('hidden');
+        }
+
+        function handleImageSelection(event) {
+            const files = Array.from(event.target.files);
+            if (files.length + selectedBase64Images.length > 3) {
+                alert("Maksimal 3 tagacha rasm yuklashingiz mumkin!");
+                return;
+            }
+
+            files.forEach(file => {
+                if (selectedBase64Images.length >= 3) return;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedBase64Images.push(e.target.result);
+                    renderImagePreviews();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderImagePreviews() {
+            const container = document.getElementById('imagePreviewContainer');
+            const badge = document.getElementById('imgCountBadge');
+            if (badge) badge.innerText = `${selectedBase64Images.length}/3 rasm tanlandi`;
+            if (!container) return;
+
+            container.innerHTML = '';
+            selectedBase64Images.forEach((imgSrc, index) => {
+                container.innerHTML += `
+                    <div class="relative w-16 h-16 rounded-xl border overflow-hidden flex-shrink-0 shadow-sm">
+                        <img src="${imgSrc}" class="w-full h-full object-cover">
+                        <button type="button" onclick="removeSelectedImage(${index})" class="absolute top-0.5 right-0.5 bg-red-600 text-white w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold">×</button>
+                    </div>
+                `;
+            });
+        }
+
+        function removeSelectedImage(index) {
+            selectedBase64Images.splice(index, 1);
+            renderImagePreviews();
+        }
+
         function addToCart(id) {
             const p = products.find(x => x.id === id);
             if (!p) return;
@@ -671,7 +870,8 @@
 
         function checkAdminPassword() {
             const pass = prompt("Bosh Admin parolini kiriting:");
-            if (pass === "tezvodil2026") openAdminPanel();
+            const currentPass = settings.adminPass || "tezvodil2026";
+            if (pass === currentPass) openAdminPanel();
             else if (pass !== null) alert("Parol noto'g'ri!");
         }
 
@@ -681,7 +881,7 @@
             document.getElementById('section-client').classList.add('hidden');
             document.getElementById('section-admin').classList.remove('hidden');
             renderAdminOrders();
-            renderAdminUsers();
+            renderAdminAnalytics();
         }
 
         function closeAdminPanel() {
@@ -690,34 +890,12 @@
         }
 
         function switchAdminTab(tab) {
-            ['orders', 'users', 'settings'].forEach(t => {
+            ['orders', 'top', 'settings'].forEach(t => {
                 document.getElementById(`admContent-${t}`).classList.add('hidden');
                 document.getElementById(`admTab-${t}`).className = "flex-1 py-2 rounded-xl hover:bg-slate-100";
             });
             document.getElementById(`admContent-${tab}`).classList.remove('hidden');
             document.getElementById(`admTab-${tab}`).className = "flex-1 py-2 rounded-xl bg-emerald-600 text-white shadow";
-        }
-
-        function renderAdminUsers() {
-            const container = document.getElementById('adminUsersList');
-            document.getElementById('userCount').innerText = usersList.length;
-            if (!container) return;
-            if (usersList.length === 0) {
-                container.innerHTML = `<p class="text-slate-400 text-center py-4">Hozircha mijozlar yo'q</p>`;
-                return;
-            }
-            container.innerHTML = '';
-            usersList.forEach((u, index) => {
-                container.innerHTML += `
-                    <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex justify-between items-center text-xs">
-                        <div>
-                            <p class="font-bold text-slate-800">${index + 1}. ${u.name}</p>
-                            <p class="text-slate-500">${u.phone}</p>
-                        </div>
-                        <span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-lg font-bold">Faol mijoz</span>
-                    </div>
-                `;
-            });
         }
 
         function renderAdminOrders() {
@@ -744,10 +922,15 @@
         }
 
         function saveSettings() {
+            settings.appName = document.getElementById('setAppName').value.trim() || "TezVodil";
+            settings.appSub = document.getElementById('setAppSub').value.trim() || "Vodil bo'ylab tezkor dostavka";
+            settings.adminPass = document.getElementById('setAdminPass').value.trim() || "tezvodil2026";
             settings.orderRate = parseInt(document.getElementById('setOrderRate').value) || 4000;
             settings.extraRate = parseInt(document.getElementById('setExtraRate').value) || 1600;
+
             localStorage.setItem('tv_settings', JSON.stringify(settings));
-            alert("Sozlamalar saqlandi!");
+            applySettingsToUI();
+            alert("Barcha sozlamalar va ilova ma'lumotlari saqlandi!");
         }
 
         function openProfileModal() {
