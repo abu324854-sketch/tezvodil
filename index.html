@@ -31,7 +31,7 @@
             
             <div class="flex items-center gap-2">
                 <!-- PROFIL TUGMASI -->
-                <button onclick="openProfileModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3 py-2 rounded-xl shadow flex items-center gap-1.5 transition">
+                <button id="profileBtn" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3 py-2 rounded-xl shadow flex items-center gap-1.5 transition">
                     <i class="fa-solid fa-user"></i> <span id="profileBtnText">Profil</span>
                 </button>
                 <a href="courier.html" class="bg-slate-900 text-emerald-400 font-bold text-xs px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
@@ -43,10 +43,10 @@
 
     <main class="max-w-2xl mx-auto p-4 space-y-4">
 
-        <!-- ASOSIY EKRAN: FAQAT TOVARLAR VA QIDIRUV -->
+        <!-- ASOSIY EKRAN: TOVARLAR VA QIDIRUV -->
         <div id="section-client" class="space-y-4">
             <div class="relative">
-                <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Mahsulot yoki do'kon qidirish..." 
+                <input type="text" id="searchInput" placeholder="Mahsulot yoki do'kon qidirish..." 
                        class="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm text-sm">
                 <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-gray-400 text-base"></i>
             </div>
@@ -61,14 +61,14 @@
         <div id="section-admin" class="space-y-4 hidden">
             <div class="bg-emerald-800 text-white p-4 rounded-2xl flex justify-between items-center shadow">
                 <h2 class="font-extrabold text-sm"><i class="fa-solid fa-shield-halved mr-1"></i> Admin Boshqaruv Paneli</h2>
-                <button onclick="closeAdminPanel()" class="bg-emerald-700 hover:bg-emerald-600 px-3 py-1 rounded-xl text-xs font-bold">Chiqish</button>
+                <button id="closeAdminBtn" class="bg-emerald-700 hover:bg-emerald-600 px-3 py-1 rounded-xl text-xs font-bold">Chiqish</button>
             </div>
 
             <div class="bg-white p-2 rounded-2xl shadow-sm border flex gap-1 text-xs font-bold text-gray-600">
-                <button onclick="switchAdminTab('orders')" id="admTab-orders" class="flex-1 py-2 rounded-xl bg-emerald-600 text-white shadow">Buyurtmalar</button>
-                <button onclick="switchAdminTab('users')" id="admTab-users" class="flex-1 py-2 rounded-xl hover:bg-gray-100">Mijozlar (<span id="userCount">0</span>)</button>
-                <button onclick="switchAdminTab('products')" id="admTab-products" class="flex-1 py-2 rounded-xl hover:bg-gray-100">Mahsulotlar</button>
-                <button onclick="switchAdminTab('settings')" id="admTab-settings" class="flex-1 py-2 rounded-xl hover:bg-gray-100">Sozlamalar</button>
+                <button id="admTabBtn-orders" class="flex-1 py-2 rounded-xl bg-emerald-600 text-white shadow">Buyurtmalar</button>
+                <button id="admTabBtn-users" class="flex-1 py-2 rounded-xl hover:bg-gray-100">Mijozlar (<span id="userCount">0</span>)</button>
+                <button id="admTabBtn-products" class="flex-1 py-2 rounded-xl hover:bg-gray-100">Mahsulotlar</button>
+                <button id="admTabBtn-settings" class="flex-1 py-2 rounded-xl hover:bg-gray-100">Sozlamalar</button>
             </div>
 
             <div id="admContent-orders" class="space-y-3">
@@ -84,7 +84,7 @@
             <div id="admContent-products" class="space-y-3 hidden">
                 <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
                     <h3 class="font-bold text-xs text-gray-800 border-b pb-2">Yangi Mahsulot Qo'shish</h3>
-                    <form onsubmit="addNewProduct(event)" class="space-y-2.5 text-xs">
+                    <form id="addProductForm" class="space-y-2.5 text-xs">
                         <input type="text" id="vName" required placeholder="Mahsulot nomi" class="w-full p-2.5 border rounded-xl">
                         <div class="grid grid-cols-2 gap-2">
                             <input type="number" id="vPrice" required placeholder="Narxi (so'm)" class="w-full p-2.5 border rounded-xl">
@@ -107,7 +107,7 @@
                         <label class="block font-semibold mb-1">Tashqari km narxi (so'm):</label>
                         <input type="number" id="setExtraRate" value="1600" class="w-full p-2.5 border rounded-xl">
                     </div>
-                    <button onclick="saveSettings()" class="w-full bg-slate-900 text-white font-bold py-2.5 rounded-xl">Sozlamalarni Saqlash</button>
+                    <button id="saveSettingsBtn" class="w-full bg-slate-900 text-white font-bold py-2.5 rounded-xl">Sozlamalarni Saqlash</button>
                 </div>
             </div>
         </div>
@@ -119,25 +119,22 @@
         <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-2">
                 <h3 class="font-bold text-gray-800 text-base">Foydalanuvchi Profili</h3>
-                <button onclick="closeProfileModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <button id="closeProfileBtn" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
 
-            <!-- Kirilmagan bo'lsa Ro'yxatdan o'tish -->
             <div id="profileFormView" class="space-y-3 text-xs">
                 <p class="text-gray-500">Iltimos, ismingiz va telefon raqamingizni kiriting:</p>
                 <input type="text" id="userNameInput" placeholder="Ism Familiyangiz" class="w-full p-3 border rounded-xl">
                 <input type="tel" id="userPhoneInput" placeholder="Telefon raqamingiz (+998...)" class="w-full p-3 border rounded-xl">
-                <button onclick="saveProfile()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">Saqlash va Kirish</button>
+                <button id="saveProfileBtn" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">Saqlash va Kirish</button>
                 
-                <!-- Parolsiz to'g'ridan-to'g'ri Admin Panelga o'tish tugmasi -->
                 <div class="pt-3 border-t text-center">
-                    <button onclick="openAdminPanel()" class="text-slate-800 font-bold underline hover:text-emerald-600">
+                    <button id="directAdminBtn" class="text-slate-800 font-bold underline hover:text-emerald-600">
                         ⚙️ Admin Bo'lib Kirish
                     </button>
                 </div>
             </div>
 
-            <!-- Kirilgan bo'lsa Profil Ma'lumotlari -->
             <div id="profileInfoView" class="space-y-3 text-xs hidden">
                 <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-200">
                     <p class="font-bold text-emerald-900 text-sm" id="dispUserName"></p>
@@ -148,8 +145,8 @@
                 <div id="userOrdersHistory" class="space-y-2 max-h-40 overflow-y-auto"></div>
 
                 <div class="pt-2 border-t flex gap-2">
-                    <button onclick="logoutProfile()" class="bg-red-50 text-red-600 font-bold py-2 px-4 rounded-xl flex-1">Chiqish</button>
-                    <button onclick="openAdminPanel()" class="bg-slate-900 text-white font-bold py-2 px-4 rounded-xl flex-1">⚙️ Admin Panel</button>
+                    <button id="logoutProfileBtn" class="bg-red-50 text-red-600 font-bold py-2 px-4 rounded-xl flex-1">Chiqish</button>
+                    <button id="openAdminFromInfoBtn" class="bg-slate-900 text-white font-bold py-2 px-4 rounded-xl flex-1">⚙️ Admin Panel</button>
                 </div>
             </div>
         </div>
@@ -167,7 +164,7 @@
                 <p id="cartTotal" class="text-sm font-extrabold">0 so'm</p>
             </div>
         </div>
-        <button onclick="openCheckoutModal()" class="bg-white text-emerald-800 px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-emerald-50 transition">
+        <button id="checkoutBarBtn" class="bg-white text-emerald-800 px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-emerald-50 transition">
             Buyurtma Berish <i class="fa-solid fa-arrow-right ml-1"></i>
         </button>
     </div>
@@ -177,12 +174,12 @@
         <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-3 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-2">
                 <h3 class="font-bold text-gray-800">Manzil va Lokatsiya</h3>
-                <button onclick="closeCheckoutModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <button id="closeCheckoutBtn" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
 
             <div>
                 <div id="map" class="w-full h-40 rounded-2xl border-2 border-emerald-500"></div>
-                <button type="button" onclick="getCurrentLocation()" class="mt-2 w-full bg-slate-100 py-2 rounded-xl text-xs font-bold text-slate-700">
+                <button type="button" id="getGpsBtn" class="mt-2 w-full bg-slate-100 py-2 rounded-xl text-xs font-bold text-slate-700">
                     <i class="fa-solid fa-location-crosshairs text-emerald-600"></i> GPS Orqali Topish
                 </button>
             </div>
@@ -192,7 +189,7 @@
                 <span>Dostavka: <strong id="deliveryPriceDisplay">5,600 so'm</strong></span>
             </div>
 
-            <form onsubmit="submitOrder(event)" class="space-y-2.5 text-xs">
+            <form id="orderSubmitForm" class="space-y-2.5 text-xs">
                 <input type="text" id="custAddress" required placeholder="Aniq mo'ljal / ko'cha nomi" class="w-full p-2.5 border rounded-xl">
                 <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">Buyurtmani Tasdiqlash</button>
             </form>
