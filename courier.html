@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TezVodil - Kuryer Paneli</title>
     
-    <!-- PWA va Ilova Logotipi (Favicon / App Icon) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23059669'/><path d='M55 15 L25 55 L48 55 L40 85 L75 45 L52 45 Z' fill='%23FACC15'/></svg>">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
@@ -35,7 +34,7 @@
 
     <main class="max-w-2xl mx-auto p-4 space-y-4">
 
-        <!-- DAROMAD VA HOLAT BADGE -->
+        <!-- DAROMAD BADGE -->
         <div class="bg-emerald-600 rounded-3xl p-5 shadow-xl flex justify-between items-center relative overflow-hidden">
             <div class="absolute -right-6 -bottom-6 text-emerald-500/30 text-8xl">
                 <i class="fa-solid fa-sack-dollar"></i>
@@ -69,12 +68,10 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             loadCourierOrders();
-            // Har 5 sekundda avtomatik yangilash
             setInterval(loadCourierOrders, 5000);
         });
 
         function loadCourierOrders() {
-            // Index.html bilan bir xil kalitdan o'qiymiz
             orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
             renderOrders();
             calculateEarnings();
@@ -96,13 +93,14 @@
             }
 
             container.innerHTML = '';
-
-            // Eng yangi buyurtmalar tepada chiqadi
             const activeOrders = [...orders].reverse();
 
             activeOrders.forEach(o => {
                 const itemsCount = o.items ? o.items.reduce((sum, item) => sum + item.qty, 0) : 0;
                 
+                // Mahsulot qaysi do'kondan olinishi
+                const storeNames = o.stores || (o.items && o.items.length > 0 ? [...new Set(o.items.map(i => i.store))].join(', ') : 'Vodil Do\'koni');
+
                 let statusBadgeClass = "bg-amber-500/20 text-amber-400 border-amber-500/30";
                 if (o.status === "Qabul qilindi") statusBadgeClass = "bg-blue-500/20 text-blue-400 border-blue-500/30";
                 if (o.status === "Yetkazildi") statusBadgeClass = "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
@@ -123,11 +121,20 @@
                             </span>
                         </div>
 
-                        <div class="space-y-1 text-xs text-slate-300">
-                            <p class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-red-400 w-4"></i> <strong>Manzil:</strong> ${o.address} (${o.distanceKM || 0} km)</p>
+                        <!-- OLISH JOYI VA MANZIL -->
+                        <div class="space-y-1.5 text-xs text-slate-300">
+                            <div class="bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-xl text-amber-300 font-medium flex items-start gap-2">
+                                <i class="fa-solid fa-store text-base mt-0.5 text-amber-400"></i>
+                                <div>
+                                    <span class="font-bold block text-[11px] text-amber-400 uppercase tracking-wider">Olish Joyi (Do'kon):</span>
+                                    <span>${storeNames}</span>
+                                </div>
+                            </div>
+
+                            <p class="flex items-center gap-1.5 pt-1"><i class="fa-solid fa-location-dot text-red-400 w-4"></i> <strong>Eltish Manzili:</strong> ${o.address} (${o.distanceKM || 0} km)</p>
                             <p class="flex items-center gap-1.5"><i class="fa-solid fa-bag-shopping text-emerald-400 w-4"></i> <strong>Tovar soni:</strong> ${itemsCount} ta mahsulot</p>
-                            <p class="flex items-center gap-1.5"><i class="fa-solid fa-wallet text-yellow-400 w-4"></i> <strong>Jami summa:</strong> ${(o.total || 0).toLocaleString()} so'm</p>
-                            <p class="flex items-center gap-1.5 text-emerald-400 font-bold"><i class="fa-solid fa-motorcycle w-4"></i> <strong>Dostavka xaqi:</strong> ${(o.deliveryFee || 0).toLocaleString()} so'm</p>
+                            <p class="flex items-center gap-1.5"><i class="fa-solid fa-wallet text-yellow-400 w-4"></i> <strong>Mijoz to'laydi:</strong> ${(o.total || 0).toLocaleString()} so'm</p>
+                            <p class="flex items-center gap-1.5 text-emerald-400 font-bold"><i class="fa-solid fa-motorcycle w-4"></i> <strong>Sizning daromadingiz (Dostavka):</strong> ${(o.deliveryFee || 0).toLocaleString()} so'm</p>
                         </div>
 
                         <!-- AMALLAR TUGMALARI -->
