@@ -98,8 +98,9 @@
             activeOrders.forEach(o => {
                 const itemsCount = o.items ? o.items.reduce((sum, item) => sum + item.qty, 0) : 0;
                 
-                // Mahsulot qaysi do'kondan olinishi
-                const storeNames = o.stores || (o.items && o.items.length > 0 ? [...new Set(o.items.map(i => i.store))].join(', ') : 'Vodil Do\'koni');
+                // Do'konlar ro'yxati
+                const storeNames = o.stores || (o.items && o.items.length > 0 ? [...new Set(o.items.map(i => i.store))].join(', ') : 'Vodil Do\'koni (Markaz)');
+                const storeCoords = o.storeCoords || { lat: 40.1764, lng: 71.7258 };
 
                 let statusBadgeClass = "bg-amber-500/20 text-amber-400 border-amber-500/30";
                 if (o.status === "Qabul qilindi") statusBadgeClass = "bg-blue-500/20 text-blue-400 border-blue-500/30";
@@ -121,23 +122,28 @@
                             </span>
                         </div>
 
-                        <!-- OLISH JOYI VA MANZIL -->
-                        <div class="space-y-1.5 text-xs text-slate-300">
-                            <div class="bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-xl text-amber-300 font-medium flex items-start gap-2">
-                                <i class="fa-solid fa-store text-base mt-0.5 text-amber-400"></i>
-                                <div>
-                                    <span class="font-bold block text-[11px] text-amber-400 uppercase tracking-wider">Olish Joyi (Do'kon):</span>
-                                    <span>${storeNames}</span>
-                                </div>
+                        <!-- OLISH JOYI (DO'KON) -->
+                        <div class="bg-amber-500/10 border border-amber-500/20 p-3 rounded-2xl text-amber-300 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-[11px] text-amber-400 uppercase tracking-wider flex items-center gap-1">
+                                    <i class="fa-solid fa-store"></i> Olish Joyi (Do'kon):
+                                </span>
+                                <a href="https://www.google.com/maps/search/?api=1&query=${storeCoords.lat},${storeCoords.lng}" target="_blank" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[10px] font-bold px-2 py-1 rounded-lg border border-amber-500/30 flex items-center gap-1">
+                                    <i class="fa-solid fa-location-arrow"></i> Do'kon Lokatsiyasi
+                                </a>
                             </div>
+                            <p class="text-xs font-bold text-white">${storeNames}</p>
+                        </div>
 
-                            <p class="flex items-center gap-1.5 pt-1"><i class="fa-solid fa-location-dot text-red-400 w-4"></i> <strong>Eltish Manzili:</strong> ${o.address} (${o.distanceKM || 0} km)</p>
+                        <!-- MIJOZ MANZILI VA SUMMALAR -->
+                        <div class="space-y-1.5 text-xs text-slate-300">
+                            <p class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-red-400 w-4"></i> <strong>Eltish Manzili:</strong> ${o.address} (${o.distanceKM || 0} km)</p>
                             <p class="flex items-center gap-1.5"><i class="fa-solid fa-bag-shopping text-emerald-400 w-4"></i> <strong>Tovar soni:</strong> ${itemsCount} ta mahsulot</p>
                             <p class="flex items-center gap-1.5"><i class="fa-solid fa-wallet text-yellow-400 w-4"></i> <strong>Mijoz to'laydi:</strong> ${(o.total || 0).toLocaleString()} so'm</p>
                             <p class="flex items-center gap-1.5 text-emerald-400 font-bold"><i class="fa-solid fa-motorcycle w-4"></i> <strong>Sizning daromadingiz (Dostavka):</strong> ${(o.deliveryFee || 0).toLocaleString()} so'm</p>
                         </div>
 
-                        <!-- AMALLAR TUGMALARI -->
+                        <!-- AMALLAR VA XARITA TUGMALARI -->
                         <div class="pt-2 border-t border-slate-700/60 flex gap-2">
                             ${o.status === 'Kutilmoqda' || !o.status ? `
                                 <button onclick="updateOrderStatus(${o.id}, 'Qabul qilindi')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow">
@@ -152,8 +158,8 @@
                             ` : ''}
 
                             ${o.coords ? `
-                                <a href="https://www.google.com/maps/search/?api=1&query=${o.coords.lat},${o.coords.lng}" target="_blank" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold px-3 py-2.5 rounded-xl text-xs flex items-center justify-center transition">
-                                    <i class="fa-solid fa-map-location-dot text-sm"></i>
+                                <a href="https://www.google.com/maps/search/?api=1&query=${o.coords.lat},${o.coords.lng}" target="_blank" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold px-3 py-2.5 rounded-xl text-xs flex items-center justify-center transition" title="Mijoz Lokatsiyasi">
+                                    <i class="fa-solid fa-map-location-dot text-sm text-red-400"></i>
                                 </a>
                             ` : ''}
                         </div>
