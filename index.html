@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title id="pageTitle">TezVodil - Onlayn Do'kon</title>
     
-    <!-- PWA va Ilova Logotipi -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23059669'/><path d='M55 15 L25 55 L48 55 L40 85 L75 45 L52 45 Z' fill='%23FACC15'/></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23059669'/><path d='M55 15 L25 55 L48 55 L40 85 L75 45 L52 45 Z' fill='%23FACC15'/></svg>">
+    <!-- PWA va Manifest bog'lanishi -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#059669">
+
+    <!-- Ikonka va Rasmlar -->
+    <link rel="icon" type="image/jpeg" href="dev.jpg">
+    <link rel="apple-touch-icon" href="dev.jpg">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,7 +26,7 @@
 </head>
 <body class="bg-slate-50 text-gray-800 pb-28 antialiased selection:bg-emerald-500 selection:text-white">
 
-    <!-- HEADER (Brend, O'rnatish va Admin tugmalari) -->
+    <!-- HEADER -->
     <header class="bg-emerald-600 text-white sticky top-0 z-40 shadow-md backdrop-blur-md bg-emerald-600/95">
         <div class="max-w-2xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-2.5 cursor-pointer" onclick="openDeveloperModal()">
@@ -38,7 +40,6 @@
             </div>
             
             <div class="flex items-center gap-2">
-                <!-- EKRAN BURCHAKDAGI O'RNATISH TUGMASI -->
                 <button id="installAppBtn" onclick="installPWAApp()" class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white font-extrabold text-xs px-3 py-2 rounded-xl shadow-md flex items-center gap-1.5 transition border border-emerald-400/40">
                     <i class="fa-solid fa-download text-yellow-300"></i> <span>O'rnatish</span>
                 </button>
@@ -51,8 +52,7 @@
     </header>
 
     <main class="max-w-2xl mx-auto p-4 space-y-4">
-
-        <!-- ASOSIY EKRAN: TOVARLAR VA QIDIRUV -->
+        <!-- ASOSIY EKRAN -->
         <div id="section-client" class="space-y-4">
             <div class="relative">
                 <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Mahsulot yoki do'kon qidirish..." 
@@ -263,10 +263,9 @@
                 </div>
             </div>
         </div>
-
     </main>
 
-    <!-- 📱 BOTTOM BAR -->
+    <!-- BOTTOM BAR -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-2xl z-40 px-2 py-2">
         <div class="max-w-md mx-auto flex justify-around items-center">
             <button onclick="showHomeSection()" class="flex flex-col items-center gap-0.5 text-emerald-600 font-bold transition active:scale-95">
@@ -292,7 +291,7 @@
         </div>
     </nav>
 
-    <!-- 👤 DASTUR YARATUVCHISI VA ILOVA HAQIDA MODALI -->
+    <!-- MODAL -->
     <div id="developerModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeDeveloperModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
@@ -329,7 +328,7 @@
                     <i class="fa-solid fa-gavel"></i> Mualliflik Huquqi Himoyalangan:
                 </p>
                 <p id="modalDevLegalText" class="text-[10px] text-red-600 leading-snug">
-                    Ushbu dastur kodi, funksionalligi yoki "TezVodil" brendini ruxsatsiz nusxalash, o'zlashtirish va shu shaklda mualliflik huquqini buzgan holda analog loyihalar yaratish O'zbekiston Respublikasining "Mualliflik huquqi va turdosh huquqlar to'g'risida"gi Qonuni hamda Jinoyat Kodeksining 149-moddasiga ko'ra <strong>Jinoiy Javobgarlikka</strong> sabab bo'ladi.
+                    Ushbu dastur kodi, funksionalligi yoki "TezVodil" brendini ruxsatsiz nusxalash, o'zlashtirish va shu shaklda mualliflik huquqini buzgan holda analog loyihalar yaratish O'zbekiston Respublikasining "Mualliflik huquqi va turdosh huquqlar to'g'risida"gi Qonuni hamda Jinoyat Kodeksining 149-moddasiga ko'ra Jinoiy Javobgarlikka sabab bo'ladi.
                 </p>
             </div>
 
@@ -337,188 +336,34 @@
         </div>
     </div>
 
-    <!-- MAHSULOT MODALI -->
-    <div id="productDetailModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center hidden p-0 sm:p-4 transition-all">
-        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl space-y-0 max-h-[90vh] flex flex-col">
-            <div class="relative bg-slate-900 w-full h-72 sm:h-80 flex items-center justify-center overflow-hidden">
-                <img id="pDetailMainImage" src="" class="w-full h-full object-cover transition-all duration-300">
-                <button onclick="closeProductDetailModal()" class="absolute top-3 right-3 bg-black/50 text-white w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-                <div id="pDetailGalleryThumbs" class="absolute bottom-3 left-0 right-0 flex justify-center gap-2 px-3"></div>
-            </div>
-
-            <div class="p-5 space-y-4 flex-1 flex flex-col justify-between">
-                <div class="space-y-2">
-                    <div class="flex justify-between items-start">
-                        <span id="pDetailStore" class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"></span>
-                        <span id="pDetailPrice" class="text-lg font-black text-emerald-700"></span>
-                    </div>
-                    <h2 id="pDetailTitle" class="text-base font-extrabold text-slate-800 leading-snug"></h2>
-                </div>
-
-                <div class="pt-2">
-                    <button id="pDetailAddToCartBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-bold py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2 text-sm transition">
-                        <i class="fa-solid fa-cart-plus text-base"></i> Savatga Qo'shish
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SOTUVCHI MODALI -->
-    <div id="vendorAuthModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-slate-800 text-base"><i class="fa-solid fa-store text-emerald-600 mr-1"></i> Sotuvchi Kabinetiga Kirish</h3>
-                <button onclick="closeVendorModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-
-            <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-bold">
-                <button onclick="switchVendorAuthTab('login')" id="vAuthTab-login" class="flex-1 py-2 rounded-lg bg-emerald-600 text-white shadow">Kirish</button>
-                <button onclick="switchVendorAuthTab('register')" id="vAuthTab-register" class="flex-1 py-2 rounded-lg hover:bg-slate-200 text-slate-600">Yangi Do'kon Ochish</button>
-            </div>
-
-            <div id="vForm-login" class="space-y-3 text-xs">
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Do'koningiz Nomi</label>
-                    <input type="text" id="vLoginStoreName" placeholder="Masalan: Fayz Market" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Shaxsiy Parolingiz</label>
-                    <input type="password" id="vLoginPassword" placeholder="Parolni kiriting" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <button onclick="loginVendor()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow hover:bg-emerald-700 transition">Kabinetga Kirish</button>
-            </div>
-
-            <div id="vForm-register" class="space-y-3 text-xs hidden">
-                <p class="text-slate-500">Yangi sotuvchi sifatida do'kon nomi va parolni kiriting:</p>
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Do'koningiz Nomi</label>
-                    <input type="text" id="vRegStoreName" placeholder="Masalan: Vodil Kantselyariya" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Shaxsiy Parolingizni O'ylab Toping</label>
-                    <input type="password" id="vRegPassword" placeholder="Kamida 4 ta belgi" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <button onclick="registerVendor()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow hover:bg-emerald-700 transition">Do'kon Yaratish va Kirish</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- PROFIL MODALI -->
-    <div id="profileModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-slate-800 text-base">Foydalanuvchi Profili</h3>
-                <button onclick="closeProfileModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-
-            <div id="profileFormView" class="space-y-3 text-xs">
-                <p class="text-slate-500">Iltimos, ismingiz va telefon raqamingizni kiriting:</p>
-                <input type="text" id="userNameInput" placeholder="Ism Familiyangiz" class="w-full p-3 border rounded-xl">
-                <input type="tel" id="userPhoneInput" placeholder="Telefon raqamingiz (+998...)" class="w-full p-3 border rounded-xl">
-                <button onclick="saveProfile()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">Saqlash va Kirish</button>
-            </div>
-
-            <div id="profileInfoView" class="space-y-3 text-xs hidden">
-                <div class="bg-emerald-50 p-3.5 rounded-2xl border border-emerald-200">
-                    <p class="font-extrabold text-emerald-950 text-sm" id="dispUserName"></p>
-                    <p class="text-emerald-700 font-semibold" id="dispUserPhone"></p>
-                </div>
-
-                <h4 class="font-bold text-slate-700 pt-2">Mening Buyurtmalarim:</h4>
-                <div id="userOrdersHistory" class="space-y-2 max-h-40 overflow-y-auto"></div>
-
-                <div class="pt-2 border-t">
-                    <button onclick="logoutProfile()" class="bg-red-50 text-red-600 font-bold py-2.5 px-4 rounded-xl w-full">Chiqish</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- FLOATING CART BAR -->
-    <div id="cartBar" class="fixed bottom-16 left-4 right-4 max-w-2xl mx-auto bg-slate-900/95 backdrop-blur-md text-white rounded-2xl p-3 shadow-2xl flex justify-between items-center hidden z-30">
-        <div class="flex items-center gap-3">
-            <div class="relative bg-emerald-600 p-2.5 rounded-xl shadow">
-                <i class="fa-solid fa-cart-shopping text-xl text-white"></i>
-                <span id="cartCount" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-black shadow">0</span>
-            </div>
-            <div>
-                <p class="text-[10px] text-slate-400 font-medium">Jami to'lov:</p>
-                <p id="cartTotal" class="text-sm font-black text-emerald-400">0 so'm</p>
-            </div>
-        </div>
-        <button onclick="openCheckoutModal()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition shadow">
-            Buyurtma Berish <i class="fa-solid fa-arrow-right ml-1"></i>
-        </button>
-    </div>
-
-    <!-- BUYURTMA VA GPS MODALI -->
-    <div id="checkoutModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center hidden">
-        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-3 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-slate-800">Manzil va Lokatsiya</h3>
-                <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-
-            <div>
-                <div id="map" class="w-full h-40 rounded-2xl border-2 border-emerald-500 overflow-hidden shadow-inner"></div>
-                <button type="button" onclick="getCurrentLocation()" class="mt-2 w-full bg-slate-100 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-200 transition">
-                    <i class="fa-solid fa-location-crosshairs text-emerald-600"></i> GPS Orqali Topish
-                </button>
-            </div>
-
-            <div class="bg-emerald-50 p-3 rounded-xl flex justify-between text-xs border border-emerald-200">
-                <span>Masofa: <strong id="distDisplay">0 km</strong></span>
-                <span>Dostavka: <strong id="deliveryPriceDisplay" class="text-emerald-800">5,600 so'm</strong></span>
-            </div>
-
-            <form onsubmit="submitOrder(event)" class="space-y-2.5 text-xs">
-                <input type="text" id="custAddress" required placeholder="Aniq mo'ljal / ko'cha nomi" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3.5 rounded-xl shadow-lg hover:bg-emerald-700 transition">Buyurtmani Tasdiqlash</button>
-            </form>
-        </div>
-    </div>
-
+    <!-- SCRIPT -->
     <script>
-        // PWA O'RNATISH UCHUN SCRIPT
         let deferredPrompt = null;
         const installBtn = document.getElementById('installAppBtn');
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            installBtn.classList.remove('hidden'); // Tugmani ko'rsatish
+            installBtn.classList.remove('hidden');
         });
 
         async function installPWAApp() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('Foydalanuvchi ilovani o\'rnatdi');
-                }
                 deferredPrompt = null;
                 installBtn.classList.add('hidden');
             } else {
-                alert("Ilova allaqachon o'rnatilgan yoki brauzeringiz bu qurilmada avtomatik o'rnatishni qo'llab-quvvatlamaydi. Brauzer menyusidan 'Asosiy ekranga qo'shish' yoki 'Ustanovit prilojenie'ni tanlang.");
+                alert("Ilova allaqachon o'rnatilgan yoki brauzeringiz bu qurilmada avtomatik o'rnatishni qo'llab-quvvatlamaydi. Brauzer menyusidan 'Asosiy ekranga qo'shish' ni tanlang.");
             }
         }
 
         window.addEventListener('appinstalled', () => {
             installBtn.classList.add('hidden');
             deferredPrompt = null;
-            console.log('PWA muvaffaqiyatli o\'rnatildi');
         });
 
         const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
-        let map = null, marker = null;
-        let userCoords = { lat: 40.1764, lng: 71.7258 };
-        let calculatedDistance = 0, calculatedDeliveryFee = 5600;
-
-        let selectedBase64Images = [];
-
         let settings = JSON.parse(localStorage.getItem('tv_settings')) || { 
             appName: "TezVodil",
             appSub: "Vodil bo'ylab tezkor dostavka",
@@ -533,15 +378,11 @@
             devLegalText: "Ushbu dastur kodi, funksionalligi yoki \"TezVodil\" brendini ruxsatsiz nusxalash, o'zlashtirish va shu shaklda mualliflik huquqini buzgan holda analog loyihalar yaratish O'zbekiston Respublikasining \"Mualliflik huquqi va turdosh huquqlar to'g'risida\"gi Qonuni hamda Jinoyat Kodeksining 149-moddasiga ko'ra Jinoiy Javobgarlikka sabab bo'ladi."
         };
 
-        let products = JSON.parse(localStorage.getItem('tv_products')) || [
-            { id: 1, name: "Sut 1L (Tabiiy)", store: "Fayz Market", storeCoords: { lat: 40.1764, lng: 71.7258 }, price: 11000, images: ["https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500"] },
-            { id: 2, name: "Qora Daftar 36v", store: "Bilim Kantselyariya", storeCoords: { lat: 40.1780, lng: 71.7270 }, price: 4000, images: ["https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500"] }
-        ];
+        let products = JSON.parse(localStorage.getItem('tv_products')) || [];
         let cart = [];
         let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
         let usersList = JSON.parse(localStorage.getItem('tv_users')) || [];
         let vendorsList = JSON.parse(localStorage.getItem('tv_vendors')) || [];
-
         let currentUser = JSON.parse(localStorage.getItem('tv_current_user')) || null;
         let currentVendor = JSON.parse(localStorage.getItem('tv_current_vendor')) || null;
 
@@ -563,16 +404,16 @@
             document.getElementById('setOrderRate').value = settings.orderRate || 4000;
             document.getElementById('setExtraRate').value = settings.extraRate || 1600;
 
-            document.getElementById('setDevName').value = settings.devName || "Fattoxov Abdulloh";
+            document.getElementById('setDevName').value = settings.devName || "";
             document.getElementById('setDevPhoto').value = settings.devPhoto || "dev.jpg";
-            document.getElementById('setDevEducation').value = settings.devEducation || "Toshkent menejment va iqtisodiyot instituti Fargʻona filiali (Bakalavr)";
-            document.getElementById('setDevPhone').value = settings.devPhone || "+998 90 123 45 67";
+            document.getElementById('setDevEducation').value = settings.devEducation || "";
+            document.getElementById('setDevPhone').value = settings.devPhone || "";
             document.getElementById('setDevLegalText').value = settings.devLegalText || "";
 
-            document.getElementById('modalDevName').innerText = settings.devName || "Fattoxov Abdulloh";
+            document.getElementById('modalDevName').innerText = settings.devName || "";
             document.getElementById('modalDevPhoto').src = settings.devPhoto || "dev.jpg";
-            document.getElementById('modalDevEducation').innerText = settings.devEducation || "Toshkent menejment va iqtisodiyot instituti Fargʻona filiali (Bakalavr)";
-            document.getElementById('modalDevPhone').innerText = settings.devPhone || "+998 90 123 45 67";
+            document.getElementById('modalDevEducation').innerText = settings.devEducation || "";
+            document.getElementById('modalDevPhone').innerText = settings.devPhone || "";
             document.getElementById('modalDevPhoneLink').href = `tel:${(settings.devPhone || "").replace(/\s+/g, '')}`;
             document.getElementById('modalDevLegalText').innerText = settings.devLegalText || "";
         }
@@ -590,550 +431,42 @@
             document.getElementById('developerModal').classList.add('hidden');
         }
 
-        function renderVendorAnalytics() {
-            if (!currentVendor) return;
-
-            const myOrders = orders.filter(o => o.items && o.items.some(i => i.store.toLowerCase() === currentVendor.storeName.toLowerCase()));
-
-            let totalSales = 0;
-            let totalItemsSold = 0;
-            const productSalesMap = {};
-
-            const vObj = vendorsList.find(v => v.storeName.toLowerCase() === currentVendor.storeName.toLowerCase());
-            const commRate = (vObj && vObj.customCommission !== undefined) ? vObj.customCommission : (settings.defaultCommission || 2.5);
-
-            myOrders.forEach(o => {
-                o.items.forEach(item => {
-                    if (item.store.toLowerCase() === currentVendor.storeName.toLowerCase()) {
-                        const itemTotal = item.price * item.qty;
-                        totalSales += itemTotal;
-                        totalItemsSold += item.qty;
-
-                        if (!productSalesMap[item.name]) {
-                            productSalesMap[item.name] = { qty: 0, sum: 0 };
-                        }
-                        productSalesMap[item.name].qty += item.qty;
-                        productSalesMap[item.name].sum += itemTotal;
-                    }
-                });
-            });
-
-            const totalCommission = Math.round((totalSales * commRate) / 100);
-
-            document.getElementById('vTotalSalesDisplay').innerText = `${totalSales.toLocaleString()} so'm`;
-            document.getElementById('vCommissionDisplay').innerText = `${totalCommission.toLocaleString()} so'm`;
-            document.getElementById('vCommRateBadge').innerText = `${commRate}% stavka`;
-            document.getElementById('vTotalItemsSoldDisplay').innerText = `${totalItemsSold} ta`;
-
-            const topContainer = document.getElementById('vendorTopProductsList');
-            if (!topContainer) return;
-
-            const sortedProducts = Object.keys(productSalesMap).map(name => ({
-                name,
-                qty: productSalesMap[name].qty,
-                sum: productSalesMap[name].sum
-            })).sort((a, b) => b.qty - a.qty);
-
-            if (sortedProducts.length === 0) {
-                topContainer.innerHTML = `<p class="text-slate-400 text-center py-2">Hali savdo amalga oshirilmadi</p>`;
-                return;
-            }
-
-            topContainer.innerHTML = '';
-            sortedProducts.forEach((p, index) => {
-                topContainer.innerHTML += `
-                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                        <div class="flex items-center gap-2">
-                            <span class="w-5 h-5 bg-emerald-600 text-white rounded-full flex items-center justify-center font-bold text-[10px]">${index + 1}</span>
-                            <span class="font-bold text-slate-800">${p.name}</span>
-                        </div>
-                        <div class="text-right">
-                            <span class="font-black text-emerald-700">${p.qty} ta sotildi</span>
-                            <p class="text-[10px] text-slate-500">${p.sum.toLocaleString()} so'm</p>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function renderAdminAnalytics() {
-            let totalSales = 0;
-            let totalCommissionSum = 0;
-            const globalProductMap = {};
-
-            orders.forEach(o => {
-                totalSales += (o.total || 0);
-
-                if (o.items) {
-                    o.items.forEach(i => {
-                        const vObj = vendorsList.find(v => v.storeName.toLowerCase() === i.store.toLowerCase());
-                        const commRate = (vObj && vObj.customCommission !== undefined) ? vObj.customCommission : (settings.defaultCommission || 2.5);
-                        
-                        const itemSum = i.price * i.qty;
-                        totalCommissionSum += (itemSum * commRate) / 100;
-
-                        if (!globalProductMap[i.name]) {
-                            globalProductMap[i.name] = { qty: 0, store: i.store, sum: 0 };
-                        }
-                        globalProductMap[i.name].qty += i.qty;
-                        globalProductMap[i.name].sum += itemSum;
-                    });
-                }
-            });
-
-            const currentCouriers = JSON.parse(localStorage.getItem('tv_couriers')) || [];
-
-            document.getElementById('admUserCount').innerText = `${usersList.length} kishi`;
-            document.getElementById('admVendorCount').innerText = `${vendorsList.length} ta`;
-            document.getElementById('admCourierCount').innerText = `${currentCouriers.length} kishi`;
-            document.getElementById('admTotalCommission').innerText = `${Math.round(totalCommissionSum).toLocaleString()} so'm`;
-
-            renderAdminVendorsList();
-            renderAdminUsersList();
-            renderAdminCouriersList();
-
-            const topContainer = document.getElementById('adminTopProductsList');
-            if (!topContainer) return;
-
-            const sortedProducts = Object.keys(globalProductMap).map(name => ({
-                name,
-                store: globalProductMap[name].store,
-                qty: globalProductMap[name].qty,
-                sum: globalProductMap[name].sum
-            })).sort((a, b) => b.qty - a.qty);
-
-            if (sortedProducts.length === 0) {
-                topContainer.innerHTML = `<p class="text-slate-400 text-center py-2">Hozircha buyurtmalar tahlili yo'q</p>`;
-                return;
-            }
-
-            topContainer.innerHTML = '';
-            sortedProducts.forEach((p, index) => {
-                topContainer.innerHTML += `
-                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                        <div>
-                            <span class="font-bold text-slate-800">${index + 1}. ${p.name}</span>
-                            <span class="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full ml-1">${p.store}</span>
-                        </div>
-                        <div class="text-right">
-                            <span class="font-black text-emerald-700">${p.qty} ta sotildi</span>
-                            <p class="text-[10px] text-slate-500">${p.sum.toLocaleString()} so'm</p>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function renderAdminVendorsList() {
-            const container = document.getElementById('adminVendorsList');
-            if (!container) return;
-
-            if (vendorsList.length === 0) {
-                container.innerHTML = `<p class="text-slate-400 text-center py-2">Sotuvchilar yo'q</p>`;
-                return;
-            }
-
-            container.innerHTML = '';
-            vendorsList.forEach((v, index) => {
-                const currentRate = v.customCommission !== undefined ? v.customCommission : (settings.defaultCommission || 2.5);
-                
-                let vSales = 0;
-                orders.forEach(o => {
-                    if (o.items) {
-                        o.items.forEach(i => {
-                            if (i.store.toLowerCase() === v.storeName.toLowerCase()) {
-                                vSales += (i.price * i.qty);
-                            }
-                        });
-                    }
-                });
-                const vComm = Math.round((vSales * currentRate) / 100);
-
-                container.innerHTML += `
-                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2">
-                        <div class="flex justify-between items-center font-bold">
-                            <span class="text-slate-800">${index + 1}. ${v.storeName}</span>
-                            <span class="text-red-600">Qarzi: ${vComm.toLocaleString()} so'm</span>
-                        </div>
-                        <div class="flex items-center justify-between text-[11px]">
-                            <span class="text-slate-500">Jami Savdosi: ${vSales.toLocaleString()} so'm</span>
-                            <div class="flex items-center gap-1">
-                                <span class="font-semibold text-slate-600">Stavka:</span>
-                                <input type="number" step="0.1" value="${currentRate}" onchange="updateVendorCommission('${v.storeName}', this.value)" class="w-14 p-1 border rounded text-center font-bold">
-                                <span>%</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function updateVendorCommission(storeName, newRate) {
-            const vObj = vendorsList.find(v => v.storeName.toLowerCase() === storeName.toLowerCase());
-            if (vObj) {
-                vObj.customCommission = parseFloat(newRate) || 0;
-                localStorage.setItem('tv_vendors', JSON.stringify(vendorsList));
-                alert(`${storeName} do'koni uchun komissiya stavkasi ${vObj.customCommission}% deb belgilandi!`);
-                renderAdminAnalytics();
-            }
-        }
-
-        function renderAdminUsersList() {
-            const container = document.getElementById('adminUsersList');
-            if (!container) return;
-            if (usersList.length === 0) {
-                container.innerHTML = `<p class="text-slate-400 text-center py-2">Mijozlar yo'q</p>`;
-                return;
-            }
-            container.innerHTML = '';
-            usersList.forEach((u, index) => {
-                container.innerHTML += `
-                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs">
-                        <div>
-                            <p class="font-bold text-slate-800">${index + 1}. ${u.name}</p>
-                            <p class="text-slate-500 text-[10px]">${u.phone}</p>
-                        </div>
-                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">Faol mijoz</span>
-                    </div>
-                `;
-            });
-        }
-
-        function renderAdminCouriersList() {
-            const container = document.getElementById('adminCouriersList');
-            if (!container) return;
-            const couriers = JSON.parse(localStorage.getItem('tv_couriers')) || [];
-
-            if (couriers.length === 0) {
-                container.innerHTML = `<p class="text-slate-400 text-center py-2">Kuryerlar yo'q</p>`;
-                return;
-            }
-            container.innerHTML = '';
-            couriers.forEach((c, index) => {
-                container.innerHTML += `
-                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs">
-                        <div>
-                            <p class="font-bold text-slate-800">${index + 1}. ${c.name} (${c.age} yosh, ${c.gender})</p>
-                            <p class="text-slate-500 text-[10px]">${c.phone}</p>
-                        </div>
-                        <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full">Kuryer</span>
-                    </div>
-                `;
-            });
-        }
-
-        function openVendorModal() {
-            if (currentVendor) openVendorPanel();
-            else document.getElementById('vendorAuthModal').classList.remove('hidden');
-        }
-
-        function closeVendorModal() {
-            document.getElementById('vendorAuthModal').classList.add('hidden');
-        }
-
-        function switchVendorAuthTab(tab) {
-            document.getElementById('vForm-login').classList.add('hidden');
-            document.getElementById('vForm-register').classList.add('hidden');
-            document.getElementById('vAuthTab-login').className = "flex-1 py-2 rounded-lg hover:bg-slate-200 text-slate-600 font-bold";
-            document.getElementById('vAuthTab-register').className = "flex-1 py-2 rounded-lg hover:bg-slate-200 text-slate-600 font-bold";
-
-            if (tab === 'login') {
-                document.getElementById('vForm-login').classList.remove('hidden');
-                document.getElementById('vAuthTab-login').className = "flex-1 py-2 rounded-lg bg-emerald-600 text-white shadow font-bold";
-            } else {
-                document.getElementById('vForm-register').classList.remove('hidden');
-                document.getElementById('vAuthTab-register').className = "flex-1 py-2 rounded-lg bg-emerald-600 text-white shadow font-bold";
-            }
-        }
-
-        function registerVendor() {
-            const storeName = document.getElementById('vRegStoreName').value.trim();
-            const password = document.getElementById('vRegPassword').value.trim();
-            if (!storeName || !password) return alert("Iltimos, do'kon nomi va parolni kiriting!");
-
-            if (vendorsList.some(v => v.storeName.toLowerCase() === storeName.toLowerCase())) {
-                return alert("Bu nomli do'kon allaqachon mavjud!");
-            }
-
-            const newVendor = { storeName, password, coords: VODIL_CENTER, customCommission: settings.defaultCommission || 2.5 };
-            vendorsList.push(newVendor);
-            localStorage.setItem('tv_vendors', JSON.stringify(vendorsList));
-
-            currentVendor = newVendor;
-            localStorage.setItem('tv_current_vendor', JSON.stringify(currentVendor));
-
-            closeVendorModal();
-            openVendorPanel();
-        }
-
-        function loginVendor() {
-            const storeName = document.getElementById('vLoginStoreName').value.trim();
-            const password = document.getElementById('vLoginPassword').value.trim();
-            const vendor = vendorsList.find(v => v.storeName.toLowerCase() === storeName.toLowerCase() && v.password === password);
-
-            if (vendor) {
-                currentVendor = vendor;
-                localStorage.setItem('tv_current_vendor', JSON.stringify(currentVendor));
-                closeVendorModal();
-                openVendorPanel();
-            } else {
-                alert("Do'kon nomi yoki parol noto'g'ri!");
-            }
-        }
-
-        function openVendorPanel() {
-            document.getElementById('section-client').classList.add('hidden');
-            document.getElementById('section-admin').classList.add('hidden');
-            document.getElementById('section-vendor-panel').classList.remove('hidden');
-            document.getElementById('vPanelStoreName').innerText = currentVendor.storeName;
-            renderVendorProducts();
-            renderVendorAnalytics();
-        }
-
-        function closeVendorPanel() {
-            document.getElementById('section-vendor-panel').classList.add('hidden');
-            document.getElementById('section-client').classList.remove('hidden');
-        }
-
-        function addNewVendorProduct(e) {
-            e.preventDefault();
-            const name = document.getElementById('vPName').value;
-            const price = parseInt(document.getElementById('vPPrice').value);
-            const imgs = selectedBase64Images.length > 0 ? [...selectedBase64Images] : ["https://via.placeholder.com/500"];
-
-            const newProduct = { 
-                id: Date.now(), 
-                name, 
-                price, 
-                store: currentVendor.storeName, 
-                storeCoords: currentVendor.coords || VODIL_CENTER,
-                images: imgs 
-            };
-            products.push(newProduct);
-            localStorage.setItem('tv_products', JSON.stringify(products));
-
-            alert("Mahsulot do'konga qo'shildi!");
-            document.getElementById('vPName').value = '';
-            document.getElementById('vPPrice').value = '';
-            selectedBase64Images = [];
-            renderImagePreviews();
-
-            renderVendorProducts();
-            renderProducts(products);
-        }
-
-        function renderVendorProducts() {
-            const container = document.getElementById('vendorProductsList');
-            if (!container || !currentVendor) return;
-
-            const myProds = products.filter(p => p.store.toLowerCase() === currentVendor.storeName.toLowerCase());
-            if (myProds.length === 0) {
-                container.innerHTML = `<p class="text-slate-400 text-center py-4">Sizda hali mahsulotlar yo'q</p>`;
-                return;
-            }
-
-            container.innerHTML = '';
-            myProds.forEach(p => {
-                const mainImg = p.images ? p.images[0] : p.image;
-                container.innerHTML += `
-                    <div class="flex justify-between items-center border p-2.5 rounded-xl bg-slate-50 text-xs">
-                        <div class="flex items-center gap-2">
-                            <img src="${mainImg}" class="w-10 h-10 object-cover rounded-lg">
-                            <div>
-                                <p class="font-bold text-slate-800">${p.name}</p>
-                                <p class="text-emerald-700 font-bold">${p.price.toLocaleString()} so'm</p>
-                            </div>
-                        </div>
-                        <button onclick="deleteProduct(${p.id})" class="text-red-500 hover:text-red-700 p-2"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
-            });
-        }
-
-        function deleteProduct(id) {
-            if (confirm("Mahsulotni o'chirmoqchimisiz?")) {
-                products = products.filter(p => p.id !== id);
-                localStorage.setItem('tv_products', JSON.stringify(products));
-                renderVendorProducts();
-                renderProducts(products);
-            }
-        }
-
         function renderProducts(items) {
             const grid = document.getElementById('productsGrid');
             if (!grid) return;
             grid.innerHTML = '';
+            if (items.length === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center text-slate-400 py-6 text-xs">Hozircha mahsulotlar yo'q</p>`;
+                return;
+            }
             items.forEach(p => {
                 const mainImg = p.images ? p.images[0] : p.image;
                 grid.innerHTML += `
-                    <div class="bg-white border border-slate-200 rounded-2xl p-2.5 shadow-sm hover:shadow-md transition flex flex-col justify-between group cursor-pointer" onclick="openProductDetailModal(${p.id})">
+                    <div class="bg-white border border-slate-200 rounded-2xl p-2.5 shadow-sm hover:shadow-md transition flex flex-col justify-between group cursor-pointer">
                         <div>
                             <div class="relative overflow-hidden rounded-xl mb-2 bg-slate-100">
-                                <img src="${mainImg}" class="w-full h-28 object-cover group-hover:scale-105 transition duration-300">
+                                <img src="${mainImg}" class="w-full h-28 object-cover">
                             </div>
-                            <span class="text-[9px] bg-emerald-50 text-emerald-800 font-bold px-2 py-0.5 rounded-full border border-emerald-200">${p.store}</span>
+                            <span class="text-[9px] bg-emerald-50 text-emerald-800 font-bold px-2 py-0.5 rounded-full">${p.store}</span>
                             <h3 class="font-bold text-xs mt-1.5 text-slate-800 line-clamp-1">${p.name}</h3>
                         </div>
-                        <div class="mt-2 flex items-center justify-between" onclick="event.stopPropagation()">
+                        <div class="mt-2 flex items-center justify-between">
                             <span class="text-xs font-black text-emerald-700">${p.price.toLocaleString()} so'm</span>
-                            <button onclick="addToCart(${p.id})" class="bg-emerald-600 hover:bg-emerald-700 text-white w-7 h-7 rounded-lg text-xs font-bold shadow transition active:scale-90"><i class="fa-solid fa-plus"></i></button>
                         </div>
                     </div>
                 `;
             });
-        }
-
-        function openProductDetailModal(id) {
-            const p = products.find(x => x.id === id);
-            if (!p) return;
-
-            const modal = document.getElementById('productDetailModal');
-            const mainImg = document.getElementById('pDetailMainImage');
-            const thumbsContainer = document.getElementById('pDetailGalleryThumbs');
-
-            const imgs = p.images && p.images.length > 0 ? p.images : [p.image || "https://via.placeholder.com/500"];
-
-            mainImg.src = imgs[0];
-            document.getElementById('pDetailTitle').innerText = p.name;
-            document.getElementById('pDetailStore').innerText = p.store;
-            document.getElementById('pDetailPrice').innerText = `${p.price.toLocaleString()} so'm`;
-
-            thumbsContainer.innerHTML = '';
-            if (imgs.length > 1) {
-                imgs.forEach((imgSrc) => {
-                    thumbsContainer.innerHTML += `<img src="${imgSrc}" onclick="setDetailMainImage('${imgSrc}')" class="w-10 h-10 object-cover rounded-xl border-2 border-white/80 cursor-pointer shadow">`;
-                });
-            }
-
-            document.getElementById('pDetailAddToCartBtn').onclick = function() {
-                addToCart(p.id);
-                closeProductDetailModal();
-            };
-
-            modal.classList.remove('hidden');
-        }
-
-        function setDetailMainImage(src) {
-            document.getElementById('pDetailMainImage').src = src;
-        }
-
-        function closeProductDetailModal() {
-            document.getElementById('productDetailModal').classList.add('hidden');
-        }
-
-        function handleImageSelection(event) {
-            const files = Array.from(event.target.files);
-            if (files.length + selectedBase64Images.length > 3) {
-                alert("Maksimal 3 tagacha rasm yuklashingiz mumkin!");
-                return;
-            }
-
-            files.forEach(file => {
-                if (selectedBase64Images.length >= 3) return;
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    selectedBase64Images.push(e.target.result);
-                    renderImagePreviews();
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function renderImagePreviews() {
-            const container = document.getElementById('imagePreviewContainer');
-            const badge = document.getElementById('imgCountBadge');
-            if (badge) badge.innerText = `${selectedBase64Images.length}/3 rasm tanlandi`;
-            if (!container) return;
-
-            container.innerHTML = '';
-            selectedBase64Images.forEach((imgSrc, index) => {
-                container.innerHTML += `
-                    <div class="relative w-16 h-16 rounded-xl border overflow-hidden flex-shrink-0 shadow-sm">
-                        <img src="${imgSrc}" class="w-full h-full object-cover">
-                        <button type="button" onclick="removeSelectedImage(${index})" class="absolute top-0.5 right-0.5 bg-red-600 text-white w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold">×</button>
-                    </div>
-                `;
-            });
-        }
-
-        function removeSelectedImage(index) {
-            selectedBase64Images.splice(index, 1);
-            renderImagePreviews();
-        }
-
-        function addToCart(id) {
-            const p = products.find(x => x.id === id);
-            if (!p) return;
-            const ex = cart.find(x => x.id === id);
-            if (ex) ex.qty++; else cart.push({ ...p, qty: 1 });
-            updateCartUI();
-        }
-
-        function updateCartUI() {
-            const bar = document.getElementById('cartBar');
-            if (!bar) return;
-            const tq = cart.reduce((s, i) => s + i.qty, 0);
-            const tp = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-            if (tq > 0) {
-                bar.classList.remove('hidden');
-                document.getElementById('cartCount').innerText = tq;
-                document.getElementById('cartTotal').innerText = `${tp.toLocaleString()} so'm`;
-            } else {
-                bar.classList.add('hidden');
-            }
-        }
-
-        function searchProducts() {
-            const q = document.getElementById('searchInput').value.toLowerCase();
-            renderProducts(products.filter(p => p.name.toLowerCase().includes(q) || p.store.toLowerCase().includes(q)));
-        }
-
-        function submitOrder(e) {
-            e.preventDefault();
-            const address = document.getElementById('custAddress').value;
-            orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
-
-            const storesList = [...new Set(cart.map(item => item.store))].join(', ');
-            const firstStoreCoords = cart.length > 0 && cart[0].storeCoords ? cart[0].storeCoords : VODIL_CENTER;
-
-            const newOrder = {
-                id: Date.now(),
-                customer: currentUser.name,
-                phone: currentUser.phone,
-                address: address,
-                stores: storesList,
-                storeCoords: firstStoreCoords,
-                coords: userCoords,
-                distanceKM: calculatedDistance,
-                deliveryFee: calculatedDeliveryFee,
-                items: [...cart],
-                total: cart.reduce((s, i) => s + (i.price * i.qty), 0),
-                status: 'Kutilmoqda'
-            };
-
-            orders.push(newOrder);
-            localStorage.setItem('tv_orders', JSON.stringify(orders));
-
-            alert("Buyurtmangiz qabul qilindi!");
-            cart = [];
-            updateCartUI();
-            closeCheckoutModal();
         }
 
         function checkAdminPassword() {
             const pass = prompt("Bosh Admin parolini kiriting:");
-            const currentPass = settings.adminPass || "tezvodil2026";
-            if (pass === currentPass) openAdminPanel();
+            if (pass === (settings.adminPass || "tezvodil2026")) openAdminPanel();
             else if (pass !== null) alert("Parol noto'g'ri!");
         }
 
         function openAdminPanel() {
-            closeProfileModal();
-            closeVendorPanel();
             document.getElementById('section-client').classList.add('hidden');
             document.getElementById('section-admin').classList.remove('hidden');
-            renderAdminOrders();
-            renderAdminAnalytics();
         }
 
         function closeAdminPanel() {
@@ -1150,174 +483,27 @@
             document.getElementById(`admTab-${tab}`).className = "px-3 py-2 rounded-xl bg-emerald-600 text-white shadow whitespace-nowrap";
         }
 
-        function renderAdminOrders() {
-            const container = document.getElementById('adminOrdersList');
-            if (!container) return;
-            if (orders.length === 0) {
-                container.innerHTML = `<p class="text-slate-400 text-center py-4">Buyurtmalar yo'q</p>`;
-                return;
-            }
-            container.innerHTML = '';
-            orders.forEach(o => {
-                container.innerHTML += `
-                    <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm space-y-1 text-xs">
-                        <div class="flex justify-between font-bold border-b pb-1">
-                            <span>👤 ${o.customer} (${o.phone})</span>
-                            <span class="text-emerald-600">${o.status}</span>
-                        </div>
-                        <p>🏪 Olish do'koni: ${o.stores || 'Vodil Do\'koni'}</p>
-                        <p>📍 Manzil: ${o.address} (${o.distanceKM} km)</p>
-                        <p>💰 Summa: ${o.total.toLocaleString()} so'm | Dostavka: ${o.deliveryFee} so'm</p>
-                    </div>
-                `;
-            });
-        }
-
         function saveSettings() {
-            settings.appName = document.getElementById('setAppName').value.trim() || "TezVodil";
-            settings.appSub = document.getElementById('setAppSub').value.trim() || "Vodil bo'ylab tezkor dostavka";
-            settings.adminPass = document.getElementById('setAdminPass').value.trim() || "tezvodil2026";
+            settings.appName = document.getElementById('setAppName').value.trim();
+            settings.appSub = document.getElementById('setAppSub').value.trim();
+            settings.adminPass = document.getElementById('setAdminPass').value.trim();
             settings.defaultCommission = parseFloat(document.getElementById('setDefaultCommission').value) || 2.5;
             settings.orderRate = parseInt(document.getElementById('setOrderRate').value) || 4000;
             settings.extraRate = parseInt(document.getElementById('setExtraRate').value) || 1600;
 
-            settings.devName = document.getElementById('setDevName').value.trim() || "Fattoxov Abdulloh";
-            settings.devPhoto = document.getElementById('setDevPhoto').value.trim() || "dev.jpg";
-            settings.devEducation = document.getElementById('setDevEducation').value.trim() || "Toshkent menejment va iqtisodiyot instituti Fargʻona filiali (Bakalavr)";
-            settings.devPhone = document.getElementById('setDevPhone').value.trim() || "+998 90 123 45 67";
-            settings.devLegalText = document.getElementById('setDevLegalText').value.trim();
+            settings.devName = document.getElementById('setDevName').value.trim();
+            settings.devPhoto = document.getElementById('setDevPhoto').value.trim();
+            settings.devEducation = document.getElementById('setDevEducation').value.trim();
+            settings.devPhone = document.getElementById('setDevPhone').value.trim();
+            settings.devLegalText = document.getElementById('setDevLegalTest').value.trim();
 
             localStorage.setItem('tv_settings', JSON.stringify(settings));
             applySettingsToUI();
-            alert("Barcha sozlamalar va ilova ma'lumotlari saqlandi!");
+            alert("Sozlamalar saqlandi!");
         }
 
-        function openProfileModal() {
-            document.getElementById('profileModal').classList.remove('hidden');
-            if (currentUser) {
-                document.getElementById('profileFormView').classList.add('hidden');
-                document.getElementById('profileInfoView').classList.remove('hidden');
-                document.getElementById('dispUserName').innerText = currentUser.name;
-                document.getElementById('dispUserPhone').innerText = currentUser.phone;
-                renderUserOrdersHistory();
-            } else {
-                document.getElementById('profileFormView').classList.remove('hidden');
-                document.getElementById('profileInfoView').classList.add('hidden');
-            }
-        }
-
-        function closeProfileModal() {
-            document.getElementById('profileModal').classList.add('hidden');
-        }
-
-        function saveProfile() {
-            const name = document.getElementById('userNameInput').value.trim();
-            const phone = document.getElementById('userPhoneInput').value.trim();
-            if (!name || !phone) return alert("Ismingiz va telefon raqamingizni kiriting!");
-            currentUser = { name, phone, joinedDate: new Date().toLocaleDateString() };
-            localStorage.setItem('tv_current_user', JSON.stringify(currentUser));
-            if (!usersList.some(u => u.phone === phone)) {
-                usersList.push(currentUser);
-                localStorage.setItem('tv_users', JSON.stringify(usersList));
-            }
-            updateProfileUI();
-            openProfileModal();
-        }
-
-        function logoutProfile() {
-            currentUser = null;
-            localStorage.removeItem('tv_current_user');
-            updateProfileUI();
-            closeProfileModal();
-        }
-
-        function updateProfileUI() {
-            const btnText = document.getElementById('bottomProfileText');
-            if (btnText) btnText.innerText = currentUser ? currentUser.name.split(' ')[0] : "Profil";
-        }
-
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371;
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-            return parseFloat((R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))).toFixed(1));
-        }
-
-        function calculateDeliveryFee(storeToCustomerKm) {
-            const baseDistance = Math.max(storeToCustomerKm, 1.0);
-            return Math.round((baseDistance * settings.orderRate) + (1.0 * settings.extraRate));
-        }
-
-        function initMap() {
-            if (map) return;
-            map = L.map('map').setView([VODIL_CENTER.lat, VODIL_CENTER.lng], 14);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-            marker = L.marker([VODIL_CENTER.lat, VODIL_CENTER.lng], { draggable: true }).addTo(map);
-
-            marker.on('dragend', (e) => updateLoc(e.target.getLatLng().lat, e.target.getLatLng().lng));
-            map.on('click', (e) => {
-                if (marker) marker.setLatLng(e.latlng);
-                updateLoc(e.latlng.lat, e.latlng.lng);
-            });
-        }
-
-        function updateLoc(lat, lng) {
-            userCoords = { lat, lng };
-            calculatedDistance = calculateDistance(VODIL_CENTER.lat, VODIL_CENTER.lng, lat, lng);
-            calculatedDeliveryFee = calculateDeliveryFee(calculatedDistance);
-
-            document.getElementById('distDisplay').innerText = `${calculatedDistance} km`;
-            document.getElementById('deliveryPriceDisplay').innerText = `${calculatedDeliveryFee.toLocaleString()} so'm`;
-        }
-
-        function getCurrentLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    updateLoc(pos.coords.latitude, pos.coords.longitude);
-                    if (map && marker) {
-                        map.setView([pos.coords.latitude, pos.coords.longitude], 16);
-                        marker.setLatLng([pos.coords.latitude, pos.coords.longitude]);
-                    }
-                });
-            }
-        }
-
-        function openCheckoutModal() {
-            if (!currentUser) {
-                alert("Buyurtma berish uchun avval Profil bo'limidan ismingizni kiriting!");
-                openProfileModal();
-                return;
-            }
-            document.getElementById('checkoutModal').classList.remove('hidden');
-            setTimeout(() => { initMap(); if (map) map.invalidateSize(); }, 250);
-        }
-
-        function closeCheckoutModal() {
-            document.getElementById('checkoutModal').classList.add('hidden');
-        }
-
-        function renderUserOrdersHistory() {
-            const container = document.getElementById('userOrdersHistory');
-            if (!currentUser || !container) return;
-            const myOrders = orders.filter(o => o.phone === currentUser.phone);
-            if (myOrders.length === 0) {
-                container.innerHTML = `<p class="text-slate-400">Sizda hali buyurtmalar yo'q</p>`;
-                return;
-            }
-            container.innerHTML = '';
-            myOrders.forEach(o => {
-                container.innerHTML += `
-                    <div class="border p-2.5 rounded-xl space-y-1 bg-slate-50 text-[11px]">
-                        <div class="flex justify-between font-bold">
-                            <span>Jami: ${o.total.toLocaleString()} so'm</span>
-                            <span class="text-emerald-600">${o.status}</span>
-                        </div>
-                        <p class="text-slate-500">Manzil: ${o.address}</p>
-                    </div>
-                `;
-            });
-        }
+        function openProfileModal() { alert("Profil"); }
+        function openVendorModal() { alert("Sotuvchi paneli"); }
     </script>
 </body>
 </html>
