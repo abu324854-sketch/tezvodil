@@ -5,17 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TezVodil - Onlayn Do'kon</title>
     
-    <!-- PWA va Ilova Logotipi (Favicon / App Icon) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23059669'/><path d='M55 15 L25 55 L48 55 L40 85 L75 45 L52 45 Z' fill='%23FACC15'/></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23059669'/><path d='M55 15 L25 55 L48 55 L40 85 L75 45 L52 45 Z' fill='%23FACC15'/></svg>">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#059669">
 
-    <!-- Frameworklar -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Leaflet Xarita -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -79,7 +75,6 @@
                 <button onclick="closeVendorPanel()" class="bg-emerald-700 hover:bg-emerald-600 px-3 py-1.5 rounded-xl text-xs font-bold transition">Chiqish</button>
             </div>
 
-            <!-- Mahsulot Qo'shish Formasi -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
                 <h3 class="font-bold text-xs text-slate-800 border-b pb-2">Do'konga Yangi Mahsulot Qo'shish</h3>
                 <form onsubmit="addNewVendorProduct(event)" class="space-y-3 text-xs">
@@ -110,7 +105,6 @@
                 </form>
             </div>
 
-            <!-- Sotuvchining O'z Mahsulotlari Ro'yxati -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
                 <h3 class="font-bold text-xs text-slate-800 border-b pb-2">Mening Mahsulotlarim</h3>
                 <div id="vendorProductsList" class="space-y-2"></div>
@@ -158,21 +152,17 @@
 
     </main>
 
-    <!-- MAHSULOT BAFURSA KO'RISH VA RASM GALEREYASI MODALI -->
+    <!-- MAHSULOT BAFURSA KO'RISH MODALI -->
     <div id="productDetailModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center hidden p-0 sm:p-4 transition-all">
         <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl space-y-0 max-h-[90vh] flex flex-col">
-            <!-- Asosiy Rasm va Galereya -->
             <div class="relative bg-slate-900 w-full h-72 sm:h-80 flex items-center justify-center overflow-hidden">
                 <img id="pDetailMainImage" src="" class="w-full h-full object-cover transition-all duration-300">
-                
                 <button onclick="closeProductDetailModal()" class="absolute top-3 right-3 bg-black/50 text-white w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
-
                 <div id="pDetailGalleryThumbs" class="absolute bottom-3 left-0 right-0 flex justify-center gap-2 px-3"></div>
             </div>
 
-            <!-- Ma'lumot va Zakaz Tugmasi -->
             <div class="p-5 space-y-4 flex-1 flex flex-col justify-between">
                 <div class="space-y-2">
                     <div class="flex justify-between items-start">
@@ -313,7 +303,6 @@
         </div>
     </div>
 
-    <!-- INLINE JAVASCRIPT -->
     <script>
         const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
         let map = null, marker = null;
@@ -340,7 +329,6 @@
             updateProfileUI();
         });
 
-        // MAHSULOT MODALINI OCHISH VA RASMLARNI KORISH
         function openProductDetailModal(id) {
             const p = products.find(x => x.id === id);
             if (!p) return;
@@ -358,10 +346,8 @@
 
             thumbsContainer.innerHTML = '';
             if (imgs.length > 1) {
-                imgs.forEach((imgSrc, idx) => {
-                    thumbsContainer.innerHTML += `
-                        <img src="${imgSrc}" onclick="setDetailMainImage('${imgSrc}')" class="w-10 h-10 object-cover rounded-xl border-2 border-white/80 cursor-pointer shadow">
-                    `;
+                imgs.forEach((imgSrc) => {
+                    thumbsContainer.innerHTML += `<img src="${imgSrc}" onclick="setDetailMainImage('${imgSrc}')" class="w-10 h-10 object-cover rounded-xl border-2 border-white/80 cursor-pointer shadow">`;
                 });
             }
 
@@ -381,7 +367,6 @@
             document.getElementById('productDetailModal').classList.add('hidden');
         }
 
-        // KAMERA VA FAYLDAN RASM OLISH (MAX 3)
         function handleImageSelection(event) {
             const files = Array.from(event.target.files);
             if (files.length + selectedBase64Images.length > 3) {
@@ -422,7 +407,6 @@
             renderImagePreviews();
         }
 
-        // SOTUVCHI PANELI
         function openVendorModal() {
             if (currentVendor) openVendorPanel();
             else document.getElementById('vendorAuthModal').classList.remove('hidden');
@@ -552,7 +536,6 @@
             }
         }
 
-        // MAHSULOTLAR
         function renderProducts(items) {
             const grid = document.getElementById('productsGrid');
             if (!grid) return;
@@ -604,17 +587,21 @@
             renderProducts(products.filter(p => p.name.toLowerCase().includes(q) || p.store.toLowerCase().includes(q)));
         }
 
-        // BUYURTMA SUBMIT
+        // BUYURTMA SUBMIT (SOTUVCHI / DO'KON NOMI BILAN BIRGA SAQLAYMIZ)
         function submitOrder(e) {
             e.preventDefault();
             const address = document.getElementById('custAddress').value;
             orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
+
+            // Savatdagi mahsulotlardan qaysi do'konlardan olinishini ajratib olamiz
+            const storesList = [...new Set(cart.map(item => item.store))].join(', ');
 
             const newOrder = {
                 id: Date.now(),
                 customer: currentUser.name,
                 phone: currentUser.phone,
                 address: address,
+                stores: storesList, // Olish joyi (Do'konlar)
                 coords: userCoords,
                 distanceKM: calculatedDistance,
                 deliveryFee: calculatedDeliveryFee,
@@ -626,13 +613,12 @@
             orders.push(newOrder);
             localStorage.setItem('tv_orders', JSON.stringify(orders));
 
-            alert("Buyurtmangiz muvaffaqiyatli qabul qilindi!");
+            alert("Buyurtmangiz qabul qilindi!");
             cart = [];
             updateCartUI();
             closeCheckoutModal();
         }
 
-        // PROFIL VA ADMIN
         function checkAdminPassword() {
             const pass = prompt("Bosh Admin parolini kiriting:");
             if (pass === "tezvodil2026") openAdminPanel();
@@ -699,6 +685,7 @@
                             <span>👤 ${o.customer} (${o.phone})</span>
                             <span class="text-emerald-600">${o.status}</span>
                         </div>
+                        <p>🏪 Olish do'koni: ${o.stores || 'Vodil Do\'koni'}</p>
                         <p>📍 Manzil: ${o.address} (${o.distanceKM} km)</p>
                         <p>💰 Summa: ${o.total.toLocaleString()} so'm | Dostavka: ${o.deliveryFee} so'm</p>
                     </div>
@@ -757,7 +744,6 @@
             if (btnText) btnText.innerText = currentUser ? currentUser.name.split(' ')[0] : "Profil";
         }
 
-        // XARITA VA MASOFA
         function calculateDistance(lat1, lon1, lat2, lon2) {
             const R = 6371;
             const dLat = (lat2 - lat1) * Math.PI / 180;
