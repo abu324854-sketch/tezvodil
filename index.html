@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TezVodil - Onlayn Do'kon va Sotuvchi</title>
+    <title>TezVodil - Onlayn Do'kon</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#059669">
@@ -25,28 +25,24 @@
                 </div>
                 <div>
                     <h1 class="text-lg font-extrabold tracking-wide">TezVodil</h1>
-                    <p class="text-[10px] text-emerald-100 font-medium">Mijoz & Do'kon Paneli</p>
+                    <p class="text-[10px] text-emerald-100 font-medium">Vodil bo'ylab tezkor dostavka</p>
                 </div>
             </div>
-            <a href="courier.html" class="bg-slate-900 text-emerald-400 font-bold text-xs px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
-                <i class="fa-solid fa-motorcycle"></i> Kuryer Ilovasi
-            </a>
+            
+            <div class="flex items-center gap-2">
+                <button onclick="openProfileModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3 py-2 rounded-xl shadow flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-user"></i> <span id="profileBtnText">Profil</span>
+                </button>
+                <a href="courier.html" class="bg-slate-900 text-emerald-400 font-bold text-xs px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
+                    <i class="fa-solid fa-motorcycle"></i> Kuryer
+                </a>
+            </div>
         </div>
     </header>
 
     <main class="max-w-2xl mx-auto p-4 space-y-4">
 
-<!-- REJIMNI TANLASH -->
-        <div class="bg-white p-1 rounded-2xl shadow-sm border flex gap-1 text-xs font-bold text-gray-500">
-            <button onclick="switchMode('client')" id="btn-client" class="flex-1 py-2.5 rounded-xl text-center bg-emerald-600 text-white shadow transition">
-                <i class="fa-solid fa-bag-shopping mr-1"></i> Xarid qilish (Mijoz)
-            </button>
-            <button onclick="switchMode('vendor')" id="btn-vendor" class="flex-1 py-2.5 rounded-xl text-center hover:bg-gray-50 transition">
-                <i class="fa-solid fa-store mr-1"></i> Magazinim (Sotuvchi)
-            </button>
-        </div>
-
-        <!-- 1. MIJOZ QISMI -->
+        <!-- ASOSIY EKRAN: FAQAT TOVARLAR VA QIDIRUV -->
         <div id="section-client" class="space-y-4">
             <!-- Qidiruv -->
             <div class="relative">
@@ -60,47 +56,102 @@
                 <h2 class="text-sm font-bold text-gray-700 mb-3">Vodil Do'konlari Mahsulotlari</h2>
                 <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
             </div>
+        </div>
 
-            <!-- Buyurtmalarim va Timeline Holati -->
-            <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
-                <h2 class="font-bold text-sm text-gray-800 border-b pb-2"><i class="fa-solid fa-clock-rotate-left text-emerald-600 mr-1"></i> Mening Buyurtmalarim</h2>
-                <div id="clientOrdersList" class="space-y-3 text-xs">
-                    <p class="text-gray-400 text-center py-2">Hozircha faol buyurtmalar yo'q</p>
+        <!-- ADMIN PANEL (Yashirin rejim, profildan yoki maxsus tugmadan ochiladi) -->
+        <div id="section-admin" class="space-y-4 hidden">
+            <div class="bg-emerald-800 text-white p-4 rounded-2xl flex justify-between items-center shadow">
+                <h2 class="font-extrabold text-sm"><i class="fa-solid fa-shield-halved mr-1"></i> Admin Boshqaruv Paneli</h2>
+                <button onclick="closeAdminPanel()" class="bg-emerald-700 hover:bg-emerald-600 px-3 py-1 rounded-xl text-xs font-bold">Chiqish</button>
+            </div>
+
+            <!-- Admin Navigatsiyasi -->
+            <div class="bg-white p-2 rounded-2xl shadow-sm border flex gap-1 text-xs font-bold text-gray-600">
+                <button onclick="switchAdminTab('orders')" id="admTab-orders" class="flex-1 py-2 rounded-xl bg-emerald-600 text-white shadow">Buyurtmalar</button>
+                <button onclick="switchAdminTab('users')" id="admTab-users" class="flex-1 py-2 rounded-xl hover:bg-gray-100">Mijozlar (<span id="userCount">0</span>)</button>
+                <button onclick="switchAdminTab('products')" id="admTab-products" class="flex-1 py-2 rounded-xl hover:bg-gray-100">Mahsulotlar</button>
+                <button onclick="switchAdminTab('settings')" id="admTab-settings" class="flex-1 py-2 rounded-xl hover:bg-gray-100">Sozlamalar</button>
+            </div>
+
+            <!-- 1. Buyurtmalar Bo'limi -->
+            <div id="admContent-orders" class="space-y-3">
+                <h3 class="font-bold text-xs text-gray-500 uppercase">Barcha Kelgan Buyurtmalar</h3>
+                <div id="adminOrdersList" class="space-y-2"></div>
+            </div>
+
+            <!-- 2. Foydalanuvchilar (Mijozlar) Bo'limi -->
+            <div id="admContent-users" class="space-y-3 hidden">
+                <h3 class="font-bold text-xs text-gray-500 uppercase">Tizimga Kirgan Barcha Mijozlar</h3>
+                <div id="adminUsersList" class="space-y-2"></div>
+            </div>
+
+            <!-- 3. Mahsulotlar Bo'limi (Qo'shish/O'chirish) -->
+            <div id="admContent-products" class="space-y-3 hidden">
+                <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
+                    <h3 class="font-bold text-xs text-gray-800 border-b pb-2">Yangi Mahsulot Qo'shish</h3>
+                    <form onsubmit="addNewProduct(event)" class="space-y-2.5 text-xs">
+                        <input type="text" id="vName" required placeholder="Mahsulot nomi" class="w-full p-2.5 border rounded-xl">
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" id="vPrice" required placeholder="Narxi (so'm)" class="w-full p-2.5 border rounded-xl">
+                            <input type="text" id="vStore" required placeholder="Do'kon nomi" class="w-full p-2.5 border rounded-xl">
+                        </div>
+                        <input type="url" id="vImage" required placeholder="Rasm URL havolasi" class="w-full p-2.5 border rounded-xl">
+                        <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-2.5 rounded-xl">Qo'shish</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 4. Sozlamalar Bo'limi -->
+            <div id="admContent-settings" class="space-y-3 hidden">
+                <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3 text-xs">
+                    <h3 class="font-bold text-sm text-gray-800 border-b pb-2">Dostavka va Tizim Sozlamalari</h3>
+                    <div>
+                        <label class="block font-semibold mb-1">Zakas qilingan km narxi (so'm):</label>
+                        <input type="number" id="setOrderRate" value="4000" class="w-full p-2.5 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Tashqari km narxi (so'm):</label>
+                        <input type="number" id="setExtraRate" value="1600" class="w-full p-2.5 border rounded-xl">
+                    </div>
+                    <button onclick="saveSettings()" class="w-full bg-slate-900 text-white font-bold py-2.5 rounded-xl">Sozlamalarni Saqlash</button>
                 </div>
             </div>
         </div>
 
-        <!-- 2. SOTUVCHI / DO'KON EGASI QISMI -->
-        <div id="section-vendor" class="space-y-4 hidden">
-            <div class="bg-white p-5 rounded-2xl border shadow-sm space-y-4">
-                <h2 class="font-bold text-sm text-gray-800 border-b pb-2"><i class="fa-solid fa-shop text-emerald-600 mr-1"></i> Do'konga Mahsulot Qo'shish</h2>
-                <form onsubmit="addNewProduct(event)" class="space-y-3 text-xs">
-                    <div>
-                        <label class="block font-semibold mb-1">Mahsulot Nomi</label>
-                        <input type="text" id="vName" required placeholder="Masalan: Non 3000 so'm" class="w-full p-2.5 border rounded-xl">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block font-semibold mb-1">Narxi (so'm)</label>
-                            <input type="number" id="vPrice" required placeholder="5000" class="w-full p-2.5 border rounded-xl">
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-1">Do'koningiz Nomi</label>
-                            <input type="text" id="vStore" required placeholder="Fayz Market" class="w-full p-2.5 border rounded-xl">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1">Rasm Havolasi (URL)</label>
-                        <input type="url" id="vImage" required placeholder="https://..." class="w-full p-2.5 border rounded-xl">
-                    </div>
-                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow">
-                        Katalogga Qo'shish
-                    </button>
-                </form>
+    </main>
+
+    <!-- PROFIL MODALI (Ism va Buyurtmalarni ko'rish) -->
+    <div id="profileModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-bold text-gray-800 text-base">Foydalanuvchi Profili</h3>
+                <button onclick="closeProfileModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <div id="profileFormView" class="space-y-3 text-xs">
+                <p class="text-gray-500">Iltimos, ilovadan foydalanish uchun o'z ma'lumotlaringizni kiriting:</p>
+                <input type="text" id="userNameInput" placeholder="Ism Familiyangiz" class="w-full p-3 border rounded-xl">
+                <input type="tel" id="userPhoneInput" placeholder="Telefon raqamingiz (+998...)" class="w-full p-3 border rounded-xl">
+                <button onclick="saveProfile()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">Saqlash va Kirish</button>
+            </div>
+
+            <div id="profileInfoView" class="space-y-3 text-xs hidden">
+                <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-200">
+                    <p class="font-bold text-emerald-900 text-sm" id="dispUserName"></p>
+                    <p class="text-emerald-700" id="dispUserPhone"></p>
+                </div>
+
+                <h4 class="font-bold text-gray-700 pt-2">Mening Buyurtmalarim:</h4>
+                <div id="userOrdersHistory" class="space-y-2 max-h-40 overflow-y-auto"></div>
+
+                <div class="pt-2 border-t flex gap-2">
+                    <button onclick="logoutProfile()" class="bg-red-50 text-red-600 font-bold py-2 px-4 rounded-xl flex-1">Hisobdan chiqish</button>
+                    <!-- Admin panelga kirish maxsus tugmasi -->
+                    <button onclick="openAdminPanel()" class="bg-slate-900 text-white font-bold py-2 px-4 rounded-xl flex-1">⚙️ Admin Panel</button>
+                </div>
             </div>
         </div>
-
-    </main>
+    </div>
 
     <!-- FLOATING CART -->
     <div id="cartBar" class="fixed bottom-4 left-4 right-4 max-w-2xl mx-auto bg-emerald-600 text-white rounded-2xl p-3 shadow-2xl flex justify-between items-center hidden z-30">
@@ -141,10 +192,8 @@
             </div>
 
             <form onsubmit="submitOrder(event)" class="space-y-2.5 text-xs">
-                <input type="text" id="custName" required placeholder="Ismingiz" class="w-full p-2.5 border rounded-xl">
-                <input type="tel" id="custPhone" required placeholder="Telefon raqam (+998...)" class="w-full p-2.5 border rounded-xl">
-                <input type="text" id="custAddress" required placeholder="Mo'ljal" class="w-full p-2.5 border rounded-xl">
-                <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">Tasdiqlash</button>
+                <input type="text" id="custAddress" required placeholder="Aniq mo'ljal / ko'cha nomi" class="w-full p-2.5 border rounded-xl">
+                <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">Buyurtmani Tasdiqlash</button>
             </form>
         </div>
     </div>
