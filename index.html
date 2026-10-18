@@ -30,7 +30,6 @@
             </div>
             
             <div class="flex items-center gap-2">
-                <!-- PROFIL TUGMASI -->
                 <button onclick="openProfileModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3 py-2 rounded-xl shadow flex items-center gap-1.5 transition">
                     <i class="fa-solid fa-user"></i> <span id="profileBtnText">Profil</span>
                 </button>
@@ -129,7 +128,7 @@
                 <button onclick="saveProfile()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">Saqlash va Kirish</button>
                 
                 <div class="pt-3 border-t text-center">
-                    <button onclick="openAdminPanel()" class="text-slate-800 font-bold underline hover:text-emerald-600">
+                    <button onclick="checkAdminPassword()" class="text-slate-800 font-bold underline hover:text-emerald-600">
                         ⚙️ Admin Bo'lib Kirish
                     </button>
                 </div>
@@ -146,7 +145,7 @@
 
                 <div class="pt-2 border-t flex gap-2">
                     <button onclick="logoutProfile()" class="bg-red-50 text-red-600 font-bold py-2 px-4 rounded-xl flex-1">Chiqish</button>
-                    <button onclick="openAdminPanel()" class="bg-slate-900 text-white font-bold py-2 px-4 rounded-xl flex-1">⚙️ Admin Panel</button>
+                    <button onclick="checkAdminPassword()" class="bg-slate-900 text-white font-bold py-2 px-4 rounded-xl flex-1">⚙️ Admin Panel</button>
                 </div>
             </div>
         </div>
@@ -196,7 +195,6 @@
         </div>
     </div>
 
-    <!-- INLINE JAVASCRIPT (Barcha mantiq 100% bitta faylda) -->
     <script>
         const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
         let map = null;
@@ -220,7 +218,16 @@
             updateProfileUI();
         });
 
-        // PROFIL FUNKSIYALARI
+        // PAROL TEKSHIRISH BILAN ADMIN KIRISHI
+        function checkAdminPassword() {
+            const pass = prompt("Admin parolini kiriting:");
+            if (pass === "tezvodil2026") {
+                openAdminPanel();
+            } else if (pass !== null) {
+                alert("Parol noto'g'ri!");
+            }
+        }
+
         function openProfileModal() {
             document.getElementById('profileModal').classList.remove('hidden');
             if (currentUser) {
@@ -274,7 +281,6 @@
             }
         }
 
-        // ADMIN PANEL FUNKSIYALARI
         function openAdminPanel() {
             closeProfileModal();
             document.getElementById('section-client').classList.add('hidden');
@@ -328,7 +334,6 @@
             alert("Sozlamalar saqlandi!");
         }
 
-        // XARITA VA MASOFA
         function calculateDistance(lat1, lon1, lat2, lon2) {
             const R = 6371;
             const dLat = (lat2 - lat1) * Math.PI / 180;
