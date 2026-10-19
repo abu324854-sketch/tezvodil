@@ -15,20 +15,13 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
-        /* Custom Scrollbar va qo'shimcha animatsiyalar */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.75; transform: scale(1.05); }
-        }
-        .pulse-badge { animation: pulseGlow 2s infinite ease-in-out; }
     </style>
 </head>
 <body class="bg-[#f0f4f8] text-slate-800 antialiased selection:bg-emerald-500 selection:text-white min-h-screen flex flex-col justify-between">
 
-    <!-- TOP HEADER -->
+    <!-- HEADER (Rasmdagidek to'liq moslangan) -->
     <header class="bg-[#0f172a] text-white sticky top-0 z-40 shadow-md">
         <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-2.5">
@@ -42,15 +35,18 @@
             </div>
             
             <div class="flex items-center gap-2">
-                <button onclick="openVendorModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-3 py-1.5 rounded-lg font-bold border border-slate-700 transition">
-                    <i class="fa-solid fa-store text-amber-400 mr-1"></i> Do'kon
+                <button onclick="openVendorModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-3 py-1.5 rounded-lg font-bold border border-slate-700 transition flex items-center gap-1">
+                    <i class="fa-solid fa-store text-amber-400"></i> <span>Do'kon</span>
                 </button>
                 <button onclick="openAdminModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-2.5 py-1.5 rounded-lg font-bold border border-slate-700 transition">
                     <i class="fa-solid fa-lock text-emerald-400"></i>
                 </button>
-                <a href="courier.html" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 shadow transition">
+                <button onclick="openCourierProfileModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3.5 py-1.5 rounded-lg font-bold flex items-center gap-1.5 shadow transition">
                     <i class="fa-solid fa-motorcycle text-xs"></i> <span>Kuryer</span>
-                </a>
+                </button>
+                <button onclick="openUserProfileModal()" class="bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-lg flex items-center justify-center text-slate-300 border border-slate-700">
+                    <i class="fa-solid fa-user text-sm"></i>
+                </button>
                 <button onclick="openCartModal()" class="relative bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-lg flex items-center justify-center text-emerald-400 border border-slate-700">
                     <i class="fa-solid fa-shopping-bag text-sm"></i>
                     <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-[#0f172a] hidden">0</span>
@@ -60,7 +56,7 @@
     </header>
 
     <!-- MAIN CONTENT AREA -->
-    <main class="max-w-xl mx-auto w-full px-4 py-6 space-y-6 flex-1">
+    <main class="max-w-xl mx-auto w-full px-4 py-6 space-y-5 flex-1">
 
         <!-- QIDIRUV INPUTI -->
         <div class="relative max-w-md mx-auto">
@@ -68,22 +64,28 @@
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
         </div>
 
-        <!-- KATEGORIYALAR PANELI -->
+        <!-- KATEGORIYALAR PANELI (Rasmdagidek) -->
         <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar max-w-md mx-auto">
             <button onclick="filterCategory('Barchasi')" class="cat-btn bg-slate-900 text-white px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition">Barchasi</button>
             <button onclick="filterCategory('Milliy Taomlar')" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 hover:border-emerald-500 transition">Milliy Taomlar</button>
             <button onclick="filterCategory('Fast Food')" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 hover:border-emerald-500 transition">Fast Food</button>
-            <button onclick="filterCategory('Pitsa')" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 hover:border-emerald-500 transition">Pitsa & Burger</button>
+            <button onclick="filterCategory('Pitsa & Burger')" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 hover:border-emerald-500 transition">Pitsa & Burger</button>
             <button onclick="filterCategory('Ichimliklar')" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 hover:border-emerald-500 transition">Ichimliklar</button>
-            <button onclick="filterCategory('Shirinliklar')" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 hover:border-emerald-500 transition">Shirinliklar</button>
         </div>
 
-        <!-- MAHSULOTLAR RO'YXATI (SOTUVCHILAR QO'SHGANDA AVTOMATIK CHIQADI) -->
+        <!-- MAHSULOTLAR RO'YXATI -->
         <div id="catalogList" class="grid grid-cols-2 gap-4 max-w-md mx-auto"></div>
 
     </main>
 
-    <!-- FOOTER NAVIGATSIYA -->
+    <!-- LEGAL LEGAL NOTICE / QONUNIY OGOHLANTIRISH -->
+    <div class="max-w-md mx-auto px-4 mb-16 text-center">
+        <p class="text-[9px] text-slate-400 leading-tight">
+            ⚖️ O'zbekiston Respublikasi JK 149-moddasi: Mualliflik va shaxsiy ma'lumotlar huquqlari himoya qilingan. Jarima 25 dan 75 BHM gacha[cite: 1].
+        </p>
+    </div>
+
+    <!-- FOOTER NAVIGATSIYA (Rasmdagidek) -->
     <div class="fixed bottom-0 left-0 right-0 z-40 pb-2 pt-1">
         <nav class="bg-white border border-slate-200/80 rounded-2xl py-2 px-6 shadow-lg max-w-md mx-auto flex justify-around items-center">
             <a href="index.html" class="text-emerald-600 text-center text-[10px] font-bold flex flex-col items-center">
@@ -94,11 +96,83 @@
                 <i class="fa-solid fa-receipt text-base mb-0.5"></i>
                 <span>Buyurtmalarim</span>
             </button>
-            <a href="courier.html" class="text-slate-400 hover:text-emerald-600 text-center text-[10px] font-bold flex flex-col items-center">
+            <button onclick="openCourierProfileModal()" class="text-slate-400 hover:text-emerald-600 text-center text-[10px] font-bold flex flex-col items-center">
                 <i class="fa-solid fa-motorcycle text-base mb-0.5"></i>
                 <span>Kuryer</span>
-            </a>
+            </button>
         </nav>
+    </div>
+
+    <!-- KURYER PROFILI MODALI (Ismi, Telefoni, Yoshi MAJBURON, Surati IXTIYORIY) -->
+    <div id="courierProfileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-4 shadow-2xl max-h-[90vh] flex flex-col overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-id-card text-emerald-600"></i> Kuryer Profili
+                </h3>
+                <button onclick="closeCourierProfileModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <form onsubmit="saveCourierProfile(event)" class="space-y-3">
+                <div class="flex flex-col items-center justify-center gap-2">
+                    <div class="w-20 h-20 rounded-full bg-slate-100 border-2 border-emerald-500 overflow-hidden flex items-center justify-center relative shadow-inner">
+                        <img id="courierImgPreview" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="w-full h-full object-cover" alt="Kuryer rasmi">
+                    </div>
+                    <label class="text-[10px] font-bold text-emerald-600 cursor-pointer hover:underline">
+                        📸 Surat yuklash (Ixtiyoriy)[cite: 1]
+                        <input type="file" id="courierImgInput" accept="image/*" onchange="previewCourierImage(event)" class="hidden">
+                    </label>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Ism va Familiya <span class="text-red-500">*</span></label>
+                    <input type="text" id="courierNameInput" required placeholder="Masalan: Ali Valiyev" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Telefon Raqam <span class="text-red-500">*</span></label>
+                    <input type="tel" id="courierPhoneInput" required value="+998 " class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Yoshi <span class="text-red-500">*</span></label>
+                    <input type="number" id="courierAgeInput" required min="18" max="70" placeholder="Masalan: 22" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold">
+                </div>
+
+                <div class="pt-2 flex gap-2">
+                    <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">Profilni Saqlash</button>
+                    <a href="courier.html" class="bg-slate-900 hover:bg-slate-800 text-white font-extrabold px-4 py-2.5 rounded-xl text-xs shadow flex items-center justify-center">Kuryer Paneli →</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MIJOZ PROFILI MODALI -->
+    <div id="userProfileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-user text-emerald-600"></i> Mijoz Profili
+                </h3>
+                <button onclick="closeUserProfileModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <form onsubmit="saveUserProfile(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Ismingiz</label>
+                    <input type="text" id="uNameInput" required placeholder="Ismingizni kiriting" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Telefon Raqamingiz</label>
+                    <input type="tel" id="uPhoneInput" required value="+998 " class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Doimiy Manzilingiz</label>
+                    <input type="text" id="uAddrInput" placeholder="Masalan: Vodil Markazi, 5-uy" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">Saqlash</button>
+            </form>
+        </div>
     </div>
 
     <!-- SAVATCHA MODALI -->
@@ -149,14 +223,12 @@
                     <input type="text" id="custAddress" required placeholder="Masalan: Vodil markazi, 12-uy" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold focus:outline-none focus:border-emerald-500">
                 </div>
 
-                <!-- XARITADAN LOKATSIYA BELGILASH -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Aniq joylashuvni xaritada belgilang:</label>
                     <div id="checkoutMap" class="w-full h-40 rounded-xl border border-slate-200 shadow-inner"></div>
                     <p class="text-[10px] text-slate-500 mt-1">Koordinata: <span id="coordsText" class="font-bold text-emerald-600">Vodil markazi</span></p>
                 </div>
 
-                <!-- TO'LOV TURI -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">To'lov Usuli</label>
                     <div class="grid grid-cols-3 gap-2">
@@ -175,7 +247,6 @@
                     </div>
                 </div>
 
-                <!-- PROMO-KOD -->
                 <div>
                     <div class="flex gap-2">
                         <input type="text" id="promoInput" placeholder="PROMO-KOD (TEZVODIL2026)" class="flex-1 bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold uppercase focus:outline-none focus:border-emerald-500">
@@ -207,21 +278,19 @@
                 <button onclick="closeVendorModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <!-- VENDOR KIRISH FORMASI -->
             <div id="vendorLoginForm" class="space-y-3">
                 <p class="text-xs text-slate-500 font-medium">Do'koningiz kabinetiga kirish yoki yangi ro'yxatdan o'tish:</p>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Do'kon nomi</label>
-                    <input type="text" id="vendorStoreNameInput" placeholder="Masalan: Vodil Chayxana" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold focus:outline-none focus:border-emerald-500">
+                    <input type="text" id="vendorStoreNameInput" placeholder="Masalan: Vodil Chayxana" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Parol</label>
-                    <input type="password" id="vendorPasswordInput" placeholder="Parolingizni kiriting" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold focus:outline-none focus:border-emerald-500">
+                    <input type="password" id="vendorPasswordInput" placeholder="Parolingizni kiriting" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold">
                 </div>
                 <button onclick="loginOrCreateVendor()" class="w-full bg-slate-900 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">Kirish / Ro'yxatdan o'tish</button>
             </div>
 
-            <!-- VENDOR BOSHQARUV PANELI -->
             <div id="vendorDashboard" class="space-y-4 hidden">
                 <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl flex justify-between items-center">
                     <div>
@@ -231,7 +300,6 @@
                     <button onclick="logoutVendor()" class="text-[10px] bg-red-100 text-red-700 px-2.5 py-1 rounded-lg font-bold">Chiqish</button>
                 </div>
 
-                <!-- MAHSULOT QO'SHISH FORMASI -->
                 <div class="border border-slate-200 p-3.5 rounded-2xl space-y-3">
                     <h4 class="font-extrabold text-xs text-slate-800">Yangi Mahsulot Qo'shish</h4>
                     <div>
@@ -244,16 +312,14 @@
                         <select id="newProdCategory" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold">
                             <option value="Milliy Taomlar">Milliy Taomlar</option>
                             <option value="Fast Food">Fast Food</option>
-                            <option value="Pitsa">Pitsa & Burger</option>
+                            <option value="Pitsa & Burger">Pitsa & Burger</option>
                             <option value="Ichimliklar">Ichimliklar</option>
-                            <option value="Shirinliklar">Shirinliklar</option>
                         </select>
                     </div>
                     <div>
-                        <input type="text" id="newProdImg" placeholder="Rasm havolasi (URL) yoki bo'sh qoldiring" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold">
+                        <input type="text" id="newProdImg" placeholder="Rasm havolasi (URL)" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold">
                     </div>
 
-                    <!-- DO'KON GPS LOKATSIYASINI XARITADA BELGILASH -->
                     <div>
                         <label class="block text-[11px] font-bold text-slate-700 mb-1">Do'koningiz GPS joylashuvini tanlang:</label>
                         <div id="vendorMap" class="w-full h-36 rounded-xl border border-slate-200 shadow-inner"></div>
@@ -264,7 +330,6 @@
                     </button>
                 </div>
 
-                <!-- VENDOR O'Z MAHSULOTLARI RO'YXATI -->
                 <div class="space-y-2">
                     <h4 class="font-extrabold text-xs text-slate-800">Do'koningiz Mahsulotlari</h4>
                     <div id="vendorProductsList" class="space-y-2"></div>
@@ -285,7 +350,7 @@
 
             <div id="adminLoginForm" class="space-y-3 py-4">
                 <p class="text-xs text-slate-500 font-medium">Boshqaruv paneliga kirish paroli:</p>
-                <input type="password" id="adminPasswordInput" placeholder="Parol (tezvodil2026)" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-xs font-bold focus:outline-none focus:border-emerald-500">
+                <input type="password" id="adminPasswordInput" placeholder="Parol (tezvodil2026)" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-xs font-bold">
                 <button onclick="checkAdminLogin()" class="w-full bg-slate-900 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">Kirish</button>
             </div>
 
@@ -306,7 +371,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT MANTIG'I -->
+    <!-- JAVASCRIPT LOGIKASI -->
     <script>
         const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
         let userCoords = { ...VODIL_CENTER };
@@ -317,20 +382,93 @@
 
         let cart = [];
         let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
-        let products = JSON.parse(localStorage.getItem('tv_products')) || []; // LocalStorage'dan olinadi
+        let products = JSON.parse(localStorage.getItem('tv_products')) || []; 
         let vendors = JSON.parse(localStorage.getItem('tv_vendors')) || [];
         
         let currentVendor = null;
         let appliedDiscount = 0;
         let currentCategory = 'Barchasi';
 
-        // SAHIFA YUKLANGANDA
         document.addEventListener('DOMContentLoaded', () => {
             renderCatalog(products);
             updateCartUI();
+            loadSavedProfiles();
         });
 
-        // KATALOGNI CHIZISH
+        // PROFIL MA'LUMOTLARINI YUKLASH
+        function loadSavedProfiles() {
+            const courier = JSON.parse(localStorage.getItem('tv_courier_profile'));
+            if (courier) {
+                document.getElementById('courierNameInput').value = courier.name || '';
+                document.getElementById('courierPhoneInput').value = courier.phone || '+998 ';
+                document.getElementById('courierAgeInput').value = courier.age || '';
+                if (courier.img) document.getElementById('courierImgPreview').src = courier.img;
+            }
+
+            const user = JSON.parse(localStorage.getItem('tv_user_profile'));
+            if (user) {
+                document.getElementById('uNameInput').value = user.name || '';
+                document.getElementById('uPhoneInput').value = user.phone || '+998 ';
+                document.getElementById('uAddrInput').value = user.address || '';
+                document.getElementById('custName').value = user.name || '';
+                document.getElementById('custPhone').value = user.phone || '+998 ';
+                document.getElementById('custAddress').value = user.address || '';
+            }
+        }
+
+        // KURYER PROFILINI SAQLASH (Rasmi IXTIYORIY, qolgani MAJBURON)
+        function saveCourierProfile(e) {
+            e.preventDefault();
+            const name = document.getElementById('courierNameInput').value.trim();
+            const phone = document.getElementById('courierPhoneInput').value.trim();
+            const age = document.getElementById('courierAgeInput').value.trim();
+            const img = document.getElementById('courierImgPreview').src;
+
+            if (!name || !phone || !age) {
+                return alert("Iltimos, Ism, Telefon va Yosh maydonlarini majburiy to'ldiring!");
+            }
+
+            const profile = { name, phone, age, img };
+            localStorage.setItem('tv_courier_profile', JSON.stringify(profile));
+            alert("Kuryer profili saqlandi!");
+            closeCourierProfileModal();
+        }
+
+        function previewCourierImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('courierImgPreview').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveUserProfile(e) {
+            e.preventDefault();
+            const name = document.getElementById('uNameInput').value.trim();
+            const phone = document.getElementById('uPhoneInput').value.trim();
+            const address = document.getElementById('uAddrInput').value.trim();
+
+            const profile = { name, phone, address };
+            localStorage.setItem('tv_user_profile', JSON.stringify(profile));
+
+            document.getElementById('custName').value = name;
+            document.getElementById('custPhone').value = phone;
+            document.getElementById('custAddress').value = address;
+
+            alert("Mijoz profili saqlandi!");
+            closeUserProfileModal();
+        }
+
+        function openCourierProfileModal() { document.getElementById('courierProfileModal').classList.remove('hidden'); }
+        function closeCourierProfileModal() { document.getElementById('courierProfileModal').classList.add('hidden'); }
+
+        function openUserProfileModal() { document.getElementById('userProfileModal').classList.remove('hidden'); }
+        function closeUserProfileModal() { document.getElementById('userProfileModal').classList.add('hidden'); }
+
+        // KATALOG
         function renderCatalog(items) {
             const list = document.getElementById('catalogList');
             if (!items || items.length === 0) {
@@ -338,7 +476,6 @@
                     <div class="col-span-2 text-center py-12 text-slate-400 space-y-2">
                         <i class="fa-solid fa-box-open text-3xl text-slate-300"></i>
                         <p class="text-xs font-bold">Hozircha mahsulotlar mavjud emas</p>
-                        <p class="text-[10px] text-slate-400">Do'konlar o'z mahsulotlarini qo'shgach bu yerda ko'rinadi.</p>
                     </div>`;
                 return;
             }
@@ -358,7 +495,6 @@
             `).join('');
         }
 
-        // KATEGORIYA FILTRI
         function filterCategory(cat) {
             currentCategory = cat;
             document.querySelectorAll('.cat-btn').forEach(btn => {
@@ -382,7 +518,7 @@
             renderCatalog(filtered);
         }
 
-        // SAVATCHA MANTIG'I
+        // SAVATCHA
         function addToCart(id) {
             const prod = products.find(p => p.id === id);
             if (!prod) return;
@@ -439,7 +575,7 @@
         function openCartModal() { document.getElementById('cartModal').classList.remove('hidden'); }
         function closeCartModal() { document.getElementById('cartModal').classList.add('hidden'); }
 
-        // CHECKOUT VA MIJOZ XARITASI
+        // CHECKOUT & MAP
         function openCheckoutModal() {
             if (cart.length === 0) return alert("Savatcha bo'sh!");
             closeCartModal();
@@ -514,10 +650,10 @@
             cart = [];
             updateCartUI();
             closeCheckoutModal();
-            alert("Buyurtmangiz muvaffaqiyatli qabul qilindi! Kuryer tez orada yo'lga chiqadi.");
+            alert("Buyurtmangiz muvaffaqiyatli qabul qilindi!");
         }
 
-        // VENDOR (DO'KON) PANELI FUNKSIYALARI
+        // VENDOR (DO'KON)
         function openVendorModal() { document.getElementById('vendorModal').classList.remove('hidden'); }
         function closeVendorModal() { document.getElementById('vendorModal').classList.add('hidden'); }
 
@@ -580,9 +716,7 @@
 
             const newProd = {
                 id: Date.now(),
-                name,
-                price,
-                category,
+                name, price, category,
                 store: currentVendor.storeName,
                 img: img || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400'
             };
@@ -590,7 +724,6 @@
             products.push(newProd);
             localStorage.setItem('tv_products', JSON.stringify(products));
 
-            // Do'kon koordinatasini yangilash
             const vIdx = vendors.findIndex(v => v.storeName === currentVendor.storeName);
             if (vIdx !== -1) {
                 vendors[vIdx].coords = { ...vendorCoords };
@@ -603,7 +736,7 @@
 
             renderVendorProducts();
             renderCatalog(products);
-            alert("Mahsulot muvaffaqiyatli qo'shildi!");
+            alert("Mahsulot qo'shildi!");
         }
 
         function renderVendorProducts() {
@@ -638,7 +771,7 @@
             }
         }
 
-        // ADMIN PANEL
+        // ADMIN
         function openAdminModal() { document.getElementById('adminModal').classList.remove('hidden'); }
         function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
 
