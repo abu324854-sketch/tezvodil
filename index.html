@@ -50,7 +50,7 @@
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
         </div>
 
-        <!-- KATALOG (2-USTUNLI GRID) -->
+        <!-- KATALOG (SOTUVCHILAR QO'SHGAN MAHSULOTLAR UCHUN) -->
         <div id="catalogList" class="grid grid-cols-2 gap-4 max-w-md mx-auto"></div>
 
     </main>
@@ -97,7 +97,7 @@
         </div>
     </div>
 
-    <!-- RASMIYLASHTIRISH MODALI (LOKATSIYA VA TO'LOV BILAN) -->
+    <!-- RASMIYLASHTIRISH MODALI -->
     <div id="checkoutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-4 shadow-2xl max-h-[90vh] flex flex-col overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -175,29 +175,32 @@
         let map = null, marker = null;
         let cart = [];
         let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
+        let products = JSON.parse(localStorage.getItem('tv_products')) || []; // LocalStorage'dan olinadi
         let appliedDiscount = 0;
 
-        const sampleProducts = [
-            { id: 1, name: "Milliy Osh", price: 35000, store: "Vodil Chayxana", img: "https://images.unsplash.com/photo-1633964913295-ceb43826e7c9?w=400" },
-            { id: 2, name: "Lavash Maxi", price: 32000, store: "Fast Food Vodil", img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400" },
-            { id: 3, name: "Burger Combo", price: 38000, store: "Burger House", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400" },
-            { id: 4, name: "Classic Pizza", price: 65000, store: "Pizza Master", img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400" }
-        ];
-
         document.addEventListener('DOMContentLoaded', () => {
-            renderCatalog(sampleProducts);
+            renderCatalog(products);
             updateCartUI();
         });
 
         function renderCatalog(items) {
             const list = document.getElementById('catalogList');
+            if (!items || items.length === 0) {
+                list.innerHTML = `
+                    <div class="col-span-2 text-center py-12 text-slate-400 space-y-2">
+                        <i class="fa-solid fa-box-open text-3xl text-slate-300"></i>
+                        <p class="text-xs font-bold">Hozircha mahsulotlar mavjud emas</p>
+                    </div>`;
+                return;
+            }
+
             list.innerHTML = items.map(p => `
                 <div class="bg-white border border-slate-100 rounded-2xl p-2.5 shadow-sm flex flex-col justify-between space-y-2">
-                    <img src="${p.img}" class="w-full h-28 object-cover rounded-xl" alt="${p.name}">
+                    <img src="${p.img || 'https://via.placeholder.com/300'}" class="w-full h-28 object-cover rounded-xl" alt="${p.name}">
                     <div class="space-y-0.5">
-                        <span class="inline-block text-[9px] bg-emerald-100/80 text-emerald-800 font-bold px-2 py-0.5 rounded-md">${p.store}</span>
+                        <span class="inline-block text-[9px] bg-emerald-100/80 text-emerald-800 font-bold px-2 py-0.5 rounded-md">${p.store || 'Do\'kon'}</span>
                         <h4 class="font-extrabold text-xs text-slate-800 leading-snug">${p.name}</h4>
-                        <p class="text-xs font-black text-emerald-600">${p.price.toLocaleString()} so'm</p>
+                        <p class="text-xs font-black text-emerald-600">${(p.price || 0).toLocaleString()} so'm</p>
                     </div>
                     <button onclick="addToCart(${p.id})" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-extrabold py-2 rounded-xl text-xs shadow transition">
                         Qo'shish
@@ -208,12 +211,13 @@
 
         function filterCatalog() {
             const q = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = sampleProducts.filter(p => p.name.toLowerCase().includes(q) || p.store.toLowerCase().includes(q));
+            const filtered = products.filter(p => p.name.toLowerCase().includes(q) || (p.store && p.store.toLowerCase().includes(q)));
             renderCatalog(filtered);
         }
 
         function addToCart(id) {
-            const prod = sampleProducts.find(p => p.id === id);
+            const prod = products.find(p => p.id === id);
+            if (!prod) return;
             const exist = cart.find(i => i.id === id);
             if (exist) exist.qty++;
             else cart.push({ ...prod, qty: 1 });
