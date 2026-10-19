@@ -3,304 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TezVodil Kuryer</title>
+    <title>TezVodil - Kuryer Paneli & Takso-Taksometr</title>
     
-    <!-- PWA Kuryer Logotipi (Sariq va Yashil Mototsikl Belgisi) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%230f172a'/><circle cx='30' cy='65' r='12' fill='%2310b981'/><circle cx='70' cy='65' r='12' fill='%2310b981'/><path d='M30 65 L45 40 L60 40 L70 65' stroke='%23facc15' stroke-width='6' fill='none'/><circle cx='45' cy='32' r='6' fill='%23ffffff'/></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%230f172a'/><circle cx='30' cy='65' r='12' fill='%2310b981'/><circle cx='70' cy='65' r='12' fill='%2310b981'/><path d='M30 65 L45 40 L60 40 L70 65' stroke='%23facc15' stroke-width='6' fill='none'/><circle cx='45' cy='32' r='6' fill='%23ffffff'/></svg>">
-    <meta name="theme-color" content="#0f172a">
-
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#059669">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-900 text-white pb-12 antialiased">
+<body class="bg-slate-100 text-slate-800 pb-10 antialiased selection:bg-emerald-500 selection:text-white">
 
     <!-- HEADER -->
-    <header class="bg-slate-800/80 border-b border-slate-700 sticky top-0 z-40 backdrop-blur-md px-4 py-3.5">
-        <div class="max-w-2xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-2.5">
-                <div class="bg-emerald-500/20 p-2 rounded-xl text-emerald-400">
-                    <i class="fa-solid fa-motorcycle text-xl"></i>
+    <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
+        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="bg-emerald-600 p-2 rounded-xl">
+                    <i class="fa-solid fa-motorcycle text-xl text-yellow-300"></i>
                 </div>
                 <div>
-                    <h1 class="text-base font-black tracking-wide leading-tight">TezVodil Kuryer</h1>
-                    <p class="text-[10px] text-emerald-400 font-bold">Kuryerlik Paneli</p>
+                    <h1 class="text-base font-black">TezVodil Kuryer</h1>
+                    <p class="text-[10px] text-emerald-400 font-semibold">Taksi-Taksometr Tizimi</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <button onclick="openCourierProfileModal()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs px-2.5 py-2 rounded-xl border border-slate-600 flex items-center gap-1">
-                    <i class="fa-solid fa-id-card text-emerald-400"></i> <span id="courierProfileBtnText">Profil</span>
-                </button>
-                <a href="index.html" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-store"></i> Mijozga O'tish
-                </a>
-            </div>
+            <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-xs px-3 py-2 rounded-xl border border-slate-700 font-bold">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Asosiy
+            </a>
         </div>
     </header>
 
-    <main class="max-w-2xl mx-auto p-4 space-y-4">
+    <main class="max-w-md mx-auto p-4 space-y-4">
 
-        <!-- DAROMAD BADGE -->
-        <div class="bg-emerald-600 rounded-3xl p-5 shadow-xl flex justify-between items-center relative overflow-hidden">
-            <div class="absolute -right-6 -bottom-6 text-emerald-500/30 text-8xl">
-                <i class="fa-solid fa-sack-dollar"></i>
+        <!-- JONLI TAKSOMETR (TAXI METER) EKRANI -->
+        <div id="taximeterBox" class="bg-slate-900 text-white p-5 rounded-3xl shadow-2xl border-2 border-emerald-500/50 relative overflow-hidden hidden">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <span class="text-xs font-extrabold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span> Takso-Taksometr Ishlamoqda
+                </span>
+                <span id="meterStatusBadge" class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">Yo'lda</span>
             </div>
-            <div class="relative z-10">
-                <p class="text-[10px] font-bold tracking-wider text-emerald-100 uppercase">Bugungi Daromad:</p>
-                <h2 id="todayEarnings" class="text-2xl font-black text-white mt-0.5">0 so'm</h2>
+
+            <div class="py-4 text-center space-y-2">
+                <p class="text-xs text-slate-400 font-medium">Joriy Dostavka Summasi:</p>
+                <div class="text-4xl font-black text-emerald-400 tracking-tight" id="liveFareDisplay">0 so'm</div>
             </div>
-            <div class="relative z-10 bg-slate-900/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                <span class="text-xs font-extrabold text-white">Faol</span>
+
+            <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800 text-center">
+                <div class="bg-slate-800/80 p-3 rounded-2xl border border-slate-700/60">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase">Bosib o'tilgan masofa</p>
+                    <p id="liveDistDisplay" class="text-lg font-black text-yellow-400 mt-0.5">0.00 km</p>
+                </div>
+                <div class="bg-slate-800/80 p-3 rounded-2xl border border-slate-700/60">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase">Tezlik (Tezometr)</p>
+                    <p id="liveSpeedDisplay" class="text-lg font-black text-cyan-400 mt-0.5">0 km/h</p>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-2">
+                <button onclick="finishOrderDelivery()" class="w-full bg-red-600 hover:bg-red-700 text-white font-extrabold py-3.5 rounded-2xl shadow-lg transition active:scale-98 flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-flag-checkered text-base"></i> Buyurtmani Yetkazdim (Tugatish)
+                </button>
             </div>
         </div>
 
-        <!-- BUYURTMALAR SALLASI -->
+        <!-- BUYURTMALAR RO'YXATI -->
         <div class="space-y-3">
-            <div class="flex justify-between items-center">
-                <h3 class="text-xs font-black uppercase tracking-wider text-slate-400">Yangi Buyurtmalar (Vodil)</h3>
-                <button onclick="loadCourierOrders()" class="text-xs text-emerald-400 font-bold hover:underline flex items-center gap-1">
-                    <i class="fa-solid fa-rotate-right"></i> Yangilash
-                </button>
-            </div>
-
-            <div id="courierOrdersContainer" class="space-y-3"></div>
+            <h2 class="text-xs font-black uppercase text-slate-500 tracking-wider flex items-center justify-between">
+                <span>Mavjud Buyurtmalar</span>
+                <button onclick="loadOrders()" class="text-emerald-600 text-xs font-bold hover:underline"><i class="fa-solid fa-rotate-right"></i> Yangilash</button>
+            </h2>
+            
+            <div id="courierOrdersList" class="space-y-3"></div>
         </div>
 
     </main>
 
-    <!-- KURYER PROFILI MODALI -->
-    <div id="courierProfileModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl text-white">
-            <div class="flex justify-between items-center border-b border-slate-700 pb-2">
-                <h3 class="font-bold text-base flex items-center gap-2">
-                    <i class="fa-solid fa-id-card text-emerald-400"></i> Kuryer Shaxsiy Profili
-                </h3>
-                <button onclick="closeCourierProfileModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-
-            <div id="cProfileForm" class="space-y-3 text-xs">
-                <p class="text-slate-400">Buyurtmalarni qabul qilish uchun ma'lumotlaringizni to'ldiring:</p>
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-300">Ism va Familiyangiz:</label>
-                    <input type="text" id="cNameInput" placeholder="Masalan: Jasurbek Rahimov" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-white outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-300">Telefon raqamingiz:</label>
-                    <input type="tel" id="cPhoneInput" placeholder="+998 90 123 45 67" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-white outline-none focus:border-emerald-500">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-300">Yoshingiz:</label>
-                        <input type="number" id="cAgeInput" placeholder="22" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-white outline-none focus:border-emerald-500">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-300">Jinsingiz:</label>
-                        <select id="cGenderInput" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-white outline-none focus:border-emerald-500">
-                            <option value="Erkak">Erkak</option>
-                            <option value="Ayol">Ayol</option>
-                        </select>
-                    </div>
-                </div>
-                <button onclick="saveCourierProfile()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow transition mt-2">
-                    Profilni Saqlash
-                </button>
-            </div>
-
-            <div id="cProfileInfo" class="space-y-3 text-xs hidden">
-                <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700 space-y-2">
-                    <div class="flex justify-between items-center border-b border-slate-700/60 pb-2">
-                        <p class="font-extrabold text-sm text-emerald-400" id="dispCName"></p>
-                        <span id="dispCGender" class="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full"></span>
-                    </div>
-                    <p class="text-slate-300">📞 Telefon: <strong id="dispCPhone" class="text-white"></strong></p>
-                    <p class="text-slate-300">🎂 Yoshi: <strong id="dispCAge" class="text-white"></strong> yoshda</p>
-                </div>
-                <button onclick="logoutCourierProfile()" class="w-full bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 font-bold py-2.5 rounded-xl transition">
-                    Profilni Tahrirlash / Chiqish
-                </button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        let orders = [];
-        let currentCourier = JSON.parse(localStorage.getItem('tv_current_courier')) || null;
+        let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
+        let activeOrder = null;
+        let watchId = null;
+        let lastCoords = null;
+        let totalDistanceKm = 0;
+        let currentFare = 0;
+        const RATE_PER_KM = 4800; // Kilometriga 4,800 so'm
 
         document.addEventListener('DOMContentLoaded', () => {
-            updateCourierProfileUI();
-            loadCourierOrders();
-            setInterval(loadCourierOrders, 5000);
+            loadOrders();
         });
 
-        function openCourierProfileModal() {
-            document.getElementById('courierProfileModal').classList.remove('hidden');
-        }
-
-        function closeCourierProfileModal() {
-            document.getElementById('courierProfileModal').classList.add('hidden');
-        }
-
-        function saveCourierProfile() {
-            const name = document.getElementById('cNameInput').value.trim();
-            const phone = document.getElementById('cPhoneInput').value.trim();
-            const age = document.getElementById('cAgeInput').value.trim();
-            const gender = document.getElementById('cGenderInput').value;
-
-            if (!name || !phone || !age) {
-                alert("Iltimos, barcha maydonlarni to'liq kiriting!");
-                return;
-            }
-
-            currentCourier = { name, phone, age, gender };
-            localStorage.setItem('tv_current_courier', JSON.stringify(currentCourier));
-
-            updateCourierProfileUI();
-            closeCourierProfileModal();
-            alert("Kuryer profili saqlandi!");
-        }
-
-        function logoutCourierProfile() {
-            currentCourier = null;
-            localStorage.removeItem('tv_current_courier');
-            updateCourierProfileUI();
-        }
-
-        function updateCourierProfileUI() {
-            const btnText = document.getElementById('courierProfileBtnText');
-            if (currentCourier) {
-                if (btnText) btnText.innerText = currentCourier.name.split(' ')[0];
-                document.getElementById('cProfileForm').classList.add('hidden');
-                document.getElementById('cProfileInfo').classList.remove('hidden');
-                document.getElementById('dispCName').innerText = currentCourier.name;
-                document.getElementById('dispCPhone').innerText = currentCourier.phone;
-                document.getElementById('dispCAge').innerText = currentCourier.age;
-                document.getElementById('dispCGender').innerText = currentCourier.gender;
-            } else {
-                if (btnText) btnText.innerText = "Profil";
-                document.getElementById('cProfileForm').classList.remove('hidden');
-                document.getElementById('cProfileInfo').classList.add('hidden');
-            }
-        }
-
-        function loadCourierOrders() {
+        function loadOrders() {
             orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
-            renderOrders();
-            calculateEarnings();
-        }
-
-        function renderOrders() {
-            const container = document.getElementById('courierOrdersContainer');
+            const container = document.getElementById('courierOrdersList');
             if (!container) return;
 
             if (orders.length === 0) {
                 container.innerHTML = `
-                    <div class="bg-slate-800/50 border border-slate-700/60 rounded-3xl p-8 text-center space-y-2">
-                        <i class="fa-solid fa-box-open text-4xl text-slate-600 mb-1"></i>
-                        <p class="text-sm font-bold text-slate-300">Hozircha yangi buyurtmalar yo'q</p>
-                        <p class="text-xs text-slate-500">Mijozlar buyurtma berganda ushbu yerda darhol aks etadi.</p>
-                    </div>
-                `;
+                    <div class="bg-white p-6 rounded-2xl text-center text-slate-400 border border-slate-200">
+                        <i class="fa-solid fa-box-open text-3xl mb-2 text-slate-300"></i>
+                        <p class="text-xs font-bold">Hozircha faol buyurtmalar yo'q</p>
+                    </div>`;
                 return;
             }
 
-            container.innerHTML = '';
-            const activeOrders = [...orders].reverse();
-
-            activeOrders.forEach(o => {
-                const itemsCount = o.items ? o.items.reduce((sum, item) => sum + item.qty, 0) : 0;
-                
-                const storeNames = o.stores || (o.items && o.items.length > 0 ? [...new Set(o.items.map(i => i.store))].join(', ') : 'Vodil Do\'koni (Markaz)');
-                const storeCoords = o.storeCoords || { lat: 40.1764, lng: 71.7258 };
-
-                let statusBadgeClass = "bg-amber-500/20 text-amber-400 border-amber-500/30";
-                if (o.status === "Qabul qilindi") statusBadgeClass = "bg-blue-500/20 text-blue-400 border-blue-500/30";
-                if (o.status === "Yetkazildi") statusBadgeClass = "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
-
-                container.innerHTML += `
-                    <div class="bg-slate-800 border border-slate-700 rounded-3xl p-4 space-y-3 shadow-lg">
-                        <div class="flex justify-between items-start border-b border-slate-700/60 pb-2.5">
-                            <div>
-                                <h4 class="font-extrabold text-sm text-white flex items-center gap-1.5">
-                                    <i class="fa-solid fa-user text-emerald-400"></i> ${o.customer}
-                                </h4>
-                                <a href="tel:${o.phone}" class="text-xs text-slate-400 hover:text-emerald-400 transition font-semibold flex items-center gap-1 mt-0.5">
-                                    <i class="fa-solid fa-phone text-[10px]"></i> ${o.phone}
-                                </a>
-                            </div>
-                            <span class="text-[10px] font-black px-2.5 py-1 rounded-full border ${statusBadgeClass}">
-                                ${o.status || 'Kutilmoqda'}
-                            </span>
+            container.innerHTML = orders.map(o => `
+                <div class="bg-white border ${o.status === 'Yo\'lda' ? 'border-amber-400 ring-2 ring-amber-400/20' : 'border-slate-200'} rounded-2xl p-4 shadow-sm space-y-3">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-black px-2 py-0.5 rounded-full">#${o.id}</span>
+                            <h3 class="font-extrabold text-sm text-slate-800 mt-1">${o.name}</h3>
+                            <p class="text-xs text-emerald-700 font-bold"><i class="fa-solid fa-phone text-xs mr-1"></i> ${o.phone}</p>
                         </div>
-
-                        <!-- OLISH JOYI (DO'KON) -->
-                        <div class="bg-amber-500/10 border border-amber-500/20 p-3 rounded-2xl text-amber-300 space-y-1">
-                            <div class="flex items-center justify-between">
-                                <span class="font-bold text-[11px] text-amber-400 uppercase tracking-wider flex items-center gap-1">
-                                    <i class="fa-solid fa-store"></i> Olish Joyi (Do'kon):
-                                </span>
-                                <a href="https://www.google.com/maps/search/?api=1&query=${storeCoords.lat},${storeCoords.lng}" target="_blank" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[10px] font-bold px-2 py-1 rounded-lg border border-amber-500/30 flex items-center gap-1">
-                                    <i class="fa-solid fa-location-arrow"></i> Do'kon Lokatsiyasi
-                                </a>
-                            </div>
-                            <p class="text-xs font-bold text-white">${storeNames}</p>
-                        </div>
-
-                        <!-- MIJOZ MANZILI VA SUMMALAR -->
-                        <div class="space-y-1.5 text-xs text-slate-300">
-                            <p class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-red-400 w-4"></i> <strong>Eltish Manzili:</strong> ${o.address} (${o.distanceKM || 0} km)</p>
-                            <p class="flex items-center gap-1.5"><i class="fa-solid fa-bag-shopping text-emerald-400 w-4"></i> <strong>Tovar soni:</strong> ${itemsCount} ta mahsulot</p>
-                            <p class="flex items-center gap-1.5"><i class="fa-solid fa-wallet text-yellow-400 w-4"></i> <strong>Mijoz to'laydi:</strong> ${(o.total || 0).toLocaleString()} so'm</p>
-                            <p class="flex items-center gap-1.5 text-emerald-400 font-bold"><i class="fa-solid fa-motorcycle w-4"></i> <strong>Sizning daromadingiz (Dostavka):</strong> ${(o.deliveryFee || 0).toLocaleString()} so'm</p>
-                        </div>
-
-                        <!-- AMALLAR VA XARITA TUGMALARI -->
-                        <div class="pt-2 border-t border-slate-700/60 flex gap-2">
-                            ${o.status === 'Kutilmoqda' || !o.status ? `
-                                <button onclick="updateOrderStatus(${o.id}, 'Qabul qilindi')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow">
-                                    <i class="fa-solid fa-check mr-1"></i> Qabul qilish
-                                </button>
-                            ` : ''}
-
-                            ${o.status === 'Qabul qilindi' ? `
-                                <button onclick="updateOrderStatus(${o.id}, 'Yetkazildi')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow">
-                                    <i class="fa-solid fa-flag-checkered mr-1"></i> Yetkazildi deb belgilash
-                                </button>
-                            ` : ''}
-
-                            ${o.coords ? `
-                                <a href="https://www.google.com/maps/search/?api=1&query=${o.coords.lat},${o.coords.lng}" target="_blank" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold px-3 py-2.5 rounded-xl text-xs flex items-center justify-center transition" title="Mijoz Lokatsiyasi">
-                                    <i class="fa-solid fa-map-location-dot text-sm text-red-400"></i>
-                                </a>
-                            ` : ''}
-                        </div>
+                        <span class="text-xs font-black px-2.5 py-1 rounded-xl ${getStatusBadgeStyle(o.status)}">${o.status || 'Yangi'}</span>
                     </div>
-                `;
-            });
+
+                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs space-y-1">
+                        <p class="text-slate-600 font-medium">📍 Manzil: <strong>${o.address}</strong></p>
+                        <p class="text-slate-600 font-medium">💰 Tovar Narxi: <strong>${(o.total || 0).toLocaleString()} so'm</strong></p>
+                    </div>
+
+                    ${getActionButton(o)}
+                </div>
+            `).join('');
         }
 
-        function updateOrderStatus(orderId, newStatus) {
-            if (!currentCourier) {
-                alert("Buyurtmani qabul qilish uchun avval Kuryer Profilini to'ldiring!");
-                openCourierProfileModal();
+        function getStatusBadgeStyle(status) {
+            if (status === 'Yo\'lda') return 'bg-amber-100 text-amber-800 border border-amber-300';
+            if (status === 'Yetkazildi') return 'bg-emerald-100 text-emerald-800 border border-emerald-300';
+            return 'bg-blue-100 text-blue-800 border border-blue-300';
+        }
+
+        function getActionButton(order) {
+            if (order.status === 'Yetkazildi') {
+                return `<div class="text-center text-xs text-emerald-600 font-bold py-1"><i class="fa-solid fa-circle-check"></i> Muvaffaqiyatli yetkazilgan</div>`;
+            }
+            if (activeOrder && activeOrder.id === order.id) {
+                return `<button disabled class="w-full bg-amber-500 text-white font-bold py-2.5 rounded-xl text-xs shadow opacity-90 flex items-center justify-center gap-1.5"><i class="fa-solid fa-spinner animate-spin"></i> Takso-taksometr ishlamoqda...</button>`;
+            }
+            return `<button onclick="acceptAndStartDelivery(${order.id})" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-extrabold py-3 rounded-xl text-xs shadow transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-motorcycle text-sm"></i> Buyurtmani Oldim (Taksometrni Yoqish)
+                    </button>`;
+        }
+
+        // BUYURTMANI OLISH VA TAKSOMETRNI YOQISH
+        function acceptAndStartDelivery(orderId) {
+            const idx = orders.findIndex(o => o.id === orderId);
+            if (idx === -1) return;
+
+            if (!navigator.geolocation) {
+                alert("Qurilmangizda GPS xizmati qo'llab-quvvatlanmaydi!");
                 return;
             }
 
-            orders = orders.map(o => {
-                if (o.id === orderId) {
-                    return { ...o, status: newStatus, courierName: currentCourier.name, courierPhone: currentCourier.phone };
-                }
-                return o;
-            });
+            activeOrder = orders[idx];
+            orders[idx].status = "Yo'lda";
             localStorage.setItem('tv_orders', JSON.stringify(orders));
-            renderOrders();
-            calculateEarnings();
+
+            totalDistanceKm = 0;
+            currentFare = 0;
+            lastCoords = null;
+
+            document.getElementById('taximeterBox').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Real vaqt GPS kuzatuvini boshlash
+            watchId = navigator.geolocation.watchPosition(
+                updatePosition,
+                handleGpsError,
+                { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 }
+            );
+
+            loadOrders();
         }
 
-        function calculateEarnings() {
-            const completed = orders.filter(o => o.status === 'Yetkazildi');
-            const totalEarned = completed.reduce((sum, o) => sum + (o.deliveryFee || 0), 0);
-            document.getElementById('todayEarnings').innerText = `${totalEarned.toLocaleString()} so'm`;
+        function updatePosition(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            const speedKmH = position.coords.speed ? (position.coords.speed * 3.6) : 0; // m/s -> km/h
+
+            document.getElementById('liveSpeedDisplay').innerText = Math.round(speedKmH) + " km/h";
+
+            if (lastCoords) {
+                const distDelta = calculateDistanceKm(lastCoords.lat, lastCoords.lng, lat, lng);
+                // Kichik siljish xatolarini (0.005 km dan kichik) inobatga olmaslik
+                if (distDelta > 0.005) {
+                    totalDistanceKm += distDelta;
+                    currentFare = Math.round(totalDistanceKm * RATE_PER_KM);
+                }
+            }
+
+            lastCoords = { lat, lng };
+
+            document.getElementById('liveDistDisplay').innerText = totalDistanceKm.toFixed(2) + " km";
+            document.getElementById('liveFareDisplay').innerText = currentFare.toLocaleString() + " so'm";
+        }
+
+        function handleGpsError(err) {
+            console.warn("GPS ma'lumoti olinmadi:", err);
+        }
+
+        function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+            const R = 6371; 
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // BUYURTMANI YETKAZISHNI YAKUNLASH
+        function finishOrderDelivery() {
+            if (!activeOrder) return;
+
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+            }
+
+            const idx = orders.findIndex(o => o.id === activeOrder.id);
+            if (idx !== -1) {
+                orders[idx].status = "Yetkazildi";
+                orders[idx].actualDeliveryFee = currentFare;
+                localStorage.setItem('tv_orders', JSON.stringify(orders));
+            }
+
+            alert(`Buyurtma yetkazildi!\nJami masofa: ${totalDistanceKm.toFixed(2)} km\nDostavka narxi: ${currentFare.toLocaleString()} so'm`);
+
+            activeOrder = null;
+            document.getElementById('taximeterBox').classList.add('hidden');
+            loadOrders();
         }
     </script>
 </body>
