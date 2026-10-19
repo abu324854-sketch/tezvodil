@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TezVodil - Kuryer Paneli & Avtonom Takso-Taksometr</title>
+    <title>TezVodil - Kuryer Navigatsiyasi & Takso-Taksometr</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#059669">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Ilova ichidagi xarita (Leaflet.js) -->
+    <!-- Leaflet Xarita Kutubxonasi -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
@@ -25,7 +25,7 @@
                 </div>
                 <div>
                     <h1 class="text-base font-black">TezVodil Kuryer</h1>
-                    <p class="text-[10px] text-emerald-400 font-semibold">Ilova Ichki GPS Navigatsiyasi</p>
+                    <p class="text-[10px] text-emerald-400 font-semibold">Ilova Ichki Marshrut Navigatsiyasi</p>
                 </div>
             </div>
             
@@ -42,7 +42,7 @@
 
     <main class="max-w-md mx-auto p-4 space-y-4">
 
-        <!-- ILOVA ICHIDAGI JONLI SUN'IY YO'LDOSH XARITASI VA TAKSOMETR -->
+        <!-- ILOVA ICHIDAGI MARSHRUTLI XARITA VA TAKSOMETR -->
         <div id="taximeterBox" class="bg-slate-900 text-white p-5 rounded-3xl shadow-2xl border-2 border-emerald-500/50 relative overflow-hidden hidden space-y-3">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <span class="text-xs font-extrabold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -51,10 +51,15 @@
                 <span id="meterRateBadge" class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold">1,800 so'm/km</span>
             </div>
 
-            <!-- XARITA EKRANI (ILOVA ICHIDA) -->
-            <div id="courierNavMap" class="w-full h-48 rounded-2xl border border-slate-700 overflow-hidden shadow-inner"></div>
+            <!-- XARITA EKRANI VA YO'L CHIZIG'I -->
+            <div class="relative">
+                <div id="courierNavMap" class="w-full h-52 rounded-2xl border border-slate-700 overflow-hidden shadow-inner"></div>
+                <div id="targetAddrInfo" class="absolute bottom-2 left-2 right-2 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-700 text-[10px] text-slate-300 font-semibold truncate">
+                    📍 Nishon: Do'kon manzili
+                </div>
+            </div>
 
-            <div class="py-2 text-center space-y-0.5">
+            <div class="py-1 text-center space-y-0.5">
                 <p class="text-xs text-slate-400 font-medium">Jami Dostavka Summasi:</p>
                 <div class="text-3xl font-black text-emerald-400 tracking-tight" id="liveFareDisplay">0 so'm</div>
             </div>
@@ -111,11 +116,16 @@
     </div>
 
     <script>
+        const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
         let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
+        let vendorsList = JSON.parse(localStorage.getItem('tv_vendors')) || [];
+        
         let activeOrder = null;
         let watchId = null;
         let lastCoords = null;
-        let cMap = null, cMarker = null;
+
+        // Xarita elementlari
+        let cMap = null, courierMarker = null, targetMarker = null, routePolyline = null;
 
         let deliveryStage = 'to_store';
         let distToStoreKm = 0;
@@ -169,7 +179,7 @@
 
         function getActionButton(order) {
             if (activeOrder && activeOrder.id === order.id) {
-                return `<button disabled class="w-full bg-amber-500 text-white font-bold py-2.5 rounded-xl text-xs shadow opacity-90 flex items-center justify-center gap-1.5"><i class="fa-solid fa-spinner animate-spin"></i> GPS Taksometr ishlamoqda...</button>`;
+                return `<button disabled class="w-full bg-amber-500 text-white font-bold py-2.5 rounded-xl text-xs shadow opacity-90 flex items-center justify-center gap-1.5"><i class="fa-solid fa-spinner animate-spin"></i> GPS Navigatsiya ishlamoqda...</button>`;
             }
             return `<button onclick="acceptAndStartDelivery(${order.id})" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-extrabold py-3 rounded-xl text-xs shadow transition flex items-center justify-center gap-2">
                         <i class="fa-solid fa-location-arrow text-sm"></i> Do'konga Ketdim (1,800 s/km Taksometr)
@@ -200,15 +210,15 @@
             document.getElementById('taximeterBox').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            // Ilova ichidagi xaritani initsializatsiya qilish
+            // Xaritani ishga tushirish
             setTimeout(() => {
                 if (!cMap) {
-                    cMap = L.map('courierNavMap').setView([40.1764, 71.7258], 15);
+                    cMap = L.map('courierNavMap').setView([VODIL_CENTER.lat, VODIL_CENTER.lng], 15);
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(cMap);
-                    cMarker = L.marker([40.1764, 71.7258]).addTo(cMap);
                 } else {
                     cMap.invalidateSize();
                 }
+                updateRouteMap();
             }, 200);
 
             watchId = navigator.geolocation.watchPosition(
@@ -220,11 +230,60 @@
             loadOrders();
         }
 
+        function getTargetCoords() {
+            if (!activeOrder) return VODIL_CENTER;
+            if (deliveryStage === 'to_store') {
+                const storeName = activeOrder.items && activeOrder.items[0] ? activeOrder.items[0].store : null;
+                const vObj = vendorsList.find(v => v.storeName === storeName);
+                return (vObj && vObj.coords) ? vObj.coords : VODIL_CENTER;
+            } else {
+                return activeOrder.customerCoords || VODIL_CENTER;
+            }
+        }
+
+        function updateRouteMap() {
+            if (!cMap) return;
+
+            const targetCoords = getTargetCoords();
+
+            // Mo'ljal nuqtasining matnli ma'lumoti
+            const infoBox = document.getElementById('targetAddrInfo');
+            if (deliveryStage === 'to_store') {
+                const storeName = activeOrder.items && activeOrder.items[0] ? activeOrder.items[0].store : "Do'kon";
+                infoBox.innerHTML = `🏪 <strong>Nishon:</strong> ${storeName} Do'koni`;
+            } else {
+                infoBox.innerHTML = `🏠 <strong>Nishon:</strong> ${activeOrder.name} (${activeOrder.address})`;
+            }
+
+            // Target marker o'rnatish
+            if (targetMarker) cMap.removeLayer(targetMarker);
+            targetMarker = L.marker([targetCoords.lat, targetCoords.lng]).addTo(cMap)
+                .bindPopup(deliveryStage === 'to_store' ? '🏪 Do'kon' : '🏠 Mijoz').openPopup();
+
+            // Agar kuryer nuqtasi bo'lsa yo'lni chizish
+            if (lastCoords) {
+                if (courierMarker) courierMarker.setLatLng([lastCoords.lat, lastCoords.lng]);
+                else courierMarker = L.marker([lastCoords.lat, lastCoords.lng]).addTo(cMap);
+
+                if (routePolyline) cMap.removeLayer(routePolyline);
+                
+                const lineColor = deliveryStage === 'to_store' ? '#f59e0b' : '#10b981';
+                routePolyline = L.polyline([
+                    [lastCoords.lat, lastCoords.lng],
+                    [targetCoords.lat, targetCoords.lng]
+                ], { color: lineColor, weight: 5, opacity: 0.8, dashArray: '8, 8' }).addTo(cMap);
+
+                cMap.fitBounds(routePolyline.getBounds(), { padding: [25, 25] });
+            } else {
+                cMap.setView([targetCoords.lat, targetCoords.lng], 15);
+            }
+        }
+
         function switchToCustomerStage() {
             deliveryStage = 'to_customer';
-            lastCoords = null;
             updateTaximeterUI();
-            alert("Tovarni oldingiz! Endi mijozgacha bo'lgan masofa 4,800 so'm/km hisoblanadi.");
+            updateRouteMap();
+            alert("Tovarni oldingiz! Endi mijoz lokatsiyasiga yo'l ko'rsatiladi (4,800 so'm/km).");
         }
 
         function updatePosition(position) {
@@ -233,12 +292,6 @@
             const speedKmH = position.coords.speed ? (position.coords.speed * 3.6) : 0;
 
             document.getElementById('liveSpeedDisplay').innerText = Math.round(speedKmH) + " km/h";
-
-            // Xaritada kuryer o'rnini jonli surish
-            if (cMap && cMarker) {
-                cMarker.setLatLng([lat, lng]);
-                cMap.setView([lat, lng]);
-            }
 
             if (lastCoords) {
                 const distDelta = calculateDistanceKm(lastCoords.lat, lastCoords.lng, lat, lng);
@@ -254,6 +307,7 @@
             }
 
             lastCoords = { lat, lng };
+            updateRouteMap();
 
             const totalDist = distToStoreKm + distToCustomerKm;
             const totalFare = storeFare + customerFare;
@@ -324,7 +378,7 @@
                 localStorage.setItem('tv_orders', JSON.stringify(orders));
             }
 
-            alert(`Buyurtma yetkazildi!\nJami Dostavka Narxi: ${totalFare.toLocaleString()} so'm`);
+            alert(`Buyurtma muvaffaqiyatli yetkazildi!\n\nJami Dostavka Narxi: ${totalFare.toLocaleString()} so'm`);
 
             activeOrder = null;
             document.getElementById('taximeterBox').classList.add('hidden');
