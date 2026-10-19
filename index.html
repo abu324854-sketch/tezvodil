@@ -150,6 +150,30 @@
                 <h2 class="font-extrabold text-sm"><i class="fa-solid fa-shield-halved mr-1 text-amber-400"></i> Bosh Admin Paneli</h2>
                 <button onclick="closeAdminPanel()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold">Chiqish</button>
             </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase">👤 Mijozlar</p>
+                    <p id="admUserCount" class="text-sm font-black text-slate-800">0 kishi</p>
+                </div>
+                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase">🏪 Sotuvchilar</p>
+                    <p id="admVendorCount" class="text-sm font-black text-emerald-600">0 ta</p>
+                </div>
+                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase">📦 Buyurtmalar</p>
+                    <p id="admOrdersCount" class="text-sm font-black text-blue-600">0 ta</p>
+                </div>
+                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase">💰 Jami Tushum</p>
+                    <p id="admTotalRevenue" class="text-sm font-black text-red-600">0 so'm</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
+                <h3 class="font-bold text-slate-800 border-b pb-2">Barcha Buyurtmalar</h3>
+                <div id="adminOrdersList" class="space-y-2"></div>
+            </div>
         </div>
 
     </main>
@@ -180,17 +204,43 @@
         </div>
     </nav>
 
-    <!-- LOYIHA HAQIDA MODALI -->
+    <!-- ILOVA HAQIDA MODALI (QONUN VA JARIMA MODDASI QO'SHILDI) -->
     <div id="developerModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center space-y-4 shadow-2xl relative">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeDeveloperModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            
             <div class="w-24 h-24 mx-auto rounded-3xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center shadow-xl border-4 border-white">
                 <i class="fa-solid fa-bolt text-yellow-300 text-4xl animate-bounce"></i>
             </div>
+
             <div>
                 <h3 class="font-black text-xl text-slate-800">Fattoxov Abdulloh</h3>
                 <p class="text-xs font-extrabold text-emerald-600 uppercase tracking-wider mt-0.5">TezVodil Asoschisi va Dasturchisi</p>
             </div>
+
+            <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-2xl text-left space-y-1.5 text-xs">
+                <p class="font-bold text-emerald-900 flex items-center gap-1.5">
+                    <i class="fa-solid fa-graduation-cap text-emerald-600 text-sm"></i> O'qish joyi:
+                </p>
+                <p class="text-slate-700 font-medium leading-snug">
+                    Toshkent menejment va iqtisodiyot instituti Fargʻona filiali
+                </p>
+                <div class="pt-2 border-t border-emerald-200 flex items-center justify-between">
+                    <span class="font-bold text-slate-700">📞 Bog'lanish:</span>
+                    <a href="tel:+998901234567" class="font-black text-emerald-700 hover:underline">+998 90 123 45 67</a>
+                </div>
+            </div>
+
+            <!-- QONUN VA JARIMA MATNI -->
+            <div class="bg-red-50 border border-red-200 p-3.5 rounded-2xl text-left space-y-1">
+                <p class="text-[11px] font-black text-red-700 flex items-center gap-1 uppercase">
+                    <i class="fa-solid fa-gavel"></i> Mualliflik Huquqi Himoyasi:
+                </p>
+                <p class="text-[10px] text-red-600 leading-relaxed">
+                    Ushbu dastur kodi, funksionalligi va "TezVodil" brendini ruxsatsiz nusxalash, o'zlashtirish va analog yaratish O'zbekiston Respublikasi <strong>Mualliflik huquqi va turdosh huquqlar to'g'risidagi Qonuni</strong> hamda <strong>Jinoyat Kodeksining 149-moddasiga</strong> muvofiq taqiqlanadi. Mualliflik huquqini buzgan shaxslarga nisbatan BHMning <strong>25 baravaridan 75 baravarigacha (9 375 000 so'mdan 28 125 000 so'mgacha) jarima</strong> yoki 5 yilgacha muayyan huquqdan mahrum qilish va jinoiy javobgarlik choralari qo'llaniladi.
+                </p>
+            </div>
+
             <button onclick="closeDeveloperModal()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow hover:bg-emerald-700 transition">Yopish</button>
         </div>
     </div>
@@ -382,7 +432,7 @@
 
         // --- KILOMETRGA QARAB DOSTAVKA HISOBLASH ---
         function calculateDistanceKm(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Yer radiusi (km)
+            const R = 6371; 
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
             const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
@@ -393,18 +443,14 @@
         }
 
         function updateDeliveryCalculation() {
-            if (cart.length === 0) return;
-            // Savatdagi birinchi mahsulot do'koni koordinatasini olamiz
+            if (cart.length === 0) return 0;
             const storeName = cart[0].store;
             const storeObj = vendorsList.find(v => v.storeName === storeName);
             const storeCoords = (storeObj && storeObj.coords) ? storeObj.coords : VODIL_CENTER;
 
-            // 1. Do'kondan mijozgacha masofa
             const distToCustomer = calculateDistanceKm(storeCoords.lat, storeCoords.lng, userCoords.lat, userCoords.lng);
-            // 2. Vodil markazidan (yoki bazadan) do'konga masofa (yoki umumiy masofa)
             const distToStore = calculateDistanceKm(VODIL_CENTER.lat, VODIL_CENTER.lng, storeCoords.lat, storeCoords.lng);
 
-            // Narxlar: Do'kondan kilometri 1,800 so'm, Yetkazish kilometri 4,800 so'm
             const storeFee = distToStore * 1800;
             const deliveryFee = distToCustomer * 4800;
             const totalDeliveryFee = Math.round(storeFee + deliveryFee);
@@ -719,12 +765,54 @@
             renderVendorProductsList();
         }
 
+        // BOSH ADMIN FUNKSIYALARI (TUZATILDI)
         function checkAdminPassword() {
-            const pass = prompt("Admin paroli:");
-            if (pass === "tezvodil2026") alert("Admin panel ochildi!");
-            else if (pass !== null) alert("Parol xato!");
+            const pass = prompt("Admin parolini kiriting (Standart: tezvodil2026):");
+            if (pass === "tezvodil2026") {
+                openAdminPanel();
+            } else if (pass !== null) {
+                alert("Parol noto'g'ri!");
+            }
         }
-        function closeAdminPanel() { document.getElementById('section-admin').classList.add('hidden'); document.getElementById('section-client').classList.remove('hidden'); }
+
+        function openAdminPanel() {
+            document.getElementById('section-client').classList.add('hidden');
+            document.getElementById('section-vendor-panel').classList.add('hidden');
+            document.getElementById('section-admin').classList.remove('hidden');
+            
+            document.getElementById('admUserCount').innerText = usersList.length + " kishi";
+            document.getElementById('admVendorCount').innerText = vendorsList.length + " ta";
+            document.getElementById('admOrdersCount').innerText = orders.length + " ta";
+            
+            const totalRev = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+            document.getElementById('admTotalRevenue').innerText = totalRev.toLocaleString() + " so'm";
+
+            renderAdminOrdersList();
+        }
+
+        function renderAdminOrdersList() {
+            const container = document.getElementById('adminOrdersList');
+            if (!container) return;
+            if (orders.length === 0) {
+                container.innerHTML = `<p class="text-slate-400">Tizimda kelgan buyurtmalar yo'q</p>`;
+                return;
+            }
+            container.innerHTML = orders.map(o => `
+                <div class="bg-slate-50 border border-slate-200 p-3 rounded-xl space-y-1 text-xs">
+                    <div class="flex justify-between font-bold text-slate-800">
+                        <span>#${o.id} - ${o.name} (${o.phone})</span>
+                        <span class="text-emerald-700">${o.total ? o.total.toLocaleString() : 0} so'm</span>
+                    </div>
+                    <p class="text-slate-600">Manzil: ${o.address}</p>
+                    <p class="text-slate-400 text-[10px]">${o.date}</p>
+                </div>
+            `).join('');
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('section-admin').classList.add('hidden');
+            document.getElementById('section-client').classList.remove('hidden');
+        }
     </script>
 </body>
 </html>
