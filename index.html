@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TezVodil - Onlayn yetkazib berish platformasi</title>
+    <title>TezVodil - Premium Yetkazib Berish Tizimi</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#059669">
@@ -14,28 +14,33 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
-<body class="bg-slate-100 text-slate-800 pb-20 antialiased selection:bg-emerald-500 selection:text-white">
+<body class="bg-slate-100 text-slate-800 pb-24 antialiased selection:bg-emerald-500 selection:text-white">
 
     <!-- HEADER -->
-    <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-lg">
+    <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-xl border-b border-slate-800">
         <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="bg-emerald-600 p-2 rounded-xl text-yellow-300 font-black">
+            <div class="flex items-center gap-2.5">
+                <div class="bg-gradient-to-tr from-emerald-600 to-teal-500 p-2.5 rounded-2xl text-yellow-300 font-black shadow-lg shadow-emerald-900/30">
                     <i class="fa-solid fa-bolt text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-base font-black tracking-tight">TezVodil</h1>
-                    <p class="text-[10px] text-emerald-400 font-semibold">Vodil yetkazib berish xizmati</p>
+                    <h1 class="text-base font-black tracking-tight flex items-center gap-1.5">
+                        TezVodil <span class="text-[9px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded-md">Pro</span>
+                    </h1>
+                    <p class="text-[10px] text-slate-400 font-semibold">Vodil bo'ylab tezkor yetkazish</p>
                 </div>
             </div>
             
             <div class="flex items-center gap-2">
-                <a href="courier.html" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-xl font-bold flex items-center gap-1 shadow">
+                <button onclick="openAdminModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-3 py-2 rounded-xl font-bold border border-slate-700 transition">
+                    <i class="fa-solid fa-lock text-emerald-400 mr-1"></i> Admin
+                </button>
+                <a href="courier.html" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-xl font-bold flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 transition">
                     <i class="fa-solid fa-motorcycle"></i> <span>Kuryer</span>
                 </a>
-                <button onclick="openCartModal()" class="relative bg-slate-800 hover:bg-slate-700 p-2.5 rounded-xl border border-slate-700">
+                <button onclick="openCartModal()" class="relative bg-slate-800 hover:bg-slate-700 p-2.5 rounded-xl border border-slate-700 transition">
                     <i class="fa-solid fa-bag-shopping text-emerald-400"></i>
-                    <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-slate-900 hidden">0</span>
+                    <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-slate-900 hidden shadow">0</span>
                 </button>
             </div>
         </div>
@@ -43,20 +48,37 @@
 
     <main class="max-w-md mx-auto p-4 space-y-4">
 
-        <!-- QIDIRUV VA KATALOG -->
-        <div class="relative">
-            <input type="text" id="searchInput" oninput="filterCatalog()" placeholder="Taom yoki mahsulotlarni qidirish..." class="w-full bg-white border border-slate-200 pl-10 pr-4 py-3 rounded-2xl text-xs font-bold shadow-sm focus:outline-none focus:border-emerald-500">
-            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+        <!-- QIDIRUV VA FILTRLAR -->
+        <div class="space-y-2.5">
+            <div class="relative">
+                <input type="text" id="searchInput" oninput="filterCatalog()" placeholder="Taom, mahsulot yoki do'kon nomini qidiring..." class="w-full bg-white border border-slate-200 pl-10 pr-4 py-3 rounded-2xl text-xs font-bold shadow-sm focus:outline-none focus:border-emerald-500 transition">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+            </div>
+
+            <!-- KATEGORIYALAR -->
+            <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+                <button onclick="filterCategory('Barchasi')" class="cat-btn bg-slate-900 text-white px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition">Barchasi</button>
+                <button onclick="filterCategory('Milliy')" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 hover:border-emerald-500 transition">Milliy Taomlar</button>
+                <button onclick="filterCategory('FastFood')" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 hover:border-emerald-500 transition">Fast Food</button>
+                <button onclick="filterCategory('Pitsa')" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 hover:border-emerald-500 transition">Pitsa & Burger</button>
+                <button onclick="filterCategory('Ichimlik')" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 hover:border-emerald-500 transition">Ichimliklar</button>
+            </div>
         </div>
 
-        <!-- MAHSULOTLAR LISTI -->
-        <div id="catalogList" class="grid grid-cols-2 gap-3"></div>
+        <!-- MAHSULOTLAR KATALOGI -->
+        <div>
+            <div class="flex justify-between items-center mb-2 px-1">
+                <h2 class="text-xs font-black uppercase tracking-wider text-slate-500">Ommabop Mahsulotlar</h2>
+                <span id="productCountBadge" class="text-[10px] text-emerald-600 font-bold">0 ta mahsulot</span>
+            </div>
+            <div id="catalogList" class="grid grid-cols-2 gap-3"></div>
+        </div>
 
     </main>
 
     <!-- SAVATCHA MODALI -->
     <div id="cartModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center hidden p-0 sm:p-4">
-        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-2xl max-h-[85vh] flex flex-col">
+        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-2xl max-h-[85vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
                     <i class="fa-solid fa-bag-shopping text-emerald-600 text-base"></i> Savatcha
@@ -71,7 +93,7 @@
                     <span>Mahsulotlar jami:</span>
                     <span id="cartSubtotal" class="font-bold text-slate-800">0 so'm</span>
                 </div>
-                <button onclick="openCheckoutModal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3.5 rounded-2xl shadow-lg transition active:scale-98 text-xs">
+                <button onclick="openCheckoutModal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3.5 rounded-2xl shadow-lg shadow-emerald-600/30 transition active:scale-98 text-xs">
                     Buyurtmani Rasmiylashtirish
                 </button>
             </div>
@@ -91,21 +113,21 @@
             <form onsubmit="submitOrder(event)" class="space-y-3">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Ism Familiya</label>
-                    <input type="text" id="custName" required placeholder="Ismingizni kiriting" class="w-full bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-xs font-bold">
+                    <input type="text" id="custName" required placeholder="Ismingizni kiriting" class="w-full bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-xs font-bold focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Telefon raqam</label>
-                    <input type="tel" id="custPhone" required value="+998 " class="w-full bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-xs font-bold">
+                    <input type="tel" id="custPhone" required value="+998 " class="w-full bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-xs font-bold focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Manzil matni</label>
-                    <input type="text" id="custAddress" required placeholder="Masalan: Vodil markazi, 12-uy" class="w-full bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-xs font-bold">
+                    <input type="text" id="custAddress" required placeholder="Masalan: Vodil markazi, 12-uy" class="w-full bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-xs font-bold focus:outline-none focus:border-emerald-500">
                 </div>
 
                 <!-- XARITADAN ANIQ LOKATSIYA TANLASH -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Aniq Lokatsiyangizni Xaritadan Belgilang:</label>
-                    <div id="checkoutMap" class="w-full h-40 rounded-2xl border border-slate-200 shadow-inner"></div>
+                    <div id="checkoutMap" class="w-full h-44 rounded-2xl border border-slate-200 shadow-inner"></div>
                     <p class="text-[10px] text-slate-500 mt-1">Belgilangan nuqta: <span id="coordsText" class="font-bold text-emerald-600">Vodil markazi</span></p>
                 </div>
 
@@ -113,17 +135,17 @@
                 <div class="space-y-1">
                     <label class="block text-xs font-bold text-slate-700">To'lov Usuli</label>
                     <div class="grid grid-cols-3 gap-2">
-                        <label class="border border-slate-200 p-2 rounded-xl text-center cursor-pointer hover:border-emerald-500 flex flex-col items-center justify-center gap-1">
+                        <label class="border border-slate-200 p-2.5 rounded-xl text-center cursor-pointer hover:border-emerald-500 flex flex-col items-center justify-center gap-1 transition">
                             <input type="radio" name="payType" value="Naqd" checked class="accent-emerald-600">
-                            <span class="text-[10px] font-bold text-slate-700">💵 Naqd</span>
+                            <span class="text-[11px] font-bold text-slate-700">💵 Naqd</span>
                         </label>
-                        <label class="border border-slate-200 p-2 rounded-xl text-center cursor-pointer hover:border-emerald-500 flex flex-col items-center justify-center gap-1">
+                        <label class="border border-slate-200 p-2.5 rounded-xl text-center cursor-pointer hover:border-emerald-500 flex flex-col items-center justify-center gap-1 transition">
                             <input type="radio" name="payType" value="Click" class="accent-emerald-600">
-                            <span class="text-[10px] font-bold text-blue-600">🔹 Click</span>
+                            <span class="text-[11px] font-bold text-blue-600">🔹 Click</span>
                         </label>
-                        <label class="border border-slate-200 p-2 rounded-xl text-center cursor-pointer hover:border-emerald-500 flex flex-col items-center justify-center gap-1">
+                        <label class="border border-slate-200 p-2.5 rounded-xl text-center cursor-pointer hover:border-emerald-500 flex flex-col items-center justify-center gap-1 transition">
                             <input type="radio" name="payType" value="Payme" class="accent-emerald-600">
-                            <span class="text-[10px] font-bold text-cyan-600">🔹 Payme</span>
+                            <span class="text-[11px] font-bold text-cyan-600">🔹 Payme</span>
                         </label>
                     </div>
                 </div>
@@ -133,33 +155,66 @@
                     <label class="block text-xs font-bold text-slate-700 mb-1">Promo-kod (Chegirma)</label>
                     <div class="flex gap-2">
                         <input type="text" id="promoInput" placeholder="Masalan: TEZVODIL2026" class="flex-1 bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold uppercase focus:outline-none focus:border-emerald-500">
-                        <button type="button" onclick="applyPromoCode()" class="bg-slate-900 text-white text-xs px-4 py-2 rounded-xl font-bold hover:bg-slate-800">Qo'llash</button>
+                        <button type="button" onclick="applyPromoCode()" class="bg-slate-900 text-white text-xs px-4 py-2 rounded-xl font-bold hover:bg-slate-800 transition">Qo'llash</button>
                     </div>
                     <p id="promoMsg" class="text-[10px] font-bold mt-1 text-emerald-600 hidden">✓ TEZVODIL2026: 10,000 so'm chegirma berildi!</p>
                 </div>
 
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1">
-                    <div class="flex justify-between"><span>Mahsulotlar:</span> <strong id="summarySub">0 so'm</strong></div>
-                    <div class="flex justify-between"><span>Dostavka (Taxminiy):</span> <strong id="summaryDel">4,800 so'm</strong></div>
-                    <div class="flex justify-between text-emerald-700 border-t pt-1 font-black text-sm"><span>Jami to'lov:</span> <strong id="summaryTotal">0 so'm</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1.5">
+                    <div class="flex justify-between text-slate-600"><span>Mahsulotlar:</span> <strong id="summarySub" class="text-slate-800">0 so'm</strong></div>
+                    <div class="flex justify-between text-slate-600"><span>Dostavka (Taxminiy):</span> <strong class="text-emerald-700">4,800 so'm</strong></div>
+                    <div class="flex justify-between text-slate-800 border-t pt-1.5 font-black text-sm"><span>Jami to'lov:</span> <strong id="summaryTotal" class="text-emerald-600">0 so'm</strong></div>
                 </div>
 
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3.5 rounded-2xl shadow-lg transition active:scale-98 text-xs">
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3.5 rounded-2xl shadow-lg shadow-emerald-600/30 transition active:scale-98 text-xs">
                     Buyurtmani Tasdiqlash
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- FOOTER NAV -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 py-2.5 px-6 z-40 shadow-lg max-w-md mx-auto flex justify-around items-center">
-        <a href="index.html" class="text-emerald-600 text-center text-[10px] font-black">
+    <!-- ADMIN PANEL MODALI -->
+    <div id="adminModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-emerald-600 text-base"></i> Admin Paneli
+                </h3>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <div id="adminLoginForm" class="space-y-3 py-4">
+                <p class="text-xs text-slate-500 font-medium">Boshqaruv paneliga kirish uchun parolni kiriting:</p>
+                <input type="password" id="adminPasswordInput" placeholder="Parol (tezvodil2026)" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-3 rounded-xl text-xs font-bold focus:outline-none focus:border-emerald-500">
+                <button onclick="checkAdminLogin()" class="w-full bg-slate-900 text-white font-extrabold py-3 rounded-xl text-xs shadow transition">Kirish</button>
+            </div>
+
+            <div id="adminDashboard" class="space-y-4 hidden overflow-y-auto flex-1 pr-1">
+                <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-2xl flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] font-bold text-emerald-700 uppercase">Jami Buyurtmalar</p>
+                        <h4 id="adminTotalOrders" class="text-xl font-black text-emerald-900 mt-0.5">0 ta</h4>
+                    </div>
+                    <button onclick="clearAllOrders()" class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-xl text-[10px] font-bold transition">Tozalash</button>
+                </div>
+
+                <div class="space-y-2">
+                    <h4 class="text-xs font-black uppercase text-slate-500">Barcha Buyurtmalar Tarixi</h4>
+                    <div id="adminOrdersList" class="space-y-2.5"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER NAVIGATION -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 py-2.5 px-6 z-40 shadow-2xl max-w-md mx-auto flex justify-around items-center">
+        <a href="index.html" class="text-emerald-600 text-center text-[10px] font-black transition">
             <i class="fa-solid fa-house text-lg block mb-0.5"></i> Asosiy
         </a>
-        <button onclick="openCartModal()" class="text-slate-400 hover:text-emerald-600 text-center text-[10px] font-black relative">
-            <i class="fa-solid fa-receipt text-lg block mb-0.5"></i> Buyurtmalarim
+        <button onclick="openCartModal()" class="text-slate-400 hover:text-emerald-600 text-center text-[10px] font-black relative transition">
+            <i class="fa-solid fa-receipt text-lg block mb-0.5"></i> Buyurtmalar
         </button>
-        <a href="courier.html" class="text-slate-400 hover:text-emerald-600 text-center text-[10px] font-black">
+        <a href="courier.html" class="text-slate-400 hover:text-emerald-600 text-center text-[10px] font-black transition">
             <i class="fa-solid fa-motorcycle text-lg block mb-0.5"></i> Kuryer
         </a>
     </nav>
@@ -171,12 +226,15 @@
         let cart = [];
         let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
         let appliedDiscount = 0;
+        let currentCategory = 'Barchasi';
 
         const sampleProducts = [
-            { id: 1, name: "Milliy Osh", price: 35000, store: "Vodil Chayxana", img: "https://images.unsplash.com/photo-1633964913295-ceb43826e7c9?w=300" },
-            { id: 2, name: "Lavash Maxi", price: 32000, store: "Fast Food Vodil", img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=300" },
-            { id: 3, name: "Burger Combo", price: 38000, store: "Burger House", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300" },
-            { id: 4, name: "Classic Pizza", price: 65000, store: "Pizza Master", img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=300" }
+            { id: 1, name: "Milliy Osh (Maxsus)", price: 35000, store: "Vodil Chayxana", category: "Milliy", img: "https://images.unsplash.com/photo-1633964913295-ceb43826e7c9?w=300" },
+            { id: 2, name: "Lavash Maxi Mol go'shti", price: 32000, store: "Fast Food Vodil", category: "FastFood", img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=300" },
+            { id: 3, name: "Burger Double Combo", price: 38000, store: "Burger House", category: "FastFood", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300" },
+            { id: 4, name: "Classic Pepperoni Pitsa", price: 65000, store: "Pizza Master", category: "Pitsa", img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=300" },
+            { id: 5, name: "Manti (6 dona)", price: 28000, store: "Vodil Chayxana", category: "Milliy", img: "https://images.unsplash.com/photo-1541529086526-db283c563270?w=300" },
+            { id: 6, name: "Coca-Cola 1.5L", price: 13000, store: "Supermarket Vodil", category: "Ichimlik", img: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=300" }
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -186,24 +244,50 @@
 
         function renderCatalog(items) {
             const list = document.getElementById('catalogList');
+            document.getElementById('productCountBadge').innerText = `${items.length} ta mahsulot`;
+            
+            if (items.length === 0) {
+                list.innerHTML = `<div class="col-span-2 text-center py-10 text-slate-400 text-xs font-bold">Mahsulot topilmadi</div>`;
+                return;
+            }
+
             list.innerHTML = items.map(p => `
-                <div class="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm flex flex-col justify-between space-y-2">
-                    <img src="${p.img}" class="w-full h-28 object-cover rounded-xl" alt="${p.name}">
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-3 shadow-sm flex flex-col justify-between space-y-2.5 hover:shadow-md transition">
+                    <img src="${p.img}" class="w-full h-28 object-cover rounded-xl shadow-inner" alt="${p.name}">
                     <div>
                         <span class="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">${p.store}</span>
-                        <h4 class="font-black text-xs text-slate-800 mt-1">${p.name}</h4>
+                        <h4 class="font-black text-xs text-slate-800 mt-1 line-clamp-1">${p.name}</h4>
                         <p class="text-xs font-black text-emerald-600 mt-0.5">${p.price.toLocaleString()} so'm</p>
                     </div>
-                    <button onclick="addToCart(${p.id})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs shadow transition active:scale-98">
-                        Qo'shish
+                    <button onclick="addToCart(${p.id})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs shadow transition active:scale-98 flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> Qo'shish
                     </button>
                 </div>
             `).join('');
         }
 
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.innerText.includes(cat) || (cat === 'Barchasi' && btn.innerText === 'Barchasi')) {
+                    btn.className = "cat-btn bg-slate-900 text-white px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition";
+                } else {
+                    btn.className = "cat-btn bg-white border border-slate-200 text-slate-600 px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 hover:border-emerald-500 transition";
+                }
+            });
+            applyFilters();
+        }
+
         function filterCatalog() {
+            applyFilters();
+        }
+
+        function applyFilters() {
             const q = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = sampleProducts.filter(p => p.name.toLowerCase().includes(q) || p.store.toLowerCase().includes(q));
+            let filtered = sampleProducts.filter(p => p.name.toLowerCase().includes(q) || p.store.toLowerCase().includes(q));
+            if (currentCategory !== 'Barchasi') {
+                filtered = filtered.filter(p => p.category === currentCategory);
+            }
             renderCatalog(filtered);
         }
 
@@ -227,7 +311,7 @@
 
             const list = document.getElementById('cartItemsList');
             if (cart.length === 0) {
-                list.innerHTML = `<div class="text-center py-10 text-slate-400 text-xs font-bold">Savatchangiz bo'sh</div>`;
+                list.innerHTML = `<div class="text-center py-12 text-slate-400 text-xs font-bold"><i class="fa-solid fa-basket-shopping text-3xl mb-2 text-slate-300 block"></i> Savatchangiz bo'sh</div>`;
                 document.getElementById('cartSubtotal').innerText = "0 so'm";
                 return;
             }
@@ -242,9 +326,9 @@
                             <p class="text-emerald-600 font-bold">${item.price.toLocaleString()} so'm x ${item.qty}</p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="changeQty(${idx}, -1)" class="w-6 h-6 bg-slate-200 rounded-lg font-bold">-</button>
+                            <button onclick="changeQty(${idx}, -1)" class="w-6 h-6 bg-slate-200 rounded-lg font-bold hover:bg-slate-300">-</button>
                             <span class="font-black">${item.qty}</span>
-                            <button onclick="changeQty(${idx}, 1)" class="w-6 h-6 bg-slate-200 rounded-lg font-bold">+</button>
+                            <button onclick="changeQty(${idx}, 1)" class="w-6 h-6 bg-slate-200 rounded-lg font-bold hover:bg-slate-300">+</button>
                         </div>
                     </div>
                 `;
@@ -337,6 +421,50 @@
             updateCartUI();
             closeCheckoutModal();
             alert("Buyurtmangiz muvaffaqiyatli qabul qilindi! Kuryer tez orada yo'lga chiqadi.");
+        }
+
+        function openAdminModal() { document.getElementById('adminModal').classList.remove('hidden'); }
+        function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
+
+        function checkAdminLogin() {
+            const pwd = document.getElementById('adminPasswordInput').value.trim();
+            if (pwd === 'tezvodil2026') {
+                document.getElementById('adminLoginForm').classList.add('hidden');
+                document.getElementById('adminDashboard').classList.remove('hidden');
+                renderAdminOrders();
+            } else {
+                alert("Parol noto'g'ri!");
+            }
+        }
+
+        function renderAdminOrders() {
+            orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
+            document.getElementById('adminTotalOrders').innerText = orders.length + " ta";
+            const container = document.getElementById('adminOrdersList');
+
+            if (orders.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4 font-bold">Buyurtmalar mavjud emas</p>`;
+                return;
+            }
+
+            container.innerHTML = orders.slice().reverse().map(o => `
+                <div class="bg-slate-50 border border-slate-200 p-3 rounded-xl text-xs space-y-1">
+                    <div class="flex justify-between font-bold">
+                        <span>#${o.id} - ${o.name}</span>
+                        <span class="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full text-[10px]">${o.status}</span>
+                    </div>
+                    <p class="text-slate-600">📞 ${o.phone} | 📍 ${o.address}</p>
+                    <p class="text-slate-600">💳 To'lov: ${o.paymentType} | 💰 Jami: ${o.total.toLocaleString()} so'm</p>
+                </div>
+            `).join('');
+        }
+
+        function clearAllOrders() {
+            if (confirm("Barcha buyurtmalar tarixini o'chirishni tasdiqlaysizmi?")) {
+                localStorage.removeItem('tv_orders');
+                orders = [];
+                renderAdminOrders();
+            }
         }
     </script>
 </body>
