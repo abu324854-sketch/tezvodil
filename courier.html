@@ -3,289 +3,571 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TezVodil - Kuryer Paneli</title>
+    <title>TezVodil - Onlayn yetkazib berish xizmati</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#059669">
+    <meta name="theme-color" content="#0f172a">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-</head>
-<body class="bg-slate-100 text-slate-800 pb-10 antialiased selection:bg-emerald-500 selection:text-white">
 
-    <!-- HEADER -->
-    <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
-        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="bg-emerald-600 p-2 rounded-xl">
-                    <i class="fa-solid fa-motorcycle text-xl text-yellow-300"></i>
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-[#f0f4f8] text-slate-800 antialiased selection:bg-emerald-500 selection:text-white min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+    <header class="bg-[#0f172a] text-white sticky top-0 z-40 shadow-md w-full">
+        <div class="max-w-4xl mx-auto px-3 py-2.5 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 shrink-0">
+                <div class="bg-emerald-500 text-amber-300 w-8 h-8 rounded-lg flex items-center justify-center font-black text-base shadow">
+                    <i class="fa-solid fa-bolt"></i>
                 </div>
                 <div>
-                    <h1 class="text-base font-black">TezVodil Kuryer</h1>
-                    <p class="text-[10px] text-emerald-400 font-semibold">Ilova GPS Navigatsiyasi</p>
+                    <h1 class="text-sm font-black tracking-tight leading-none text-white">TezVodil</h1>
+                    <p class="text-[9px] text-emerald-400 font-medium leading-tight mt-0.5">Vodil yetkazish</p>
                 </div>
             </div>
             
-            <div class="flex items-center gap-2">
-                <button onclick="openHistoryModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-xl font-bold flex items-center gap-1.5 shadow transition">
-                    <i class="fa-solid fa-chart-line"></i> <span>Statistika</span>
+            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+                <button onclick="openVendorModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] px-2.5 py-1.5 rounded-lg font-bold border border-slate-700 transition shrink-0 flex items-center gap-1">
+                    <i class="fa-solid fa-store text-amber-400"></i> <span>Do'kon</span>
                 </button>
-                <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-xs p-2 rounded-xl border border-slate-700 font-bold">
-                    <i class="fa-solid fa-arrow-left"></i>
+                <button onclick="openAdminModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] px-2 py-1.5 rounded-lg font-bold border border-slate-700 transition shrink-0">
+                    <i class="fa-solid fa-lock text-emerald-400"></i>
+                </button>
+                <a href="courier.html" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-3 py-1.5 rounded-lg font-bold shrink-0 flex items-center gap-1 shadow">
+                    <i class="fa-solid fa-motorcycle"></i> <span>Kuryer</span>
                 </a>
+                <button onclick="openUserProfileModal()" class="bg-slate-800 hover:bg-slate-700 w-7 h-7 rounded-lg shrink-0 flex items-center justify-center text-slate-300 border border-slate-700">
+                    <i class="fa-solid fa-user text-xs"></i>
+                </button>
+                <button onclick="openCartModal()" class="relative bg-slate-800 hover:bg-slate-700 w-7 h-7 rounded-lg shrink-0 flex items-center justify-center text-emerald-400 border border-slate-700">
+                    <i class="fa-solid fa-shopping-bag text-xs"></i>
+                    <span id="cartBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-[#0f172a] hidden">0</span>
+                </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-md mx-auto p-4 space-y-4">
-
-        <!-- DAROMAD KARTASI -->
-        <div class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-4 rounded-2xl shadow-lg flex justify-between items-center">
-            <div>
-                <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-100">Bugungi Jami Daromad</p>
-                <h3 id="todayEarning" class="text-2xl font-black mt-0.5">0 so'm</h3>
-            </div>
-            <div class="text-right">
-                <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-100">Bajarildi</p>
-                <h3 id="todayCount" class="text-xl font-black mt-0.5 text-yellow-300">0 ta</h3>
-            </div>
+    <main class="max-w-xl mx-auto w-full px-4 py-4 space-y-4 flex-1">
+        <div class="relative max-w-md mx-auto">
+            <input type="text" id="searchInput" oninput="filterCatalog()" placeholder="Taom yoki mahsulotlarni qidirish..." class="w-full bg-white border border-slate-200 pl-9 pr-4 py-2 rounded-xl text-xs font-semibold shadow-sm focus:outline-none focus:border-emerald-500 text-slate-700">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
         </div>
 
-        <!-- BUYURTMALAR RO'YXATI VA HAR BIRIDA INDIVIDUAL TAKSOMETR -->
-        <div class="space-y-3">
-            <div class="flex justify-between items-center">
-                <h2 class="text-xs font-black uppercase text-slate-500 tracking-wider">Yangi Buyurtmalar</h2>
-                <button onclick="loadOrders()" class="text-emerald-600 text-xs font-bold hover:underline flex items-center gap-1">
-                    <i class="fa-solid fa-rotate-right"></i> Yangilash
-                </button>
-            </div>
-            
-            <div id="courierActiveOrdersList" class="space-y-3"></div>
+        <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar max-w-md mx-auto">
+            <button onclick="filterCategory('Barchasi')" class="cat-btn bg-slate-900 text-white px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0">Barchasi</button>
+            <button onclick="filterCategory('Milliy Taomlar')" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0">Milliy Taomlar</button>
+            <button onclick="filterCategory('Fast Food')" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0">Fast Food</button>
+            <button onclick="filterCategory('Pitsa & Burger')" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0">Pitsa & Burger</button>
         </div>
 
+        <div id="catalogList" class="grid grid-cols-2 gap-3 max-w-md mx-auto"></div>
     </main>
 
-    <!-- STATISTIKA MODALI -->
-    <div id="historyModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl max-h-[85vh] flex flex-col">
+    <!-- FOOTER NAVIGATSIYA (BUYURTMALARIM / KURYER KUZATUVI) -->
+    <div class="fixed bottom-0 left-0 right-0 z-40 pb-2 pt-1 bg-gradient-to-t from-[#f0f4f8] via-[#f0f4f8] to-transparent">
+        <nav class="bg-white border border-slate-200/80 rounded-2xl py-2 px-6 shadow-lg max-w-md mx-auto flex justify-around items-center">
+            <a href="index.html" class="text-emerald-600 text-center text-[10px] font-bold flex flex-col items-center">
+                <i class="fa-solid fa-house text-base mb-0.5"></i>
+                <span>Asosiy</span>
+            </a>
+            <button onclick="openOrdersModal()" class="text-slate-400 hover:text-emerald-600 text-center text-[10px] font-bold flex flex-col items-center">
+                <i class="fa-solid fa-receipt text-base mb-0.5"></i>
+                <span>Buyurtmalarim</span>
+            </button>
+            <a href="courier.html" class="text-slate-400 hover:text-emerald-600 text-center text-[10px] font-bold flex flex-col items-center">
+                <i class="fa-solid fa-motorcycle text-base mb-0.5"></i>
+                <span>Kuryer</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- SAVATCHA MODALI -->
+    <div id="cartModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-4 shadow-2xl max-h-[85vh] flex flex-col">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-chart-line text-emerald-600 text-base"></i> Bajarilganlar Tarixi
+                    <i class="fa-solid fa-shopping-bag text-emerald-600"></i> Savatcha
                 </h3>
-                <button onclick="closeHistoryModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <button onclick="closeCartModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            <div id="historyOrdersList" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
-            <button onclick="closeHistoryModal()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl shadow">Yopish</button>
+            <div id="cartItemsList" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
+            <div class="border-t pt-3 space-y-2">
+                <div class="flex justify-between text-xs font-bold text-slate-700">
+                    <span>Jami mahsulotlar:</span>
+                    <span id="cartSubtotal" class="text-emerald-600">0 so'm</span>
+                </div>
+                <button onclick="openCheckoutModal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3 rounded-xl shadow text-xs transition">
+                    Buyurtmani rasmiylashtirish
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MIJOZNING BUYURTMALARI VA KURYERNI KUZATISH MODALI -->
+    <div id="ordersModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-receipt text-emerald-600"></i> Buyurtmalarim & Kuryer Kuzatuvi
+                </h3>
+                <button onclick="closeOrdersModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="clientOrdersList" class="space-y-3 overflow-y-auto flex-1 pr-1"></div>
+            <button onclick="closeOrdersModal()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs shadow">Yopish</button>
+        </div>
+    </div>
+
+    <!-- CHECKOUT / MANZIL MODALI -->
+    <div id="checkoutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-4 shadow-2xl max-h-[90vh] flex flex-col overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-location-dot text-emerald-600"></i> Yetkazish manzili
+                </h3>
+                <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <form onsubmit="submitOrder(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Ism Familiya</label>
+                    <input type="text" id="custName" required placeholder="Ismingiz" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Telefon raqam</label>
+                    <input type="tel" id="custPhone" required value="+998 " class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Manzil matni</label>
+                    <input type="text" id="custAddress" required placeholder="Masalan: Vodil markazi, 12-uy" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Aniq joylashuvni xaritada belgilang:</label>
+                    <div id="checkoutMap" class="w-full h-40 rounded-xl border border-slate-200 shadow-inner"></div>
+                    <p class="text-[10px] text-slate-500 mt-1">Koordinata: <span id="coordsText" class="font-bold text-emerald-600">Vodil markazi</span></p>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">To'lov Usuli</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="border border-slate-200 p-2 rounded-xl text-center cursor-pointer hover:border-emerald-500 flex flex-col items-center justify-center gap-0.5">
+                            <input type="radio" name="payType" value="Naqd" checked class="accent-emerald-600">
+                            <span class="text-[10px] font-bold text-slate-700">💵 Naqd</span>
+                        </label>
+                        <label class="border border-slate-200 p-2 rounded-xl text-center cursor-pointer hover:border-emerald-500 flex flex-col items-center justify-center gap-0.5">
+                            <input type="radio" name="payType" value="Click" class="accent-emerald-600">
+                            <span class="text-[10px] font-bold text-blue-600">🔹 Click</span>
+                        </label>
+                        <label class="border border-slate-200 p-2 rounded-xl text-center cursor-pointer hover:border-emerald-500 flex flex-col items-center justify-center gap-0.5">
+                            <input type="radio" name="payType" value="Payme" class="accent-emerald-600">
+                            <span class="text-[10px] font-bold text-cyan-600">🔹 Payme</span>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex gap-2">
+                        <input type="text" id="promoInput" placeholder="PROMO-KOD (TEZVODIL2026)" class="flex-1 bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold uppercase">
+                        <button type="button" onclick="applyPromoCode()" class="bg-slate-900 text-white text-xs px-3 py-2 rounded-xl font-bold">Qo'llash</button>
+                    </div>
+                    <p id="promoMsg" class="text-[10px] font-bold mt-1 text-emerald-600 hidden">✓ TEZVODIL2026: 10,000 so'm chegirma berildi!</p>
+                </div>
+                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs space-y-1">
+                    <div class="flex justify-between"><span>Mahsulotlar:</span> <strong id="summarySub">0 so'm</strong></div>
+                    <div class="flex justify-between"><span>Dostavka:</span> <strong id="summaryDel">4,800 so'm</strong></div>
+                    <div class="flex justify-between text-emerald-700 border-t pt-1 font-black text-sm"><span>Jami to'lov:</span> <strong id="summaryTotal">0 so'm</strong></div>
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3 rounded-xl shadow text-xs transition">
+                    Buyurtmani tasdiqlash
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PROFIL & VENDOR MODALLARI -->
+    <div id="userProfileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-user text-emerald-600"></i> Mijoz Profili</h3>
+                <button onclick="closeUserProfileModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="saveUserProfile(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Ismingiz</label>
+                    <input type="text" id="uNameInput" required placeholder="Ismingiz" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Telefon Raqamingiz</label>
+                    <input type="tel" id="uPhoneInput" required value="+998 " class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Doimiy Manzilingiz</label>
+                    <input type="text" id="uAddrInput" placeholder="Masalan: Vodil Markazi" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">Saqlash</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="vendorModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-4 shadow-2xl max-h-[90vh] flex flex-col overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-store text-amber-500"></i> Do'kon Kabineti</h3>
+                <button onclick="closeVendorModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="vendorLoginForm" class="space-y-3">
+                <input type="text" id="vendorStoreNameInput" placeholder="Do'kon nomi" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold">
+                <input type="password" id="vendorPasswordInput" placeholder="Parol" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold">
+                <button onclick="loginOrCreateVendor()" class="w-full bg-slate-900 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">Kirish</button>
+            </div>
+            <div id="vendorDashboard" class="space-y-4 hidden">
+                <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl flex justify-between items-center">
+                    <h4 id="vDashTitle" class="font-black text-xs text-amber-900">Do'kon</h4>
+                    <button onclick="logoutVendor()" class="text-[10px] bg-red-100 text-red-700 px-2 py-1 rounded-lg font-bold">Chiqish</button>
+                </div>
+                <div class="border border-slate-200 p-3.5 rounded-2xl space-y-3">
+                    <h4 class="font-extrabold text-xs text-slate-800">Yangi Mahsulot</h4>
+                    <input type="text" id="newProdName" placeholder="Mahsulot nomi" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold">
+                    <input type="number" id="newProdPrice" placeholder="Narxi (So'm)" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold">
+                    <input type="text" id="newProdImg" placeholder="Rasm URL" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold">
+                    <button onclick="addNewProduct()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">Saqlash</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN MODALI -->
+    <div id="adminModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-4 shadow-2xl max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-shield-halved text-emerald-600"></i> Admin Paneli</h3>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="adminLoginForm" class="space-y-3 py-4">
+                <input type="password" id="adminPasswordInput" placeholder="Parol (tezvodil2026)" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-xs font-bold">
+                <button onclick="checkAdminLogin()" class="w-full bg-slate-900 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">Kirish</button>
+            </div>
+            <div id="adminDashboard" class="space-y-3 hidden flex-1 flex flex-col overflow-hidden">
+                <div class="flex justify-between items-center bg-emerald-50 p-2.5 rounded-xl border border-emerald-200 text-xs">
+                    <h4 id="adminTotalOrders" class="font-black text-emerald-800 text-sm">0 ta buyurtma</h4>
+                </div>
+                <div id="adminOrdersList" class="space-y-2 overflow-y-auto flex-1 pr-1"></div>
+            </div>
         </div>
     </div>
 
     <script>
         const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
+        let userCoords = { ...VODIL_CENTER };
+        let map = null, marker = null;
+        let cart = [];
         let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
-        let activeOrderId = null;
-        let watchId = null;
-        let lastCoords = null;
-        let cMap = null, cMarker = null, rLine = null;
-
-        let deliveryStage = 'to_store';
-        let distStoreKm = 0, distCustKm = 0;
-        let fareStore = 0, fareCust = 0;
+        let products = JSON.parse(localStorage.getItem('tv_products')) || []; 
+        let vendors = JSON.parse(localStorage.getItem('tv_vendors')) || [];
+        let appliedDiscount = 0;
+        let currentCategory = 'Barchasi';
 
         document.addEventListener('DOMContentLoaded', () => {
-            loadOrders();
-            calculateStats();
+            renderCatalog(products);
+            updateCartUI();
         });
 
-        function calculateStats() {
-            orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
-            const delivered = orders.filter(o => o.status === 'Yetkazildi');
-            const total = delivered.reduce((sum, o) => sum + (o.actualDeliveryFee || 0), 0);
-            document.getElementById('todayEarning').innerText = total.toLocaleString() + " so'm";
-            document.getElementById('todayCount').innerText = delivered.length + " ta";
-        }
-
-        function loadOrders() {
-            orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
-            const container = document.getElementById('courierActiveOrdersList');
-            const activeOrders = orders.filter(o => o.status !== 'Yetkazildi');
-
-            if (activeOrders.length === 0) {
-                container.innerHTML = `
-                    <div class="bg-white p-6 rounded-2xl text-center text-slate-400 border border-slate-200 shadow-sm">
-                        <i class="fa-solid fa-box-open text-3xl mb-2 text-slate-300"></i>
-                        <p class="text-xs font-bold">Hozircha yangi buyurtmalar mavjud emas</p>
-                    </div>`;
+        function renderCatalog(items) {
+            const list = document.getElementById('catalogList');
+            if (!items || items.length === 0) {
+                list.innerHTML = `<div class="col-span-2 text-center py-12 text-slate-400 space-y-2"><i class="fa-solid fa-box-open text-3xl text-slate-300"></i><p class="text-xs font-bold">Hozircha mahsulotlar mavjud emas</p></div>`;
                 return;
             }
-
-            container.innerHTML = activeOrders.map(o => `
-                <div class="bg-white border ${activeOrderId === o.id ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200'} rounded-2xl p-4 shadow-sm space-y-3">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-black px-2 py-0.5 rounded-full">#${o.id}</span>
-                            <h3 class="font-extrabold text-sm text-slate-800 mt-1">${o.name || "Mijoz"}</h3>
-                            <p class="text-xs text-emerald-700 font-bold"><i class="fa-solid fa-phone text-xs mr-1"></i> ${o.phone || "Telefon yo'q"}</p>
-                        </div>
-                        <span class="text-xs font-black px-2.5 py-1 rounded-xl bg-blue-100 text-blue-800">${o.status || 'Yangi'}</span>
+            list.innerHTML = items.map(p => `
+                <div class="bg-white border border-slate-100 rounded-2xl p-2.5 shadow-sm flex flex-col justify-between space-y-2 hover:shadow-md transition">
+                    <img src="${p.img || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400'}" class="w-full h-28 object-cover rounded-xl" alt="${p.name}">
+                    <div class="space-y-0.5">
+                        <span class="inline-block text-[9px] bg-emerald-100/80 text-emerald-800 font-bold px-2 py-0.5 rounded-md">${p.store || 'Do\'kon'}</span>
+                        <h4 class="font-extrabold text-xs text-slate-800 leading-snug line-clamp-1">${p.name}</h4>
+                        <p class="text-xs font-black text-emerald-600">${(p.price || 0).toLocaleString()} so'm</p>
                     </div>
-
-                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs space-y-1">
-                        <p class="text-slate-600 font-medium">📍 Manzil: <strong>${o.address || 'Manzil kiritilmagan'}</strong></p>
-                        <p class="text-slate-600 font-medium">💳 To'lov: <strong>${o.paymentType || 'Naqd'}</strong></p>
-                        <p class="text-slate-600 font-medium">💰 Tovar Summasi: <strong>${(o.total || 0).toLocaleString()} so'm</strong></p>
-                    </div>
-
-                    ${renderOrderControls(o)}
+                    <button onclick="addToCart(${p.id})" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-extrabold py-2 rounded-xl text-xs shadow transition">Qo'shish</button>
                 </div>
             `).join('');
-
-            if (activeOrderId && cMap) {
-                setTimeout(() => cMap.invalidateSize(), 200);
-            }
         }
 
-        function renderOrderControls(o) {
-            if (activeOrderId === o.id) {
-                return `
-                    <div class="bg-slate-900 text-white p-3 rounded-2xl space-y-2 border border-slate-800 mt-2">
-                        <div class="flex justify-between items-center text-[11px] font-bold border-b border-slate-800 pb-1.5">
-                            <span class="text-emerald-400">${deliveryStage === 'to_store' ? '🏪 Do\'konga ketilmoqda (1,800 s/km)' : '🏠 Mijozga ketilmoqda (4,800 s/km)'}</span>
-                            <span class="text-yellow-400" id="liveFare">0 so'm</span>
-                        </div>
-                        <div id="cNavMap" class="w-full h-40 rounded-xl border border-slate-700"></div>
-                        
-                        ${deliveryStage === 'to_store' ? `
-                            <button onclick="switchToCustomerStage()" class="w-full bg-amber-500 text-slate-900 font-extrabold py-2.5 rounded-xl text-xs shadow">
-                                Tovarni Oldim (Mijozga Ketish)
-                            </button>
-                        ` : `
-                            <button onclick="finishDelivery(${o.id})" class="w-full bg-emerald-600 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">
-                                Buyurtmani Yetkazdim (Tugatish)
-                            </button>
-                        `}
-                    </div>
-                `;
-            }
-
-            return `
-                <button onclick="startDelivery(${o.id})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 rounded-xl text-xs shadow flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-location-arrow"></i> Do'konga Ketdim (Taksometrni yoqish)
-                </button>
-            `;
-        }
-
-        function startDelivery(id) {
-            if (!navigator.geolocation) return alert("GPS faol emas!");
-            activeOrderId = id;
-            deliveryStage = 'to_store';
-            distStoreKm = 0; distCustKm = 0;
-            fareStore = 0; fareCust = 0;
-            lastCoords = null;
-
-            const idx = orders.findIndex(o => o.id === id);
-            if (idx !== -1) {
-                orders[idx].status = "Yo'lda";
-                localStorage.setItem('tv_orders', JSON.stringify(orders));
-            }
-
-            loadOrders();
-
-            setTimeout(() => {
-                const mapEl = document.getElementById('cNavMap');
-                if (mapEl) {
-                    cMap = L.map('cNavMap').setView([VODIL_CENTER.lat, VODIL_CENTER.lng], 15);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(cMap);
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.innerText.includes(cat) || (cat === 'Barchasi' && btn.innerText === 'Barchasi')) {
+                    btn.className = "cat-btn bg-slate-900 text-white px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0";
+                } else {
+                    btn.className = "cat-btn bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0";
                 }
-            }, 300);
-
-            watchId = navigator.geolocation.watchPosition(updateGPS, err => console.warn(err), { enableHighAccuracy: true });
+            });
+            applyFilters();
         }
 
-        function switchToCustomerStage() {
-            deliveryStage = 'to_customer';
-            lastCoords = null;
-            loadOrders();
+        function filterCatalog() { applyFilters(); }
+
+        function applyFilters() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = products.filter(p => p.name.toLowerCase().includes(q) || (p.store && p.store.toLowerCase().includes(q)));
+            if (currentCategory !== 'Barchasi') filtered = filtered.filter(p => p.category === currentCategory);
+            renderCatalog(filtered);
         }
 
-        function updateGPS(pos) {
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
-
-            if (cMap) {
-                if (cMarker) cMarker.setLatLng([lat, lng]);
-                else cMarker = L.marker([lat, lng]).addTo(cMap);
-                cMap.setView([lat, lng]);
-            }
-
-            if (lastCoords) {
-                const delta = calcDistKm(lastCoords.lat, lastCoords.lng, lat, lng);
-                if (delta > 0.005) {
-                    if (deliveryStage === 'to_store') {
-                        distStoreKm += delta;
-                        fareStore = Math.round(distStoreKm * 1800);
-                    } else {
-                        distCustKm += delta;
-                        fareCust = Math.round(distCustKm * 4800);
-                    }
-                }
-            }
-
-            lastCoords = { lat, lng };
-            const totalFare = fareStore + fareCust;
-            const fareEl = document.getElementById('liveFare');
-            if (fareEl) fareEl.innerText = totalFare.toLocaleString() + " so'm";
+        function addToCart(id) {
+            const prod = products.find(p => p.id === id);
+            if (!prod) return;
+            const exist = cart.find(i => i.id === id);
+            if (exist) exist.qty++; else cart.push({ ...prod, qty: 1 });
+            updateCartUI();
         }
 
-        function calcDistKm(lat1, lon1, lat2, lon2) {
-            const R = 6371;
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
-            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        }
+        function updateCartUI() {
+            const badge = document.getElementById('cartBadge');
+            const totalQty = cart.reduce((s, i) => s + i.qty, 0);
+            if (totalQty > 0) { badge.innerText = totalQty; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
 
-        function finishDelivery(id) {
-            if (watchId) navigator.geolocation.clearWatch(watchId);
-            const totalFare = fareStore + fareCust;
-
-            const idx = orders.findIndex(o => o.id === id);
-            if (idx !== -1) {
-                orders[idx].status = "Yetkazildi";
-                orders[idx].actualDeliveryFee = totalFare;
-                localStorage.setItem('tv_orders', JSON.stringify(orders));
-            }
-
-            alert(`Buyurtma yetkazildi!\nDostavka narxi: ${totalFare.toLocaleString()} so'm`);
-            activeOrderId = null;
-            calculateStats();
-            loadOrders();
-        }
-
-        function openHistoryModal() { document.getElementById('historyModal').classList.remove('hidden'); renderHistory(); }
-        function closeHistoryModal() { document.getElementById('historyModal').classList.add('hidden'); }
-
-        function renderHistory() {
-            orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
-            const container = document.getElementById('historyOrdersList');
-            const delivered = orders.filter(o => o.status === 'Yetkazildi');
-
-            if (delivered.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6 font-bold">Yetkazilgan buyurtmalar yo'q</p>`;
+            const list = document.getElementById('cartItemsList');
+            if (cart.length === 0) {
+                list.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs font-bold">Savatcha bo'sh</div>`;
+                document.getElementById('cartSubtotal').innerText = "0 so'm";
                 return;
             }
 
-            container.innerHTML = delivered.map(o => `
-                <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-xs space-y-1">
-                    <div class="flex justify-between font-bold">
-                        <span>#${o.id} - ${o.name || 'Mijoz'}</span>
-                        <span class="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full text-[10px]">Yetkazildi</span>
+            let sub = 0;
+            list.innerHTML = cart.map((item, idx) => {
+                sub += item.price * item.qty;
+                return `
+                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs">
+                        <div>
+                            <p class="font-black text-slate-800">${item.name}</p>
+                            <p class="text-emerald-600 font-bold">${item.price.toLocaleString()} so'm x ${item.qty}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="changeQty(${idx}, -1)" class="w-6 h-6 bg-slate-200 rounded-lg font-bold">-</button>
+                            <span class="font-black">${item.qty}</span>
+                            <button onclick="changeQty(${idx}, 1)" class="w-6 h-6 bg-slate-200 rounded-lg font-bold">+</button>
+                        </div>
+                    </div>`;
+            }).join('');
+            document.getElementById('cartSubtotal').innerText = sub.toLocaleString() + " so'm";
+        }
+
+        function changeQty(idx, delta) {
+            cart[idx].qty += delta;
+            if (cart[idx].qty <= 0) cart.splice(idx, 1);
+            updateCartUI();
+        }
+
+        function openCartModal() { document.getElementById('cartModal').classList.remove('hidden'); }
+        function closeCartModal() { document.getElementById('cartModal').classList.add('hidden'); }
+
+        // MIJOZ BUYURTMALARI VA KURYERNI JONLI KUZATISH
+        function openOrdersModal() {
+            document.getElementById('ordersModal').classList.remove('hidden');
+            renderClientOrders();
+        }
+        function closeOrdersModal() { document.getElementById('ordersModal').classList.add('hidden'); }
+
+        function renderClientOrders() {
+            orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
+            const container = document.getElementById('clientOrdersList');
+
+            if (orders.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6 font-bold">Buyurtmalar mavjud emas</p>`;
+                return;
+            }
+
+            container.innerHTML = orders.slice().reverse().map(o => `
+                <div class="bg-slate-50 border border-slate-200 p-3 rounded-xl text-xs space-y-2 shadow-sm">
+                    <div class="flex justify-between font-extrabold text-slate-800">
+                        <span>#${o.id}</span>
+                        <span class="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full text-[10px]">${o.status || 'Yangi'}</span>
                     </div>
                     <p class="text-slate-600">📍 Manzil: ${o.address || ''}</p>
-                    <p class="text-emerald-800 font-bold">Dostavka: ${(o.actualDeliveryFee || 0).toLocaleString()} so'm</p>
+                    <p class="text-slate-600">💰 Jami: ${(o.total || 0).toLocaleString()} so'm</p>
+                    
+                    ${o.status === "Yo'lda" ? `
+                        <div class="pt-2 border-t border-slate-200">
+                            <p class="font-bold text-emerald-700 mb-1">🛵 Kuryer yo'lda! Jonli xarita:</p>
+                            <div id="trackMap_${o.id}" class="w-full h-36 rounded-xl border border-slate-300"></div>
+                        </div>
+                    ` : ''}
                 </div>
             `).join('');
+
+            // Agar kuryer yo'lda bo'lsa xaritani chizish
+            setTimeout(() => {
+                orders.forEach(o => {
+                    if (o.status === "Yo'lda") {
+                        const mapId = `trackMap_${o.id}`;
+                        if (document.getElementById(mapId) && !window['map_' + o.id]) {
+                            const tMap = L.map(mapId).setView([VODIL_CENTER.lat, VODIL_CENTER.lng], 15);
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(tMap);
+                            
+                            // Mijozning manzili
+                            if (o.customerCoords) {
+                                L.marker([o.customerCoords.lat, o.customerCoords.lng]).addTo(tMap).bindPopup('Sizning manzilingiz');
+                            }
+                            window['map_' + o.id] = tMap;
+                        }
+                    }
+                });
+            }, 300);
+        }
+
+        function openCheckoutModal() {
+            if (cart.length === 0) return alert("Savatcha bo'sh!");
+            closeCartModal();
+            document.getElementById('checkoutModal').classList.remove('hidden');
+
+            const sub = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            document.getElementById('summarySub').innerText = sub.toLocaleString() + " so'm";
+            document.getElementById('summaryTotal').innerText = Math.max(0, sub + 4800 - appliedDiscount).toLocaleString() + " so'm";
+
+            setTimeout(() => {
+                if (!map) {
+                    map = L.map('checkoutMap').setView([VODIL_CENTER.lat, VODIL_CENTER.lng], 15);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                    marker = L.marker([VODIL_CENTER.lat, VODIL_CENTER.lng], { draggable: true }).addTo(map);
+
+                    marker.on('dragend', function(e) {
+                        const pos = marker.getLatLng();
+                        userCoords = { lat: pos.lat, lng: pos.lng };
+                        document.getElementById('coordsText').innerText = `${pos.lat.toFixed(4)}, ${pos.lng.toFixed(4)}`;
+                    });
+
+                    map.on('click', function(e) {
+                        marker.setLatLng(e.latlng);
+                        userCoords = { lat: e.latlng.lat, lng: e.latlng.lng };
+                        document.getElementById('coordsText').innerText = `${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`;
+                    });
+                } else {
+                    map.invalidateSize();
+                }
+            }, 250);
+        }
+
+        function closeCheckoutModal() { document.getElementById('checkoutModal').classList.add('hidden'); }
+
+        function applyPromoCode() {
+            const code = document.getElementById('promoInput').value.trim().toUpperCase();
+            const msg = document.getElementById('promoMsg');
+            if (code === 'TEZVODIL2026') {
+                appliedDiscount = 10000;
+                msg.classList.remove('hidden');
+                const sub = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+                document.getElementById('summaryTotal').innerText = Math.max(0, sub + 4800 - appliedDiscount).toLocaleString() + " so'm";
+            } else { alert("Noto'g'ri promo-kod!"); }
+        }
+
+        function submitOrder(e) {
+            e.preventDefault();
+            const name = document.getElementById('custName').value.trim();
+            const phone = document.getElementById('custPhone').value.trim();
+            const address = document.getElementById('custAddress').value.trim();
+            const paymentType = document.querySelector('input[name="payType"]:checked').value;
+
+            const sub = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            const deliveryFee = 4800;
+            const finalTotal = Math.max(0, sub + deliveryFee - appliedDiscount);
+
+            const newOrder = {
+                id: Date.now(),
+                name, phone, address, paymentType,
+                customerCoords: { ...userCoords },
+                items: [...cart],
+                total: finalTotal,
+                deliveryFee,
+                status: "Yangi",
+                date: new Date().toLocaleString()
+            };
+
+            orders.push(newOrder);
+            localStorage.setItem('tv_orders', JSON.stringify(orders));
+            cart = [];
+            updateCartUI();
+            closeCheckoutModal();
+            alert("Buyurtmangiz muvaffaqiyatli qabul qilindi!");
+        }
+
+        function openUserProfileModal() { document.getElementById('userProfileModal').classList.remove('hidden'); }
+        function closeUserProfileModal() { document.getElementById('userProfileModal').classList.add('hidden'); }
+
+        function saveUserProfile(e) {
+            e.preventDefault();
+            const name = document.getElementById('uNameInput').value.trim();
+            const phone = document.getElementById('uPhoneInput').value.trim();
+            const address = document.getElementById('uAddrInput').value.trim();
+
+            localStorage.setItem('tv_user_profile', JSON.stringify({ name, phone, address }));
+            document.getElementById('custName').value = name;
+            document.getElementById('custPhone').value = phone;
+            document.getElementById('custAddress').value = address;
+            alert("Profil saqlandi!");
+            closeUserProfileModal();
+        }
+
+        function openAdminModal() { document.getElementById('adminModal').classList.remove('hidden'); }
+        function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
+
+        function checkAdminLogin() {
+            if (document.getElementById('adminPasswordInput').value.trim() === 'tezvodil2026') {
+                document.getElementById('adminLoginForm').classList.add('hidden');
+                document.getElementById('adminDashboard').classList.remove('hidden');
+                renderAdminOrders();
+            } else { alert("Parol noto'g'ri!"); }
+        }
+
+        function renderAdminOrders() {
+            orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
+            document.getElementById('adminTotalOrders').innerText = orders.length + " ta buyurtma";
+            document.getElementById('adminOrdersList').innerHTML = orders.slice().reverse().map(o => `
+                <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-xs space-y-1">
+                    <div class="flex justify-between font-bold"><span>#${o.id} - ${o.name}</span><span class="text-emerald-600">${o.status}</span></div>
+                    <p class="text-slate-600">📞 ${o.phone} | 📍 ${o.address}</p>
+                </div>
+            `).join('');
+        }
+
+        function openVendorModal() { document.getElementById('vendorModal').classList.remove('hidden'); }
+        function closeVendorModal() { document.getElementById('vendorModal').classList.add('hidden'); }
+
+        function loginOrCreateVendor() {
+            const storeName = document.getElementById('vendorStoreNameInput').value.trim();
+            const pwd = document.getElementById('vendorPasswordInput').value.trim();
+            if (!storeName || !pwd) return alert("To'ldiring!");
+            let v = vendors.find(x => x.storeName === storeName);
+            if (v) {
+                if (v.password !== pwd) return alert("Parol xato!");
+                currentVendor = v;
+            } else {
+                currentVendor = { storeName, password: pwd, coords: { ...VODIL_CENTER } };
+                vendors.push(currentVendor);
+                localStorage.setItem('tv_vendors', JSON.stringify(vendors));
+            }
+            document.getElementById('vendorLoginForm').classList.add('hidden');
+            document.getElementById('vendorDashboard').classList.remove('hidden');
+            document.getElementById('vDashTitle').innerText = currentVendor.storeName;
+        }
+
+        function logoutVendor() {
+            currentVendor = null;
+            document.getElementById('vendorLoginForm').classList.remove('hidden');
+            document.getElementById('vendorDashboard').classList.add('hidden');
+        }
+
+        function addNewProduct() {
+            if (!currentVendor) return;
+            const name = document.getElementById('newProdName').value.trim();
+            const price = parseFloat(document.getElementById('newProdPrice').value);
+            const img = document.getElementById('newProdImg').value.trim();
+            if (!name || isNaN(price)) return alert("Ma'lumotlarni kiriting!");
+            products.push({ id: Date.now(), name, price, store: currentVendor.storeName, img: img || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400' });
+            localStorage.setItem('tv_products', JSON.stringify(products));
+            renderCatalog(products);
+            alert("Mahsulot qo'shildi!");
         }
     </script>
 </body>
