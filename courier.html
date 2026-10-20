@@ -26,11 +26,11 @@
                 </a>
                 <div>
                     <h1 class="text-sm font-black text-emerald-400 leading-tight">TezVodil Kuryer</h1>
-                    <p id="courierStatusTag" class="text-[10px] text-slate-400 font-bold">Ofline (Dam olishda)</p>
+                    <p id="courierStatusTag" class="text-[10px] text-slate-400 font-bold">Offline (Dam olishda)</p>
                 </div>
             </div>
 
-            <!-- REAL-TIME TAKSOMETR (YUQORI BURCHAKDA) -->
+            <!-- REAL-TIME TAKSOMETR -->
             <div class="bg-slate-900 border border-emerald-500/50 px-3 py-1.5 rounded-2xl text-right shadow-inner">
                 <span class="text-[9px] text-slate-400 font-bold block uppercase tracking-wider">Taksometr</span>
                 <span id="taximeterAmount" class="text-sm font-black text-yellow-400">0 so'm</span>
@@ -41,7 +41,7 @@
     <!-- ASOSIY BO'LIM -->
     <main class="max-w-md mx-auto w-full px-4 py-3 space-y-4 flex-1 pb-24">
 
-        <!-- PROFIL & ISHGA CHIQISH (ONLINE/OFFLINE) -->
+        <!-- PROFIL CARD -->
         <div id="courierProfileCard" class="bg-slate-800 border border-slate-700/80 rounded-2xl p-3.5 shadow-md space-y-3">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
@@ -53,9 +53,14 @@
                         <p id="cProfilePhone" class="text-[10px] text-slate-400 font-medium">+998 -- --- -- --</p>
                     </div>
                 </div>
-                <button onclick="toggleCourierStatus()" id="cStatusBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-3 py-2 rounded-xl shadow transition">
-                    Ishni Boshlash
-                </button>
+                <div class="flex items-center gap-2">
+                    <button onclick="openCourierProfileModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 p-2 rounded-xl text-xs shadow">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button onclick="toggleCourierStatus()" id="cStatusBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-3 py-2 rounded-xl shadow transition">
+                        Ishni Boshlash
+                    </button>
+                </div>
             </div>
 
             <div class="grid grid-cols-2 gap-2 text-[10px] pt-2 border-t border-slate-700/50">
@@ -92,9 +97,7 @@
                 <span id="activeOrdersBadge" class="bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 text-[10px] font-black px-2 py-0.5 rounded-full">0 ta</span>
             </div>
 
-            <div id="courierOrdersContainer" class="space-y-3">
-                <!-- Buyurtmalar JavaScript orqali joylanadi -->
-            </div>
+            <div id="courierOrdersContainer" class="space-y-3"></div>
         </div>
     </main>
 
@@ -133,7 +136,7 @@
         </div>
     </div>
 
-    <!-- NAVIGATSIYA -->
+    <!-- NAVIGATSIYA PANEL -->
     <div class="fixed bottom-0 left-0 right-0 z-40 bg-slate-800/95 backdrop-blur-md border-t border-slate-700/80 px-4 py-2 shadow-lg">
         <div class="max-w-md mx-auto flex justify-around items-center text-[10px] font-bold text-slate-400">
             <button onclick="window.location.reload()" class="text-emerald-400 flex flex-col items-center">
@@ -147,17 +150,15 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIKA -->
+    <!-- JAVASCRIPT -->
     <script>
         const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
         let courierMap = null;
         let courierMarker = null;
         let isOnline = false;
-        let activeTripOrder = null;
 
-        // HISOB-KITOB TARIFLARI
-        const BASE_STORE_FEE = 2000;  // Magazingacha belgilangan tarif
-        const BASE_CLIENT_FEE = 4900; // Mijozgacha belgilangan tarif
+        const BASE_STORE_FEE = 2000;
+        const BASE_CLIENT_FEE = 4900;
 
         let courierData = JSON.parse(localStorage.getItem('tv_courier_profile')) || {
             name: "Kuryer Biriktirilmagan",
@@ -172,17 +173,15 @@
             initCourierProfile();
             initCourierMap();
             renderOrdersList();
-
-            // Har 5 sekundda yangi zakazlarni va hodisalarni avto-tekshirish
             setInterval(checkNewOrdersAlert, 5000);
         });
 
         function speakText(text) {
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // Oldingi ovozni to'xtatish
+                window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'uz-UZ';
-                utterance.rate = 0.9; // Sekinroq va tushunarli aytish
+                utterance.rate = 0.9;
                 window.speechSynthesis.speak(utterance);
             }
         }
@@ -196,6 +195,28 @@
             document.getElementById('cInputName').value = courierData.name !== "Kuryer Biriktirilmagan" ? courierData.name : "";
             document.getElementById('cInputPhone').value = courierData.phone !== "+998 20 000 00 00" ? courierData.phone : "+998 ";
             document.getElementById('cInputVehicle').value = courierData.vehicle;
+        }
+
+        function openCourierProfileModal() {
+            const modal = document.getElementById('courierProfileModal');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeCourierProfileModal() {
+            const modal = document.getElementById('courierProfileModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function saveCourierProfile(e) {
+            e.preventDefault();
+            courierData.name = document.getElementById('cInputName').value.trim();
+            courierData.phone = document.getElementById('cInputPhone').value.trim();
+            courierData.vehicle = document.getElementById('cInputVehicle').value;
+
+            localStorage.setItem('tv_courier_profile', JSON.stringify(courierData));
+            initCourierProfile();
+            closeCourierProfileModal();
+            speakText(`Profil ma'lumotlaringiz saqlandi.`);
         }
 
         function toggleCourierStatus() {
@@ -214,7 +235,7 @@
                 btn.innerText = "Ishni Yakunlash";
                 tag.innerText = "Online (Aktiv)";
                 tag.className = "text-[10px] text-emerald-400 font-bold";
-                speakText("Kuryer rejimi faollashtirildi. Yangi buyurtmalar kutilmoqda.");
+                speakText("Kuryer rejimi faollashtirildi.");
                 updateCourierLocation();
             } else {
                 btn.className = "bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-3 py-2 rounded-xl shadow transition";
@@ -231,7 +252,6 @@
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(courierMap);
             
             courierMarker = L.marker([VODIL_CENTER.lat, VODIL_CENTER.lng], { draggable: true }).addTo(courierMap);
-            courierMarker.bindPopup("Sizning hozirgi joylashuvingiz").openPopup();
         }
 
         function updateCourierLocation() {
@@ -294,7 +314,6 @@
                     <div class="text-[11px] space-y-1 text-slate-300">
                         <p><i class="fa-solid fa-store text-amber-400 w-4"></i> Do'kon yetkazishi: <b>${BASE_STORE_FEE.toLocaleString()} so'm</b></p>
                         <p><i class="fa-solid fa-location-dot text-red-400 w-4"></i> Mijoz manzili: <b>${o.address} (${BASE_CLIENT_FEE.toLocaleString()} so'm)</b></p>
-                        <p><i class="fa-solid fa-bag-shopping text-emerald-400 w-4"></i> Tovarlar: ${o.items ? o.items.map(i => i.name).join(', ') : 'Buyurtma'}</p>
                     </div>
 
                     <div class="pt-1">
@@ -325,21 +344,20 @@
 
             const o = orders.find(x => x.id === id);
             if (o) {
-                o.status = 'Kuryer yo'lda';
+                o.status = 'Kuryer yo\'lda';
                 o.courierName = courierData.name;
                 o.courierPhone = courierData.phone;
                 localStorage.setItem('tv_orders', JSON.stringify(orders));
                 
-                speakText(`Buyurtma qabul qilindi. Do'kon to'lovi 2000 so'm, mijoz to'lovi 4900 so'm. Yo'lga chiqing.`);
+                speakText(`Buyurtma qabul qilindi.`);
                 renderOrdersList();
             }
         }
 
         function startTaximeterTrip(id) {
-            activeTripOrder = id;
             const totalFee = BASE_STORE_FEE + BASE_CLIENT_FEE;
             document.getElementById('taximeterAmount').innerText = `${totalFee.toLocaleString()} so'm`;
-            speakText(`Taksometr ishga tushdi. Hisoblangan umumiy yetkazib berish haqi ${totalFee} so'm.`);
+            speakText(`Taksometr ishga tushdi.`);
         }
 
         function completeOrder(id) {
@@ -355,29 +373,9 @@
                 document.getElementById('taximeterAmount').innerText = "0 so'm";
                 initCourierProfile();
                 
-                speakText(`Buyurtma muvaffaqiyatli topshirildi. Hisobingizga ${earned} so'm qo'shildi.`);
+                speakText(`Buyurtma topshirildi.`);
                 renderOrdersList();
             }
-        }
-
-        function openCourierProfileModal() {
-            document.getElementById('courierProfileModal').classList.remove('hidden');
-        }
-
-        function closeCourierProfileModal() {
-            document.getElementById('courierProfileModal').classList.add('hidden');
-        }
-
-        function saveCourierProfile(e) {
-            e.preventDefault();
-            courierData.name = document.getElementById('cInputName').value.trim();
-            courierData.phone = document.getElementById('cInputPhone').value.trim();
-            courierData.vehicle = document.getElementById('cInputVehicle').value;
-
-            localStorage.setItem('tv_courier_profile', JSON.stringify(courierData));
-            initCourierProfile();
-            closeCourierProfileModal();
-            speakText(`Profil ma'lumotlaringiz saqlandi.`);
         }
     </script>
 </body>
