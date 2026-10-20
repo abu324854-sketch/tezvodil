@@ -142,7 +142,7 @@
         </div>
     </div>
 
-    <!-- CHECKOUT MODALI (XARITA VA DOSTAVKA) -->
+    <!-- CHECKOUT MODALI -->
     <div id="checkoutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl max-h-[90vh] flex flex-col overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -332,7 +332,7 @@
                     <i class="fa-solid fa-graduation-cap text-emerald-600 text-sm"></i> Ta'lim:
                 </p>
                 <p id="modalDevEducation" class="text-slate-700 font-medium leading-snug">
-                    Toshkent MENEJMENT VA IQTISODIYOT INSTITUTI FARG'ONA CAMPUSI
+                    TOSHKENT MENEJMENT VA IQTISODIYOT INSTITUTI FARG'ONA CAMPUSI
                 </p>
                 
                 <div class="pt-2 border-t border-emerald-200/60 flex items-center justify-between">
@@ -356,6 +356,34 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
-</body>
-</html>
+    <!-- ВСТРОЕННЫЙ СКРИПТ (РЕШАЕТ ПРОБЛЕМУ 404 ОШИБКИ И НЕСРАБАТЫВАНИЯ КНОПОК) -->
+    <script>
+        const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
+        let map = null;
+        let marker = null;
+        let userCoords = { lat: 40.1764, lng: 71.7258 };
+        let calculatedDistance = 0;
+        let calculatedDeliveryFee = 5600;
+
+        let settings = JSON.parse(localStorage.getItem('tv_settings')) || { 
+            orderRate: 4000, 
+            extraRate: 1600,
+            devName: "Fattoxov Abdulloh Toxirjon o'g'li",
+            devPhoto: "dev.jpg",
+            devEducation: "TOSHKENT MENEJMENT VA IQTISODIYOT INSTITUTI FARG'ONA CAMPUSI",
+            devPhone: "+998 20 000 57 88",
+            devLegalText: "Ushbu dastur kodi, funksionalligi yoki 'TezVodil' brendini ruxsatsiz nusxalash O'zbekiston Respublikasining Mualliflik huquqi to'g'risidagi Qonuniga muvofiq javobgarlikka sabab bo'ladi."
+        };
+
+        let products = JSON.parse(localStorage.getItem('tv_products')) || [
+            { id: 1, name: "Sut 1L (Tabiiy)", store: "Fayz Market", price: 11000, image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=300", category: "Milliy Taomlar" },
+            { id: 2, name: "Qora Daftar 36v", store: "Bilim Kantselyariya", price: 4000, image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300", category: "Barchasi" }
+        ];
+
+        let cart = [];
+        let favorites = JSON.parse(localStorage.getItem('tv_favorites')) || [];
+        let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
+        let usersList = JSON.parse(localStorage.getItem('tv_users')) || [];
+        let vendorsList = JSON.parse(localStorage.getItem('tv_vendors')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('tv_current_user')) || null;
+        let currentVendor = JSON.parse
