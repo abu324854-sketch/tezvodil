@@ -22,7 +22,7 @@
 </head>
 <body class="text-slate-900 antialiased min-h-full flex flex-col justify-between overflow-x-hidden selection:bg-emerald-500 selection:text-white relative">
 
-    <!-- JONLI KURYER TUSHUM VIDJETI (FAQAT KURYER REJIMIDA KO'RINADI) -->
+    <!-- JONLI KURYER TUSHUM VIDJETI -->
     <div id="floatingFareWidget" class="fixed top-16 right-3 z-50 dark-glass text-yellow-400 border border-amber-400/30 px-3.5 py-2 rounded-2xl shadow-2xl hidden flex items-center gap-2.5">
         <div class="w-7 h-7 rounded-xl bg-amber-400/20 flex items-center justify-center">
             <i class="fa-solid fa-gauge-high text-amber-400 animate-pulse text-xs"></i>
@@ -93,7 +93,7 @@
         <div id="catalogList" class="grid grid-cols-2 gap-3 w-full"></div>
     </main>
 
-    <!-- 2. KURYER TEZOMETR EKRANI (FAQAT KURYER REJIMIDA OCHILADI) -->
+    <!-- 2. KURYER TEZOMETR EKRANI -->
     <section id="courierSectionModal" class="fixed inset-0 bg-slate-900 z-50 hidden flex flex-col overflow-y-auto pb-24 text-white">
         <header class="bg-slate-950 text-white sticky top-0 z-40 border-b border-slate-800">
             <div class="max-w-md mx-auto px-4 py-3.5 flex justify-between items-center">
@@ -103,7 +103,7 @@
                     </div>
                     <div>
                         <h1 class="text-sm font-black tracking-tight">TezVodil Pro Kuryer</h1>
-                        <p class="text-[9px] text-emerald-400 font-bold uppercase tracking-widest">Tezometr & Sun'iy Yo'ldosh GPS</p>
+                        <p class="text-[9px] text-emerald-400 font-bold uppercase tracking-widest">Tezometr & Vodil GPS</p>
                     </div>
                 </div>
                 
@@ -393,7 +393,7 @@
         </div>
     </div>
 
-    <!-- SATELLITE & MFY SMART LOGIC ENGINE -->
+    <!-- ENGINE LOGIC -->
     <script>
         const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
         const MFY_ZONES = {
@@ -422,7 +422,10 @@
             { id: 1, name: "Osh (Milliy)", price: 35000, store: "Vodil Oshpazi", category: "Milliy Taomlar", mfy: "Markaz MFY", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400" },
             { id: 2, name: "Burger Pro", price: 28000, store: "FastFood Hub", category: "Fast Food", mfy: "Navbahor MFY", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400" }
         ];
-        let vendors = JSON.parse(localStorage.getItem('tv_vendors')) || [];
+        let vendors = JSON.parse(localStorage.getItem('tv_vendors')) || [
+            { storeName: "Vodil Oshpazi", password: "123", coords: { lat: 40.1764, lng: 71.7258 } },
+            { storeName: "FastFood Hub", password: "123", coords: { lat: 40.1810, lng: 71.7320 } }
+        ];
         let promos = JSON.parse(localStorage.getItem('tv_promos')) || [{ code: 'TEZVODIL2026', amount: 10000 }];
         let userSessions = JSON.parse(localStorage.getItem('tv_user_sessions')) || [1];
         
@@ -460,7 +463,6 @@
             document.getElementById('moreMenuDropdown').classList.toggle('hidden');
         }
 
-        // BARCHA EKRANLARNI TOZALAB, FAQAT ASOSIY EKRANNI OCHISH
         function returnToMainScreen() {
             document.getElementById('moreMenuDropdown').classList.add('hidden');
             document.getElementById('courierSectionModal').classList.add('hidden');
@@ -475,10 +477,6 @@
             document.getElementById('floatingFareWidget').classList.remove('hidden');
             calculateCourierStats();
             loadCourierOrders();
-        }
-
-        function closeCourierSection() {
-            returnToMainScreen();
         }
 
         function calculateCourierStats() {
@@ -566,11 +564,19 @@
         function getTargetCoords() {
             const currentOrder = orders.find(o => o.id === activeOrderId);
             if (!currentOrder) return VODIL_CENTER;
+            
             if (deliveryStage === 'to_store') {
                 const storeName = currentOrder.items && currentOrder.items[0] ? currentOrder.items[0].store : null;
                 const v = vendors.find(x => x.storeName === storeName);
-                return (v && v.coords) ? v.coords : VODIL_CENTER;
-            } else { return currentOrder.customerCoords || VODIL_CENTER; }
+                if (v && v.coords && v.coords.lat > 40) return v.coords;
+                return VODIL_CENTER;
+            } else { 
+                // Agar mijoz xaritadan lokatsiya tanlagan bo'lsa o'shani olamiz, bo'lmasa Vodil markazini berib qutqaramiz
+                if (currentOrder.customerCoords && currentOrder.customerCoords.lat) {
+                    return currentOrder.customerCoords;
+                }
+                return VODIL_CENTER; 
+            }
         }
 
         function initOrUpdateCourierMap() {
@@ -864,6 +870,9 @@
             const img = document.getElementById('newProdImgBase64').value;
             if (!name || isNaN(price)) return alert("Ma'lumotlarni to'liq kiriting!");
             
+            currentVendor.coords = { ...VODIL_CENTER };
+            localStorage.setItem('tv_vendors', JSON.stringify(vendors));
+
             products.push({ id: Date.now(), name, price, store: currentVendor.storeName, category: 'Milliy Taomlar', mfy: currentMfyFilter !== 'Barchasi' ? currentMfyFilter : 'Markaz MFY', img: img || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400' });
             localStorage.setItem('tv_products', JSON.stringify(products));
             renderCatalog(products);
@@ -889,7 +898,6 @@
             closeUserProfileModal();
         }
 
-        // XARITA ISHLASHINI KAFOLATLOVCHI VA LOKATSIYA MUAMMOSINI BARTARAF ETUVCHI FUNKSIYA
         function openCheckoutModal() {
             closeCartModal();
             document.getElementById('checkoutModal').classList.remove('hidden');
@@ -909,14 +917,11 @@
                         userCoords = { lat: e.target.getLatLng().lat, lng: e.target.getLatLng().lng };
                     });
 
-                    // Xaritaga bosganda marker o'sha joyga ko'chishi va lokatsiya yangilanishi
                     map.on('click', function(e) {
                         marker.setLatLng(e.latlng);
                         userCoords = { lat: e.latlng.lat, lng: e.latlng.lng };
                     });
                 }
-                
-                // Modal ochilganda xarita o'lchamini to'g'rilash (xarita kulrang bo'lib qolishi va belgilanmay qolishining oldini oladi)
                 map.invalidateSize();
                 map.setView([userCoords.lat, userCoords.lng], 15);
                 marker.setLatLng([userCoords.lat, userCoords.lng]);
@@ -936,7 +941,7 @@
             }
         }
 
-        function closeCheckoutModal() { document.getElementById('checkoutModal').classList.add('hidden'); }
+        function closeCheckoutModal() { document.getElementById('checkoutModal'].classList.add('hidden'); }
 
         function submitOrder(e) {
             e.preventDefault();
@@ -946,13 +951,22 @@
             const sub = cart.reduce((s, i) => s + (i.price * i.qty), 0);
             const finalTotal = Math.max(0, sub - appliedPromoDiscount) + 4800;
 
-            orders.push({ id: Date.now(), name, phone, address, items: [...cart], total: finalTotal, status: "Yangi", customerCoords: { ...userCoords } });
+            orders.push({ 
+                id: Date.now(), 
+                name, 
+                phone, 
+                address, 
+                items: [...cart], 
+                total: finalTotal, 
+                status: "Yangi", 
+                customerCoords: { ...userCoords } // Mijoz xaritada belgilagan aniq koordinata saqlanmoqda
+            });
             localStorage.setItem('tv_orders', JSON.stringify(orders));
             cart = [];
             appliedPromoDiscount = 0;
             updateCartUI();
             closeCheckoutModal();
-            alert("Buyurtmangiz muvaffaqiyatli qabul qilindi! Sun'iy yo'ldosh xaritasi orqali kuryer biriktirildi.");
+            alert("Buyurtmangiz muvaffaqiyatli qabul qilindi!");
         }
 
         function createPromoCode() {
