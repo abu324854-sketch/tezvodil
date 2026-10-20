@@ -25,7 +25,7 @@
 <body class="bg-slate-100 text-slate-800 antialiased min-h-full flex flex-col justify-between overflow-x-hidden selection:bg-emerald-500 selection:text-white">
 
     <!-- HEADER -->
-    <header class="bg-emerald-600 text-white sticky top-0 z-40 shadow-md backdrop-blur-md bg-emerald-600/95 w-full">
+    <header class="bg-emerald-600 text-white sticky top-0 z-30 shadow-md backdrop-blur-md bg-emerald-600/95 w-full">
         <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-2.5 cursor-pointer" onclick="openDeveloperModal()">
                 <div class="bg-white/20 p-2 rounded-2xl backdrop-blur-md shadow-inner">
@@ -49,10 +49,8 @@
         </div>
     </header>
 
-    <!-- ASOSIY MAZMUN -->
+    <!-- MAIN CONTENT -->
     <main class="max-w-md mx-auto w-full px-4 py-3 space-y-3 flex-1 pb-24">
-        
-        <!-- QIDIRUV VA OVOZLI QIDIRUV -->
         <div class="relative w-full">
             <input type="text" id="searchInput" onkeyup="applyFilters()" placeholder="Taom yoki mahsulotlarni qidirish..." class="w-full bg-white border border-slate-200 pl-9 pr-9 py-2.5 rounded-2xl text-xs font-semibold shadow-sm focus:outline-none focus:border-emerald-500 text-slate-700">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
@@ -61,7 +59,6 @@
             </button>
         </div>
 
-        <!-- KATEGORIYALAR -->
         <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar w-full" id="categoriesContainer">
             <button onclick="filterCategory('Barchasi')" class="cat-btn bg-slate-900 text-white px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 shadow-sm">Barchasi</button>
             <button onclick="filterCategory('Milliy Taomlar')" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0">Milliy Taomlar</button>
@@ -69,14 +66,12 @@
             <button onclick="filterCategory('Pitsa & Burger')" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0">Pitsa & Burger</button>
         </div>
 
-        <!-- KATALOG -->
         <div id="productsGrid" class="grid grid-cols-2 gap-2.5 w-full"></div>
     </main>
 
-    <!-- PASTKI NAVIGATSIYA PANEL -->
-    <div class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-4 py-2 shadow-lg">
+    <!-- BOTTOM NAVBAR -->
+    <div class="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-4 py-2 shadow-lg">
         <nav class="max-w-md mx-auto flex justify-around items-center">
-            
             <button onclick="showHomeSection()" class="text-emerald-600 text-center text-[10px] font-extrabold flex flex-col items-center">
                 <i class="fa-solid fa-house text-base mb-0.5"></i>
                 <span>Asosiy</span>
@@ -104,7 +99,7 @@
                     <i class="fa-solid fa-border-all text-base mb-0.5"></i>
                     <span>Rejimlar</span>
                 </button>
-                <div id="moreMenuDropdown" class="absolute bottom-12 right-0 bg-slate-900 text-white rounded-2xl p-2 w-44 shadow-2xl space-y-1 hidden border border-slate-800">
+                <div id="moreMenuDropdown" class="absolute bottom-12 right-0 bg-slate-900 text-white rounded-2xl p-2 w-44 shadow-2xl space-y-1 hidden border border-slate-800 z-40">
                     <button onclick="openVendorModal()" class="w-full text-left px-3 py-2 text-xs font-bold hover:bg-slate-800 rounded-xl flex items-center gap-2">
                         <i class="fa-solid fa-store text-amber-400"></i> Do'kon Rejimi
                     </button>
@@ -119,12 +114,11 @@
                     </button>
                 </div>
             </div>
-
         </nav>
     </div>
 
     <!-- SAVATCHA MODALI -->
-    <div id="cartModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div id="cartModal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center hidden p-4 pointer-events-auto">
         <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl max-h-[85vh] flex flex-col">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
@@ -146,7 +140,7 @@
     </div>
 
     <!-- CHECKOUT MODALI -->
-    <div id="checkoutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div id="checkoutModal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center hidden p-4 pointer-events-auto">
         <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl max-h-[90vh] flex flex-col overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-location-dot text-emerald-600"></i> Yetkazish manzili</h3>
@@ -163,7 +157,7 @@
                         <label class="block text-xs font-bold text-slate-700">Xaritada belgilang:</label>
                         <button type="button" onclick="getCurrentLocation()" class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-lg font-bold">GPS Orqali Aniqlash</button>
                     </div>
-                    <div id="map" class="w-full h-44 rounded-xl border border-slate-200 shadow-inner"></div>
+                    <div id="map" class="w-full h-44 rounded-xl border border-slate-200 shadow-inner z-10"></div>
                 </div>
                 <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100 flex justify-between text-xs font-bold text-slate-700">
                     <span>Masofa: <b id="distDisplay">0 km</b></span>
@@ -177,7 +171,7 @@
     </div>
 
     <!-- PROFIL MODALI -->
-    <div id="profileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div id="profileModal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center hidden p-4 pointer-events-auto">
         <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-user text-emerald-600"></i> Mijoz Profili</h3>
@@ -205,7 +199,7 @@
     </div>
 
     <!-- BUYURTMALAR MODALI -->
-    <div id="ordersModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div id="ordersModal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center hidden p-4 pointer-events-auto">
         <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-receipt text-emerald-600"></i> Buyurtmalarim</h3>
@@ -216,8 +210,8 @@
         </div>
     </div>
 
-    <!-- SOTUVCHI MODALI (BOYITILGAN) -->
-    <div id="vendorModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <!-- SOTUVCHI MODALI -->
+    <div id="vendorModal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center hidden p-4 pointer-events-auto">
         <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl max-h-[90vh] flex flex-col overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
@@ -226,16 +220,13 @@
                 <button onclick="closeVendorModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             
-            <!-- KIRISH FORMASI -->
             <div id="vendorLoginForm" class="space-y-3">
                 <input type="text" id="vendorStoreNameInput" placeholder="Do'kon nomi" class="w-full bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-xs font-bold">
                 <input type="password" id="vendorPasswordInput" placeholder="Parol" class="w-full bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-xs font-bold">
                 <button onclick="loginOrCreateVendor()" class="w-full bg-slate-900 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">Kirish / Ro'yxatdan o'tish</button>
             </div>
 
-            <!-- DASHBOARD & STATISTIKA -->
             <div id="vendorDashboard" class="space-y-4 hidden">
-                <!-- HISOBOT VA STATISTIKA KARTALARI -->
                 <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-3.5 rounded-2xl shadow-md space-y-2">
                     <div class="flex justify-between items-center border-b border-slate-700/80 pb-2">
                         <div>
@@ -261,7 +252,6 @@
                     </div>
                 </div>
 
-                <!-- MAHSULOT QO'SHISH FORMASI -->
                 <form id="addProductForm" onsubmit="addNewProduct(event)" class="border border-slate-200 p-3.5 rounded-2xl space-y-3 bg-slate-50">
                     <h4 class="font-extrabold text-xs text-slate-800 flex items-center gap-1.5">
                         <i class="fa-solid fa-plus-circle text-emerald-600"></i> Yangi Mahsulot Joylash
@@ -280,19 +270,15 @@
                         </select>
                     </div>
 
-                    <!-- FOTO / GALEREYA YUKLASH BO'LIMI -->
                     <div class="space-y-1.5">
                         <label class="block text-[11px] font-bold text-slate-600">Mahsulot Rasmi:</label>
-                        
                         <div class="grid grid-cols-2 gap-2">
-                            <!-- KAMERAGA OLISH -->
                             <label class="cursor-pointer bg-white border border-slate-200 hover:border-emerald-500 p-2 rounded-xl text-center flex flex-col items-center justify-center text-slate-600 hover:text-emerald-600 transition shadow-sm">
                                 <i class="fa-solid fa-camera text-base mb-1 text-emerald-600"></i>
                                 <span class="text-[10px] font-bold">Rasmga olish</span>
                                 <input type="file" accept="image/*" capture="environment" onchange="handleImageUpload(event)" class="hidden">
                             </label>
 
-                            <!-- GALEREYADAN TANLASH -->
                             <label class="cursor-pointer bg-white border border-slate-200 hover:border-emerald-500 p-2 rounded-xl text-center flex flex-col items-center justify-center text-slate-600 hover:text-emerald-600 transition shadow-sm">
                                 <i class="fa-solid fa-images text-base mb-1 text-blue-600"></i>
                                 <span class="text-[10px] font-bold">Galereyadan</span>
@@ -300,7 +286,6 @@
                             </label>
                         </div>
 
-                        <!-- OLDINDAN KO'RISH (PREVIEW) -->
                         <div id="imagePreviewContainer" class="hidden relative mt-2 w-full h-28 rounded-xl overflow-hidden border">
                             <img id="imagePreview" src="" class="w-full h-full object-cover">
                             <button type="button" onclick="removeUploadedImage()" class="absolute top-1 right-1 bg-red-600 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center shadow"><i class="fa-solid fa-xmark"></i></button>
@@ -314,7 +299,6 @@
                     </button>
                 </form>
 
-                <!-- DO'KON MAHSULOTLARI RO'YXATI -->
                 <div class="space-y-2 pt-2">
                     <h4 class="font-extrabold text-xs text-slate-800">🛍 Mening Tovarlarim</h4>
                     <div id="vendorProductsList" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
@@ -324,9 +308,8 @@
     </div>
 
     <!-- ADMIN MODALI -->
-    <div id="adminModal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center hidden p-3">
+    <div id="adminModal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center hidden p-3 pointer-events-auto">
         <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl max-h-[92vh] flex flex-col overflow-hidden border border-slate-200">
-            
             <div class="flex justify-between items-center border-b pb-3">
                 <div class="flex items-center gap-2">
                     <div class="bg-emerald-600 text-white w-8 h-8 rounded-xl flex items-center justify-center font-black text-sm shadow">
@@ -340,7 +323,6 @@
                 <button onclick="closeAdminPanel()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
 
-            <!-- AUTH -->
             <div id="adminLoginForm" class="space-y-3 py-6 max-w-xs mx-auto text-center">
                 <i class="fa-solid fa-lock text-3xl text-emerald-600 mb-1"></i>
                 <p class="text-xs text-slate-500 font-bold">Admin kirish parolini kiriting:</p>
@@ -348,7 +330,6 @@
                 <button onclick="checkAdminLogin()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 rounded-2xl text-xs shadow-lg transition">Kirish</button>
             </div>
 
-            <!-- DASHBOARD -->
             <div id="adminDashboard" class="space-y-4 hidden flex-1 flex flex-col overflow-hidden">
                 <div class="grid grid-cols-4 gap-1 bg-slate-100 p-1 rounded-2xl text-[9px] font-extrabold text-slate-600">
                     <button onclick="switchAdminTab('orders')" id="admTabBtn-orders" class="py-2 rounded-xl bg-emerald-600 text-white shadow transition">Buyurtmalar</button>
@@ -382,7 +363,7 @@
     </div>
 
     <!-- ILOVA HAQIDA MODALI -->
-    <div id="developerModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div id="developerModal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center hidden p-4 pointer-events-auto">
         <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeDeveloperModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
                 <i class="fa-solid fa-xmark text-xl"></i>
@@ -426,7 +407,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIKA -->
+    <!-- JAVASCRIPT -->
     <script>
         const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
         let map = null;
@@ -784,7 +765,6 @@
             `).join('');
         }
 
-        // --- DO'KON KABINETI FUNKSIYALARI ---
         function openVendorModal() {
             document.getElementById('moreMenuDropdown').classList.add('hidden');
             document.getElementById('vendorModal').classList.remove('hidden');
@@ -930,7 +910,6 @@
             removeUploadedImage();
         }
 
-        // --- ADMIN PANEL FUNKSIYALARI ---
         function openAdminModal() { document.getElementById('adminModal').classList.remove('hidden'); }
 
         function checkAdminLogin() {
