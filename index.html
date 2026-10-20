@@ -41,7 +41,7 @@
                     <i class="fa-solid fa-store text-amber-400"></i> <span>Do'kon</span>
                 </button>
                 <button onclick="openAdminModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-2.5 py-1.5 rounded-lg font-extrabold border border-emerald-500 transition shrink-0 flex items-center gap-1 shadow">
-                    <i class="fa-solid fa-user-shield"></i> <span>Admin</span>
+                    <i class="fa-solid fa-user-shield"></i> <span>Admin Portal</span>
                 </button>
                 <a href="courier.html" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] px-2.5 py-1.5 rounded-lg font-bold border border-slate-700 shrink-0 flex items-center gap-1">
                     <i class="fa-solid fa-motorcycle text-amber-400"></i> <span>Kuryer</span>
@@ -119,13 +119,13 @@
         </div>
     </div>
 
-    <!-- MUKAMMAL TEZVODIL ADMIN PANELI -->
+    <!-- MUKAMMAL TEZVODIL ADMIN PORTAL (KENGAYTIRILGAN) -->
     <div id="adminModal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center hidden p-3">
         <div class="bg-white w-full max-w-2xl rounded-3xl p-5 space-y-4 shadow-2xl max-h-[92vh] flex flex-col overflow-hidden border border-slate-200">
             
             <div class="flex justify-between items-center border-b pb-3">
                 <div class="flex items-center gap-2">
-                    <div class="bg-slate-900 text-emerald-400 w-8 h-8 rounded-xl flex items-center justify-center font-black text-sm shadow">
+                    <div class="bg-emerald-600 text-white w-8 h-8 rounded-xl flex items-center justify-center font-black text-sm shadow">
                         <i class="fa-solid fa-user-shield"></i>
                     </div>
                     <div>
@@ -148,11 +148,13 @@
             <div id="adminDashboard" class="space-y-4 hidden flex-1 flex flex-col overflow-hidden">
                 
                 <!-- NAVIGATION TABS -->
-                <div class="grid grid-cols-5 gap-1 bg-slate-100 p-1 rounded-2xl text-[10px] font-extrabold text-slate-600">
+                <div class="grid grid-cols-7 gap-1 bg-slate-100 p-1 rounded-2xl text-[9px] font-extrabold text-slate-600">
                     <button onclick="switchAdminTab('stats')" id="tabBtnStats" class="py-2 rounded-xl bg-emerald-600 text-white shadow-sm transition">Analitika</button>
                     <button onclick="switchAdminTab('orders')" id="tabBtnOrders" class="py-2 rounded-xl hover:bg-white transition">Orders</button>
                     <button onclick="switchAdminTab('vendors')" id="tabBtnVendors" class="py-2 rounded-xl hover:bg-white transition">Sotuvchilar</button>
-                    <button onclick="switchAdminTab('users')" id="tabBtnUsers" class="py-2 rounded-xl hover:bg-white transition">Mijozlar</button>
+                    <button onclick="switchAdminTab('products')" id="tabBtnProducts" class="py-2 rounded-xl hover:bg-white transition">Tovarlar</button>
+                    <button onclick="switchAdminTab('couriers')" id="tabBtnCouriers" class="py-2 rounded-xl hover:bg-white transition">Kuryerlar</button>
+                    <button onclick="switchAdminTab('promos')" id="tabBtnPromos" class="py-2 rounded-xl hover:bg-white transition">Promolar</button>
                     <button onclick="switchAdminTab('settings')" id="tabBtnSettings" class="py-2 rounded-xl hover:bg-white transition">Sozlamalar</button>
                 </div>
 
@@ -183,18 +185,33 @@
                     <div id="adminOrdersList" class="space-y-2"></div>
                 </div>
 
-                <!-- 3. SOTUVCHILAR TAB (PAROL O'ZGARTIRISH BILAN) -->
+                <!-- 3. SOTUVCHILAR TAB -->
                 <div id="adminTabVendors" class="space-y-2 overflow-y-auto flex-1 pr-1 hidden">
                     <div id="adminVendorsList" class="space-y-2"></div>
                 </div>
 
-                <!-- 4. MIJOZLAR LOGLARI TAB (KIRGAN-CHIQGAN MA'LUMOTLARI) -->
-                <div id="adminTabUsers" class="space-y-2 overflow-y-auto flex-1 pr-1 hidden">
-                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs mb-2 font-bold text-slate-700">👥 Saytga Kirgan/Chiqgan Mijozlar Tarixi</div>
-                    <div id="adminUserSessionsList" class="space-y-2"></div>
+                <!-- 4. TOVARLAR TAB -->
+                <div id="adminTabProducts" class="space-y-2 overflow-y-auto flex-1 pr-1 hidden">
+                    <div id="adminProductsList" class="space-y-2"></div>
                 </div>
 
-                <!-- 5. TIZIM SOZLAMALARI TAB -->
+                <!-- 5. KURYERLAR TAB -->
+                <div id="adminTabCouriers" class="space-y-2 overflow-y-auto flex-1 pr-1 hidden">
+                    <div id="adminCouriersList" class="space-y-2"></div>
+                </div>
+
+                <!-- 6. PROMO-KODLAR TAB -->
+                <div id="adminTabPromos" class="space-y-3 overflow-y-auto flex-1 pr-1 hidden text-xs">
+                    <div class="bg-slate-50 border border-slate-200 p-3 rounded-2xl space-y-2">
+                        <h5 class="font-extrabold text-slate-800">🏷️ Yangi Promo-kod Yaratish</h5>
+                        <input type="text" id="newPromoCode" placeholder="Kod nomi (Masalan: VODIL5000)" class="w-full bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-bold uppercase">
+                        <input type="number" id="newPromoAmount" placeholder="Chegirma summasi (So'm)" class="w-full bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-bold">
+                        <button onclick="createPromoCode()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2 rounded-xl shadow">Saqlash</button>
+                    </div>
+                    <div id="adminPromosList" class="space-y-2"></div>
+                </div>
+
+                <!-- 7. TIZIM SOZLAMALARI TAB -->
                 <div id="adminTabSettings" class="space-y-3 overflow-y-auto flex-1 pr-1 hidden text-xs">
                     <div class="bg-slate-50 border border-slate-200 p-3 rounded-2xl space-y-2">
                         <h5 class="font-extrabold text-slate-800">⚙️ Platforma Sozlamalari</h5>
@@ -203,7 +220,7 @@
                             <input type="text" id="setAppName" value="TezVodil" class="w-full bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-semibold">
                         </div>
                         <div>
-                            <label class="block font-bold text-slate-600 mb-1">Boshlang'ich Dostavka Tarifi (So'm/km)</label>
+                            <label class="block font-bold text-slate-600 mb-1">Dostavka Tarifi (So'm/km)</label>
                             <input type="number" id="setDeliveryFee" value="4800" class="w-full bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-semibold">
                         </div>
                         <button onclick="saveAdminSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2 rounded-xl shadow">Sozlamalarni Saqlash</button>
@@ -237,7 +254,6 @@
                     <button onclick="logoutVendor()" class="text-[10px] bg-red-100 text-red-700 px-2.5 py-1 rounded-lg font-bold">Chiqish</button>
                 </div>
 
-                <!-- SOTUVCHI MAHSULOT QO'SHISH (RASM OLIU SH/FAYL) -->
                 <div class="border border-slate-200 p-3.5 rounded-2xl space-y-3">
                     <h4 class="font-extrabold text-xs text-slate-800">📦 Yangi Mahsulot Joylash</h4>
                     <input type="text" id="newProdName" placeholder="Mahsulot nomi" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold">
@@ -262,7 +278,6 @@
                     <button onclick="addNewProduct()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">Joylash</button>
                 </div>
 
-                <!-- SOTUVCHI SHAXSIY PROFIL SOZLAMALARI -->
                 <div class="border border-slate-200 p-3.5 rounded-2xl space-y-2 bg-slate-50">
                     <h4 class="font-extrabold text-xs text-slate-800">👤 Profil Sozlamalari</h4>
                     <input type="password" id="vendorNewPwd" placeholder="Yangi parol kiritish" class="w-full bg-white border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold">
@@ -386,31 +401,17 @@
         let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
         let products = JSON.parse(localStorage.getItem('tv_products')) || []; 
         let vendors = JSON.parse(localStorage.getItem('tv_vendors')) || [];
+        let promos = JSON.parse(localStorage.getItem('tv_promos')) || [{ code: 'TEZVODIL2026', amount: 10000 }];
         let userSessions = JSON.parse(localStorage.getItem('tv_user_sessions')) || [];
         let currentVendor = null;
         let appliedDiscount = 0;
         let currentCategory = 'Barchasi';
 
         document.addEventListener('DOMContentLoaded', () => {
-            logUserSession('Kirdi');
             renderCatalog(products);
             updateCartUI();
             updateFavUI();
         });
-
-        window.addEventListener('beforeunload', () => {
-            logUserSession('Chiqdi');
-        });
-
-        function logUserSession(type) {
-            const profile = JSON.parse(localStorage.getItem('tv_user_profile')) || { name: 'Mehmon' };
-            userSessions.push({
-                user: profile.name,
-                type: type,
-                time: new Date().toLocaleString()
-            });
-            localStorage.setItem('tv_user_sessions', JSON.stringify(userSessions));
-        }
 
         // OVOZLI QIDIRUV
         function startVoiceSearch() {
@@ -577,14 +578,14 @@
             document.getElementById('adminTabStats').classList.add('hidden');
             document.getElementById('adminTabOrders').classList.add('hidden');
             document.getElementById('adminTabVendors').classList.add('hidden');
-            document.getElementById('adminTabUsers').classList.add('hidden');
+            document.getElementById('adminTabProducts').classList.add('hidden');
+            document.getElementById('adminTabCouriers').classList.add('hidden');
+            document.getElementById('adminTabPromos').classList.add('hidden');
             document.getElementById('adminTabSettings').classList.add('hidden');
 
-            document.getElementById('tabBtnStats').className = "py-2 rounded-xl hover:bg-white transition";
-            document.getElementById('tabBtnOrders').className = "py-2 rounded-xl hover:bg-white transition";
-            document.getElementById('tabBtnVendors').className = "py-2 rounded-xl hover:bg-white transition";
-            document.getElementById('tabBtnUsers').className = "py-2 rounded-xl hover:bg-white transition";
-            document.getElementById('tabBtnSettings').className = "py-2 rounded-xl hover:bg-white transition";
+            document.querySelectorAll('#adminDashboard button[id^="tabBtn"]').forEach(btn => {
+                btn.className = "py-2 rounded-xl hover:bg-white transition";
+            });
 
             if (tab === 'stats') {
                 document.getElementById('adminTabStats').classList.remove('hidden');
@@ -598,10 +599,18 @@
                 document.getElementById('adminTabVendors').classList.remove('hidden');
                 document.getElementById('tabBtnVendors').className = "py-2 rounded-xl bg-emerald-600 text-white shadow-sm font-black";
                 renderAdminVendors();
-            } else if (tab === 'users') {
-                document.getElementById('adminTabUsers').classList.remove('hidden');
-                document.getElementById('tabBtnUsers').className = "py-2 rounded-xl bg-emerald-600 text-white shadow-sm font-black";
-                renderAdminUsers();
+            } else if (tab === 'products') {
+                document.getElementById('adminTabProducts').classList.remove('hidden');
+                document.getElementById('tabBtnProducts').className = "py-2 rounded-xl bg-emerald-600 text-white shadow-sm font-black";
+                renderAdminProducts();
+            } else if (tab === 'couriers') {
+                document.getElementById('adminTabCouriers').classList.remove('hidden');
+                document.getElementById('tabBtnCouriers').className = "py-2 rounded-xl bg-emerald-600 text-white shadow-sm font-black";
+                renderAdminCouriers();
+            } else if (tab === 'promos') {
+                document.getElementById('adminTabPromos').classList.remove('hidden');
+                document.getElementById('tabBtnPromos').className = "py-2 rounded-xl bg-emerald-600 text-white shadow-sm font-black";
+                renderAdminPromos();
             } else if (tab === 'settings') {
                 document.getElementById('adminTabSettings').classList.remove('hidden');
                 document.getElementById('tabBtnSettings').className = "py-2 rounded-xl bg-emerald-600 text-white shadow-sm font-black";
@@ -652,7 +661,7 @@
                         <h5 class="font-black text-slate-800">🏪 ${v.storeName}</h5>
                         <button onclick="changeVendorPasswordByAdmin(${i})" class="bg-amber-100 text-amber-800 px-2.5 py-1 rounded-xl font-bold text-[10px]">Parolni O'zgartirish</button>
                     </div>
-                    <p class="text-slate-500 text-[10px]">Hozirgi Parol: <span class="font-mono bg-slate-200 px-1 rounded">${v.password}</span></p>
+                    <p class="text-slate-500 text-[10px]">Parol: <span class="font-mono bg-slate-200 px-1 rounded">${v.password}</span></p>
                 </div>
             `).join('');
         }
@@ -667,22 +676,78 @@
             }
         }
 
-        function renderAdminUsers() {
-            userSessions = JSON.parse(localStorage.getItem('tv_user_sessions')) || [];
-            const container = document.getElementById('adminUserSessionsList');
-            if (userSessions.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6 font-bold">Ma'lumotlar yo'q</p>`;
+        function renderAdminProducts() {
+            products = JSON.parse(localStorage.getItem('tv_products')) || [];
+            const container = document.getElementById('adminProductsList');
+            if (products.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6 font-bold">Tovarlar yo'q</p>`;
                 return;
             }
-            container.innerHTML = userSessions.slice().reverse().map(s => `
-                <div class="bg-slate-50 border border-slate-200 p-2 rounded-xl text-xs flex justify-between items-center">
+            container.innerHTML = products.map((p, i) => `
+                <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-2xl text-xs flex justify-between items-center">
                     <div>
-                        <span class="font-bold text-slate-800">${s.user}</span>
-                        <span class="text-[10px] ml-2 ${s.type === 'Kirdi' ? 'text-emerald-600 font-extrabold' : 'text-red-500 font-extrabold'}">${s.type}</span>
+                        <h5 class="font-bold text-slate-800">${p.name}</h5>
+                        <p class="text-emerald-600 font-black">${(p.price||0).toLocaleString()} so'm | ${p.store||'Do\'kon'}</p>
                     </div>
-                    <span class="text-[10px] text-slate-400 font-medium">${s.time}</span>
+                    <button onclick="deleteProductAdmin(${i})" class="bg-red-100 text-red-600 px-2 py-1 rounded-xl font-bold text-[10px]">O'chirish</button>
                 </div>
             `).join('');
+        }
+
+        function deleteProductAdmin(i) {
+            if (confirm("Tovarni o'chirasizmi?")) {
+                products.splice(i, 1);
+                localStorage.setItem('tv_products', JSON.stringify(products));
+                renderAdminProducts();
+                renderCatalog(products);
+            }
+        }
+
+        function renderAdminCouriers() {
+            orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
+            const delivered = orders.filter(o => o.status === 'Yetkazildi');
+            const totalFee = delivered.reduce((sum, o) => sum + (o.actualDeliveryFee || 0), 0);
+            
+            const container = document.getElementById('adminCouriersList');
+            container.innerHTML = `
+                <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl text-xs space-y-1">
+                    <h5 class="font-black text-emerald-900">🛵 Barcha Faol Kuryerlar Statistikasi</h5>
+                    <p class="text-slate-600">Bajarilgan Yetkazishlar: <strong>${delivered.length} ta</strong></p>
+                    <p class="text-emerald-700 font-bold">Kuryerlar Jami Daromadi: ${totalFee.toLocaleString()} so'm</p>
+                </div>
+            `;
+        }
+
+        function createPromoCode() {
+            const code = document.getElementById('newPromoCode').value.trim().toUpperCase();
+            const amount = parseFloat(document.getElementById('newPromoAmount').value);
+            if (!code || isNaN(amount)) return alert("To'liq kiriting!");
+            promos.push({ code, amount });
+            localStorage.setItem('tv_promos', JSON.stringify(promos));
+            renderAdminPromos();
+            alert("Promo-kod yaratildi!");
+            document.getElementById('newPromoCode').value = '';
+            document.getElementById('newPromoAmount').value = '';
+        }
+
+        function renderAdminPromos() {
+            promos = JSON.parse(localStorage.getItem('tv_promos')) || [{ code: 'TEZVODIL2026', amount: 10000 }];
+            const container = document.getElementById('adminPromosList');
+            container.innerHTML = promos.map((p, i) => `
+                <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-xs flex justify-between items-center">
+                    <div>
+                        <span class="font-extrabold text-slate-800 font-mono">${p.code}</span>
+                        <span class="text-emerald-600 font-bold ml-2">-${p.amount.toLocaleString()} so'm</span>
+                    </div>
+                    <button onclick="deletePromo(${i})" class="text-red-500 font-bold text-[10px]">O'chirish</button>
+                </div>
+            `).join('');
+        }
+
+        function deletePromo(i) {
+            promos.splice(i, 1);
+            localStorage.setItem('tv_promos', JSON.stringify(promos));
+            renderAdminPromos();
         }
 
         function saveAdminSettings() {
@@ -693,7 +758,7 @@
             }
         }
 
-        // SOTUVCHI (VENDOR) LOGIKASI
+        // SOTUVCHI LOGIKASI
         function openVendorModal() { document.getElementById('vendorModal').classList.remove('hidden'); }
         function closeVendorModal() { document.getElementById('vendorModal').classList.add('hidden'); }
 
@@ -820,8 +885,12 @@
         function applyPromoCode() {
             const code = document.getElementById('promoInput').value.trim().toUpperCase();
             const msg = document.getElementById('promoMsg');
-            if (code === 'TEZVODIL2026') {
-                appliedDiscount = 10000;
+            promos = JSON.parse(localStorage.getItem('tv_promos')) || [{ code: 'TEZVODIL2026', amount: 10000 }];
+            
+            const found = promos.find(p => p.code === code);
+            if (found) {
+                appliedDiscount = found.amount;
+                msg.innerText = `✓ ${found.code}: ${found.amount.toLocaleString()} so'm chegirma berildi!`;
                 msg.classList.remove('hidden');
                 const sub = cart.reduce((s, i) => s + (i.price * i.qty), 0);
                 document.getElementById('summaryTotal').innerText = Math.max(0, sub + 4800 - appliedDiscount).toLocaleString() + " so'm";
