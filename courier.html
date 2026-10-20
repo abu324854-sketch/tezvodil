@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TezVodil - Kuryer Paneli</title>
+    <title>TezVodil - Kuryer Tezometri</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#059669">
@@ -13,18 +13,27 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
-<body class="bg-slate-100 text-slate-800 pb-10 antialiased selection:bg-emerald-500 selection:text-white">
+<body class="bg-slate-100 text-slate-800 pb-10 antialiased selection:bg-emerald-500 selection:text-white relative">
+
+    <!-- EKRAN TEPASIDAGI JONLI PUL VIDJETI -->
+    <div id="floatingFareWidget" class="fixed top-16 right-3 z-50 bg-slate-900/90 text-yellow-400 border border-amber-400/40 px-3 py-1.5 rounded-2xl shadow-2xl backdrop-blur-md hidden flex items-center gap-2">
+        <i class="fa-solid fa-coins text-amber-400 animate-bounce text-xs"></i>
+        <div>
+            <p class="text-[8px] text-slate-300 font-bold uppercase tracking-wider">Jonli Tushum</p>
+            <span id="floatFareText" class="text-sm font-black tracking-tight">0 so'm</span>
+        </div>
+    </div>
 
     <!-- HEADER -->
     <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
         <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <div class="bg-emerald-600 p-2 rounded-xl shadow">
-                    <i class="fa-solid fa-motorcycle text-xl text-yellow-300"></i>
+                    <i class="fa-solid fa-gauge-high text-xl text-yellow-300"></i>
                 </div>
                 <div>
                     <h1 class="text-base font-black">TezVodil Kuryer</h1>
-                    <p class="text-[10px] text-emerald-400 font-semibold">Ilova GPS Navigatsiyasi</p>
+                    <p class="text-[10px] text-emerald-400 font-semibold">Tezometr & Ovozli GPS Navigator</p>
                 </div>
             </div>
             
@@ -83,23 +92,42 @@
 
     <script>
         const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
+        // Vodildagi simulyatsiya qilingan radarlar koordinatalari
+        const RADARS = [
+            { lat: 40.1780, lng: 71.7270, name: "Markaziy Radar" },
+            { lat: 40.1800, lng: 71.7300, name: "Chorsu Radari" }
+        ];
+
         let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
         let vendors = JSON.parse(localStorage.getItem('tv_vendors')) || [];
         
         let activeOrderId = null;
         let watchId = null;
         let lastCoords = null;
+        let warnedRadars = [];
 
         let cMap = null, courierMarker = null, targetMarker = null, routeLine = null;
 
         let deliveryStage = 'to_store';
         let distStoreKm = 0, distCustKm = 0;
         let fareStore = 0, fareCust = 0;
+        let currentSpeed = 0;
 
         document.addEventListener('DOMContentLoaded', () => {
             loadOrders();
             calculateStats();
         });
+
+        // OVOZLI OVOZLANTIRISH FUNKSIYASI
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const uttr = new SpeechSynthesisUtterance(text);
+                uttr.lang = 'uz-UZ';
+                uttr.rate = 1.0;
+                window.speechSynthesis.speak(uttr);
+            }
+        }
 
         function calculateStats() {
             orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
@@ -156,15 +184,33 @@
             if (activeOrderId === o.id) {
                 return `
                     <div class="bg-slate-900 text-white p-3 rounded-2xl space-y-2 border border-slate-800 mt-2">
-                        <div class="flex justify-between items-center text-[11px] font-bold border-b border-slate-800 pb-1.5">
-                            <span class="text-emerald-400">${deliveryStage === 'to_store' ? '🏪 Do\'konga ketilmoqda (1,800 s/km)' : '🏠 Mijozga ketilmoqda (4,800 s/km)'}</span>
-                            <span class="text-yellow-400" id="liveFare">0 so'm</span>
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                            <span class="text-[11px] font-bold text-emerald-400">
+                                ${deliveryStage === 'to_store' ? '🏪 Do\'konga Ketilmoqda' : '🏠 Mijozga Ketilmoqda'}
+                            </span>
+                            <div class="text-right">
+                                <span class="text-[9px] text-slate-400 block uppercase font-bold">Tezlik</span>
+                                <span id="liveSpeed" class="text-xs font-black text-amber-400">0 km/h</span>
+                            </div>
                         </div>
-                        <div id="cNavMap" class="w-full h-48 rounded-xl border border-slate-700 overflow-hidden"></div>
+
+                        <!-- TEZOMETR DISPLEYI -->
+                        <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+                            <div>
+                                <span class="text-[9px] text-slate-400 block font-bold">Tezometr Tarifi</span>
+                                <span class="font-extrabold text-emerald-400">${deliveryStage === 'to_store' ? '1,800 s/km' : '4,800 s/km'}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[9px] text-slate-400 block font-bold">Joriy Summa</span>
+                                <span id="liveFare" class="font-black text-yellow-400 text-sm">0 so'm</span>
+                            </div>
+                        </div>
+
+                        <div id="cNavMap" class="w-full h-52 rounded-xl border border-slate-700 overflow-hidden relative"></div>
                         
                         ${deliveryStage === 'to_store' ? `
                             <button onclick="switchToCustomerStage()" class="w-full bg-amber-500 hover:bg-amber-600 active:scale-98 text-slate-900 font-extrabold py-3 rounded-xl text-xs shadow transition">
-                                Tovarni Oldim (Mijozga Ketish - 4,800 s/km)
+                                Tovarni Oldim (Mijozga Ketish)
                             </button>
                         ` : `
                             <button onclick="finishDelivery(${o.id})" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-extrabold py-3 rounded-xl text-xs shadow transition">
@@ -177,7 +223,7 @@
 
             return `
                 <button onclick="startDelivery(${o.id})" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-extrabold py-2.5 rounded-xl text-xs shadow transition flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-location-arrow"></i> Do'konga Ketdim (Taksometrni yoqish)
+                    <i class="fa-solid fa-gauge-high"></i> Do'konga Ketdim (Tezometrni yoqish)
                 </button>
             `;
         }
@@ -189,6 +235,7 @@
             distStoreKm = 0; distCustKm = 0;
             fareStore = 0; fareCust = 0;
             lastCoords = null;
+            warnedRadars = [];
 
             const idx = orders.findIndex(o => o.id === id);
             if (idx !== -1) {
@@ -196,7 +243,10 @@
                 localStorage.setItem('tv_orders', JSON.stringify(orders));
             }
 
+            document.getElementById('floatingFareWidget').classList.remove('hidden');
             loadOrders();
+
+            speak("Tezometr ishga tushdi. Do'konga harakatlaning.");
 
             watchId = navigator.geolocation.watchPosition(updateGPS, err => console.warn(err), { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 });
         }
@@ -223,9 +273,10 @@
             if (!cMap) {
                 cMap = L.map('cNavMap').setView([targetCoords.lat, targetCoords.lng], 15);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(cMap);
-            } else {
-                cMap.invalidateSize();
             }
+
+            // Xarita o'lchamini qayta tiklash (Qorayib qolishini oldini oladi)
+            cMap.invalidateSize();
 
             if (targetMarker) cMap.removeLayer(targetMarker);
             targetMarker = L.marker([targetCoords.lat, targetCoords.lng]).addTo(cMap)
@@ -252,12 +303,23 @@
         function switchToCustomerStage() {
             deliveryStage = 'to_customer';
             lastCoords = null;
+            warnedRadars = [];
             loadOrders();
+
+            speak("Tovarni oldingiz. Mijoz manziliga harakatlaning.");
+
+            setTimeout(() => {
+                if (cMap) cMap.invalidateSize();
+            }, 300);
         }
 
         function updateGPS(pos) {
             const lat = pos.coords.latitude;
             const lng = pos.coords.longitude;
+            currentSpeed = pos.coords.speed ? Math.round(pos.coords.speed * 3.6) : 0;
+
+            const speedEl = document.getElementById('liveSpeed');
+            if (speedEl) speedEl.innerText = `${currentSpeed} km/h`;
 
             if (lastCoords) {
                 const delta = calcDistKm(lastCoords.lat, lastCoords.lng, lat, lng);
@@ -272,12 +334,22 @@
                 }
             }
 
+            // RADARLARNI TEKSHIRISH VA OVOZLI OGOHLANTIRISH
+            RADARS.forEach((radar, idx) => {
+                const distToRadar = calcDistKm(lat, lng, radar.lat, radar.lng) * 1000; // metrlarda
+                if (distToRadar <= 300 && !warnedRadars.includes(idx)) {
+                    warnedRadars.push(idx);
+                    speak(`Diqqat! 300 metrdan keyin radar bor! Tezlikni kamaytiring.`);
+                }
+            });
+
             lastCoords = { lat, lng };
             initOrUpdateMap();
 
             const totalFare = fareStore + fareCust;
             const fareEl = document.getElementById('liveFare');
             if (fareEl) fareEl.innerText = totalFare.toLocaleString() + " so'm";
+            document.getElementById('floatFareText').innerText = totalFare.toLocaleString() + " so'm";
         }
 
         function calcDistKm(lat1, lon1, lat2, lon2) {
@@ -299,6 +371,8 @@
                 localStorage.setItem('tv_orders', JSON.stringify(orders));
             }
 
+            document.getElementById('floatingFareWidget').classList.add('hidden');
+            speak(`Buyurtma yetkazildi. Jami hisob ${totalFare} so'm.`);
             alert(`Buyurtma yetkazildi!\nDostavka narxi: ${totalFare.toLocaleString()} so'm`);
             activeOrderId = null;
             cMap = null;
