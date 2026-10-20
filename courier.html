@@ -227,21 +227,31 @@
             }
 
             isOnline = !isOnline;
+            updateStatusUI();
+        }
+
+        function updateStatusUI() {
             const btn = document.getElementById('cStatusBtn');
             const tag = document.getElementById('courierStatusTag');
 
             if (isOnline) {
-                btn.className = "bg-red-600 hover:bg-red-500 text-white font-extrabold text-xs px-3 py-2 rounded-xl shadow transition";
-                btn.innerText = "Ishni Yakunlash";
-                tag.innerText = "Online (Aktiv)";
-                tag.className = "text-[10px] text-emerald-400 font-bold";
-                speakText("Kuryer rejimi faollashtirildi. Buyurtmalar kutilmoqda.");
+                if (btn) {
+                    btn.className = "bg-red-600 hover:bg-red-500 text-white font-extrabold text-xs px-3 py-2 rounded-xl shadow transition";
+                    btn.innerText = "Ishni Yakunlash";
+                }
+                if (tag) {
+                    tag.innerText = "Online (Aktiv)";
+                    tag.className = "text-[10px] text-emerald-400 font-bold";
+                }
             } else {
-                btn.className = "bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-3 py-2 rounded-xl shadow transition";
-                btn.innerText = "Ishni Boshlash";
-                tag.innerText = "Offline (Dam olishda)";
-                tag.className = "text-[10px] text-slate-400 font-bold";
-                speakText("Kuryer rejimi o'chirildi.");
+                if (btn) {
+                    btn.className = "bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-3 py-2 rounded-xl shadow transition";
+                    btn.innerText = "Ishni Boshlash";
+                }
+                if (tag) {
+                    tag.innerText = "Offline (Dam olishda)";
+                    tag.className = "text-[10px] text-slate-400 font-bold";
+                }
             }
         }
 
@@ -297,15 +307,16 @@
             document.getElementById('cTotalDistance').innerText = `${tripDistanceKM.toFixed(1)} km`;
         }
 
-        // ISHLAYDIGAN ACCEPTORDER FUNKSIYASI
+        // AKTIORLIK VA TUGMANI AFTO-FAOL QILUVCHI ACCEPTORDER FUNKSIYASI
         function acceptOrder(id) {
             if (!isOnline) {
-                alert("Avval 'Ishni Boshlash' tugmasini bosib, Online rejimga o'ting!");
-                return;
+                isOnline = true;
+                updateStatusUI();
             }
 
             orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
-            const o = orders.find(x => x.id === id);
+            const targetId = Number(id);
+            const o = orders.find(x => Number(x.id) === targetId);
 
             if (o) {
                 o.status = "Kuryer yolda";
@@ -314,7 +325,7 @@
 
                 localStorage.setItem('tv_orders', JSON.stringify(orders));
 
-                activeTripOrder = id;
+                activeTripOrder = targetId;
                 pathHistory = [];
                 tripDistanceKM = 0;
                 updateTaximeterDisplay();
@@ -337,7 +348,8 @@
 
         function completeOrder(id) {
             orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
-            const o = orders.find(x => x.id === id);
+            const targetId = Number(id);
+            const o = orders.find(x => Number(x.id) === targetId);
 
             if (o) {
                 o.status = "Yetkazib berildi";
@@ -415,15 +427,15 @@
                             <p class="text-[11px] text-slate-300"><i class="fa-solid fa-location-dot text-red-400"></i> Manzil: <b>${o.address}</b></p>
                             <div class="pt-1">
                                 ${o.status === 'Kutilmoqda' ? `
-                                    <button onclick="acceptOrder(\${o.id})" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2.5 rounded-xl text-xs shadow transition">
+                                    <button onclick="acceptOrder(\${o.id})" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-extrabold py-2.5 rounded-xl text-xs shadow transition cursor-pointer">
                                         Buyurtmani Qabul Qilish
                                     </button>
                                 ` : `
                                     <div class="flex gap-2">
-                                        <button onclick="startClientDelivery(\${o.id})" class="flex-1 bg-yellow-600 hover:bg-yellow-500 text-slate-900 font-extrabold py-2.5 rounded-xl text-xs shadow">
+                                        <button onclick="startClientDelivery(\${o.id})" class="flex-1 bg-yellow-600 hover:bg-yellow-500 active:scale-95 text-slate-900 font-extrabold py-2.5 rounded-xl text-xs shadow cursor-pointer">
                                             Mijozga Ketish
                                         </button>
-                                        <button onclick="completeOrder(\${o.id})" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">
+                                        <button onclick="completeOrder(\${o.id})" class="flex-1 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-extrabold py-2.5 rounded-xl text-xs shadow cursor-pointer">
                                             Topshirildi
                                         </button>
                                     </div>
