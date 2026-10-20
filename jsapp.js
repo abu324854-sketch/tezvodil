@@ -1,4 +1,3 @@
-// GLOBAL O'ZGARUVCHILAR
 const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
 let map = null;
 let marker = null;
@@ -11,7 +10,7 @@ let settings = JSON.parse(localStorage.getItem('tv_settings')) || {
     extraRate: 1600,
     devName: "Fattoxov Abdulloh Toxirjon o'g'li",
     devPhoto: "dev.jpg",
-    devEducation: "Toshkent MENEJMENT VA IQTISODIYOT INSTITUTI FARG'ONA CAMPUSI",
+    devEducation: "TOSHKENT MENEJMENT VA IQTISODIYOT INSTITUTI FARG'ONA CAMPUSI",
     devPhone: "+998 20 000 57 88",
     devLegalText: "Ushbu dastur kodi, funksionalligi yoki 'TezVodil' brendini ruxsatsiz nusxalash O'zbekiston Respublikasining Mualliflik huquqi to'g'risidagi Qonuniga muvofiq javobgarlikka sabab bo'ladi."
 };
@@ -32,14 +31,12 @@ let currentVendor = JSON.parse(localStorage.getItem('tv_current_vendor')) || nul
 let currentCategory = 'Barchasi';
 let showOnlyFavorites = false;
 
-// DOM YUKLANGANDA HODISALARNI BIRIKTIRISH
 document.addEventListener('DOMContentLoaded', () => {
     renderProducts(products);
     updateProfileUI();
     updateFavUI();
     updateCartUI();
 
-    // Event Listeners (Xatosiz biriktirish)
     bindClick('headerDevBtn', openDeveloperModal);
     bindClick('menuDevBtn', openDeveloperModal);
     bindClick('closeDevModalBtn', closeDeveloperModal);
@@ -80,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
     bindClick('admTabBtn-products', () => switchAdminTab('products'));
     bindClick('admTabBtn-settings', () => switchAdminTab('settings'));
 
-    // Kategoriya tugmalari
     const catContainer = document.getElementById('categoriesContainer');
     if (catContainer) {
         catContainer.addEventListener('click', (e) => {
@@ -112,7 +108,6 @@ function bindClick(id, func) {
     if (el) el.addEventListener('click', func);
 }
 
-// NAVIGATION & FILTERING
 function showHomeSection() {
     closeAdminPanel();
     document.getElementById('moreMenuDropdown').classList.add('hidden');
@@ -160,7 +155,6 @@ function updateFavUI() {
     if (fElem) fElem.innerText = favorites.length;
 }
 
-// KATALOG VA MAHSULOTLAR
 function renderProducts(items) {
     const grid = document.getElementById('productsGrid');
     if (!grid) return;
@@ -192,7 +186,6 @@ function renderProducts(items) {
     });
 }
 
-// SAVATCHA
 function addToCart(id) {
     const p = products.find(x => x.id === id);
     if (!p) return;
@@ -247,7 +240,6 @@ function updateCartUI() {
 function openCartModal() { document.getElementById('cartModal').classList.remove('hidden'); }
 function closeCartModal() { document.getElementById('cartModal').classList.add('hidden'); }
 
-// PROFIL
 function openProfileModal() {
     document.getElementById('moreMenuDropdown').classList.add('hidden');
     const modal = document.getElementById('profileModal');
@@ -301,7 +293,6 @@ function updateProfileUI() {
     if (btnText) btnText.innerText = currentUser ? currentUser.name.split(' ')[0] : "Profil";
 }
 
-// XARITA VA BUYURTMA
 function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -432,7 +423,6 @@ function renderUserOrdersHistory() {
     `).join('');
 }
 
-// SOTUVCHI PANELI
 function openVendorModal() {
     document.getElementById('moreMenuDropdown').classList.add('hidden');
     document.getElementById('vendorModal').classList.remove('hidden');
@@ -482,7 +472,6 @@ function addNewProduct(e) {
     document.getElementById('addProductForm').reset();
 }
 
-// ADMIN PANEL
 function openAdminModal() { document.getElementById('adminModal').classList.remove('hidden'); }
 
 function checkAdminLogin() {
@@ -574,7 +563,6 @@ function saveSettings() {
     alert("Sozlamalar saqlandi!");
 }
 
-// ILOVA HAQIDA MODALI
 function openDeveloperModal() {
     document.getElementById('developerModal').classList.remove('hidden');
     document.getElementById('modalDevName').innerText = settings.devName;
@@ -585,7 +573,6 @@ function openDeveloperModal() {
 
 function closeDeveloperModal() { document.getElementById('developerModal').classList.add('hidden'); }
 
-// OVOZLI QIDIRUV
 function startVoiceSearch() {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return alert("Ovozli qidiruv qo'llab-quvvatlanmaydi!");
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -598,7 +585,6 @@ function startVoiceSearch() {
     recognition.start();
 }
 
-// PWA
 let deferredPrompt = null;
 function setupPWAInstall() {
     window.addEventListener('beforeinstallprompt', (e) => {
