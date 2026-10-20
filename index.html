@@ -1,15 +1,13 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="uz" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title id="pageTitle">TezVodil - Onlayn Do'kon</title>
     
-    <!-- PWA va Manifest bog'lanishi -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#059669">
 
-    <!-- Ikonka va Rasmlar -->
     <link rel="icon" type="image/jpeg" href="dev.jpg">
     <link rel="apple-touch-icon" href="dev.jpg">
 
@@ -22,279 +20,302 @@
     <style>
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body { padding-bottom: env(safe-area-inset-bottom); }
     </style>
 </head>
-<body class="bg-slate-50 text-gray-800 pb-28 antialiased selection:bg-emerald-500 selection:text-white">
+<body class="bg-slate-100 text-slate-800 antialiased min-h-full flex flex-col justify-between overflow-x-hidden selection:bg-emerald-500 selection:text-white">
 
     <!-- HEADER -->
-    <header class="bg-emerald-600 text-white sticky top-0 z-40 shadow-md backdrop-blur-md bg-emerald-600/95">
-        <div class="max-w-2xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2.5 cursor-pointer" onclick="openDeveloperModal()">
+    <header class="bg-emerald-600 text-white sticky top-0 z-40 shadow-md backdrop-blur-md bg-emerald-600/95 w-full">
+        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2.5 cursor-pointer" id="headerDevBtn">
                 <div class="bg-white/20 p-2 rounded-2xl backdrop-blur-md shadow-inner">
-                    <i class="fa-solid fa-bolt text-yellow-300 text-xl animate-pulse"></i>
+                    <i class="fa-solid fa-bolt text-yellow-300 text-lg animate-pulse"></i>
                 </div>
                 <div>
-                    <h1 id="appHeaderTitle" class="text-lg font-black tracking-wide leading-tight">TezVodil</h1>
+                    <h1 id="appHeaderTitle" class="text-base font-black tracking-wide leading-tight">TezVodil</h1>
                     <p id="appHeaderSub" class="text-[10px] text-emerald-100 font-medium">Vodil bo'ylab tezkor dostavka</p>
                 </div>
             </div>
             
             <div class="flex items-center gap-2">
-                <button id="installAppBtn" onclick="installPWAApp()" class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white font-extrabold text-xs px-3 py-2 rounded-xl shadow-md flex items-center gap-1.5 transition border border-emerald-400/40">
+                <button id="installAppBtn" class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white font-extrabold text-xs px-2.5 py-1.5 rounded-xl shadow flex items-center gap-1 border border-emerald-400/40 hidden">
                     <i class="fa-solid fa-download text-yellow-300"></i> <span>O'rnatish</span>
                 </button>
 
-                <button onclick="checkAdminPassword()" class="bg-slate-900 hover:bg-slate-800 active:scale-95 text-amber-400 font-extrabold text-xs px-3 py-2 rounded-xl shadow-md flex items-center gap-1.5 transition border border-amber-400/30">
+                <button id="headerAdminBtn" class="bg-slate-900 hover:bg-slate-800 active:scale-95 text-amber-400 font-extrabold text-xs px-3 py-1.5 rounded-xl shadow flex items-center gap-1.5 border border-amber-400/30">
                     <i class="fa-solid fa-shield-halved"></i> <span>Admin</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-2xl mx-auto p-4 space-y-4">
-        <!-- ASOSIY EKRAN -->
-        <div id="section-client" class="space-y-4">
+    <!-- ASOSIY MAZMUN -->
+    <main class="max-w-md mx-auto w-full px-4 py-3 space-y-3 flex-1 pb-24">
+        
+        <!-- QIDIRUV VA OVOZLI QIDIRUV -->
+        <div class="relative w-full">
+            <input type="text" id="searchInput" placeholder="Taom yoki mahsulotlarni qidirish..." class="w-full bg-white border border-slate-200 pl-9 pr-9 py-2.5 rounded-2xl text-xs font-semibold shadow-sm focus:outline-none focus:border-emerald-500 text-slate-700">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+            <button id="micSearchBtn" class="absolute right-3.5 top-2.5 text-slate-400 hover:text-emerald-600">
+                <i class="fa-solid fa-microphone text-xs" id="micIcon"></i>
+            </button>
+        </div>
+
+        <!-- KATEGORIYALAR -->
+        <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar w-full" id="categoriesContainer">
+            <button data-cat="Barchasi" class="cat-btn bg-slate-900 text-white px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 shadow-sm">Barchasi</button>
+            <button data-cat="Milliy Taomlar" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0">Milliy Taomlar</button>
+            <button data-cat="Fast Food" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0">Fast Food</button>
+            <button data-cat="Pitsa & Burger" class="cat-btn bg-white border border-slate-200 text-slate-600 px-3.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0">Pitsa & Burger</button>
+        </div>
+
+        <!-- KATALOG -->
+        <div id="productsGrid" class="grid grid-cols-2 gap-2.5 w-full"></div>
+    </main>
+
+    <!-- PASTKI NAVIGATSIYA PANEL -->
+    <div class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-4 py-2 shadow-lg">
+        <nav class="max-w-md mx-auto flex justify-around items-center">
+            
+            <button id="navHomeBtn" class="text-emerald-600 text-center text-[10px] font-extrabold flex flex-col items-center">
+                <i class="fa-solid fa-house text-base mb-0.5"></i>
+                <span>Asosiy</span>
+            </button>
+
+            <button id="navFavBtn" class="text-slate-400 hover:text-emerald-600 text-center text-[10px] font-bold flex flex-col items-center relative">
+                <i class="fa-solid fa-heart text-base mb-0.5"></i>
+                <span>Sevimli</span>
+                <span id="favCount" class="absolute -top-1 right-1 bg-red-500 text-white text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center">0</span>
+            </button>
+
+            <button id="navCartBtn" class="text-slate-400 hover:text-emerald-600 text-center text-[10px] font-bold flex flex-col items-center relative">
+                <i class="fa-solid fa-shopping-bag text-base mb-0.5"></i>
+                <span>Savatcha</span>
+                <span id="cartBadge" class="absolute -top-1 right-1 bg-emerald-600 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+            </button>
+
+            <button id="navOrdersBtn" class="text-slate-400 hover:text-emerald-600 text-center text-[10px] font-bold flex flex-col items-center">
+                <i class="fa-solid fa-receipt text-base mb-0.5"></i>
+                <span>Tarix</span>
+            </button>
+
             <div class="relative">
-                <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Mahsulot yoki do'kon qidirish..." 
-                       class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm text-sm transition">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-400 text-base"></i>
-            </div>
-
-            <div>
-                <h2 class="text-xs font-black uppercase text-slate-400 tracking-wider mb-3">Vodil Do'konlari Mahsulotlari</h2>
-                <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
-            </div>
-        </div>
-
-        <!-- SOTUVCHI PANELI -->
-        <div id="section-vendor-panel" class="space-y-4 hidden">
-            <div class="bg-emerald-800 text-white p-4 rounded-2xl flex justify-between items-center shadow-lg">
-                <div>
-                    <h2 class="font-extrabold text-sm flex items-center gap-1.5"><i class="fa-solid fa-shop text-yellow-300"></i> <span id="vPanelStoreName">Do'kon Boshqaruvi</span></h2>
-                    <p class="text-[10px] text-emerald-200">Sotuvchi Kabineti & Oylik Hisob-kitob</p>
-                </div>
-                <button onclick="closeVendorPanel()" class="bg-emerald-700 hover:bg-emerald-600 px-3 py-1.5 rounded-xl text-xs font-bold transition">Chiqish</button>
-            </div>
-
-            <div class="grid grid-cols-3 gap-2 text-xs">
-                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-                    <p class="text-[9px] font-bold uppercase text-slate-400">Jami Savdo</p>
-                    <p id="vTotalSalesDisplay" class="text-xs sm:text-sm font-black text-emerald-700">0 so'm</p>
-                </div>
-                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-                    <p class="text-[9px] font-bold uppercase text-slate-400">Oylik Komissiya</p>
-                    <p id="vCommissionDisplay" class="text-xs sm:text-sm font-black text-red-600">0 so'm</p>
-                    <p id="vCommRateBadge" class="text-[8px] bg-red-100 text-red-700 font-bold px-1.5 py-0.5 rounded inline-block">2.5% stavka</p>
-                </div>
-                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-                    <p class="text-[9px] font-bold uppercase text-slate-400">Sotilgan Tovar</p>
-                    <p id="vTotalItemsSoldDisplay" class="text-xs sm:text-sm font-black text-slate-800">0 ta</p>
-                </div>
-            </div>
-
-            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-                <h3 class="font-bold text-xs text-slate-800 border-b pb-2 flex items-center gap-1.5">
-                    <i class="fa-solid fa-fire text-orange-500"></i> Eng Ommabop Mahsulotlaringiz
-                </h3>
-                <div id="vendorTopProductsList" class="space-y-2 text-xs"></div>
-            </div>
-
-            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-                <h3 class="font-bold text-xs text-slate-800 border-b pb-2">Do'konga Yangi Mahsulot Qo'shish</h3>
-                <form onsubmit="addNewVendorProduct(event)" class="space-y-3 text-xs">
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Mahsulot nomi:</label>
-                        <input type="text" id="vPName" required placeholder="Masalan: Sut 1L (Tabiiy)" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Narxi (so'm):</label>
-                        <input type="number" id="vPPrice" required placeholder="11000" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-                    </div>
-                    
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Mahsulot rasmlari (3 tagacha):</label>
-                        <input type="file" id="vPImagesInput" accept="image/*" multiple capture="environment" onchange="handleImageSelection(event)" class="hidden">
-                        
-                        <div class="flex items-center gap-2">
-                            <button type="button" onclick="document.getElementById('vPImagesInput').click()" class="bg-emerald-50 text-emerald-700 border border-emerald-300 font-bold px-3 py-2.5 rounded-xl flex items-center gap-2 hover:bg-emerald-100 transition">
-                                <i class="fa-solid fa-camera text-base"></i> Rasmga Olish / Tanlash
-                            </button>
-                            <span id="imgCountBadge" class="text-[11px] text-slate-500 font-semibold">0/3 rasm tanlandi</span>
-                        </div>
-
-                        <div id="imagePreviewContainer" class="flex gap-2 mt-2.5 overflow-x-auto no-scrollbar"></div>
-                    </div>
-
-                    <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow hover:bg-emerald-700 transition active:scale-98">Katalogga Saqlash</button>
-                </form>
-            </div>
-
-            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-                <h3 class="font-bold text-xs text-slate-800 border-b pb-2">Mening Mahsulotlarim</h3>
-                <div id="vendorProductsList" class="space-y-2"></div>
-            </div>
-        </div>
-
-        <!-- BOSH ADMIN PANELI -->
-        <div id="section-admin" class="space-y-4 hidden">
-            <div class="bg-slate-900 text-white p-4 rounded-2xl flex justify-between items-center shadow-lg">
-                <h2 class="font-extrabold text-sm"><i class="fa-solid fa-shield-halved mr-1 text-amber-400"></i> Bosh Admin Paneli</h2>
-                <button onclick="closeAdminPanel()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold">Chiqish</button>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase">👤 Mijozlar</p>
-                    <p id="admUserCount" class="text-sm font-black text-slate-800">0 kishi</p>
-                </div>
-                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase">🏪 Sotuvchilar</p>
-                    <p id="admVendorCount" class="text-sm font-black text-emerald-600">0 ta</p>
-                </div>
-                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase">🛵 Kuryerlar</p>
-                    <p id="admCourierCount" class="text-sm font-black text-blue-600">0 kishi</p>
-                </div>
-                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase">💰 Jami Komissiya</p>
-                    <p id="admTotalCommission" class="text-sm font-black text-red-600">0 so'm</p>
-                </div>
-            </div>
-
-            <div class="bg-white p-1.5 rounded-2xl shadow-sm border border-slate-200 flex gap-1 text-[11px] font-bold text-slate-600 overflow-x-auto no-scrollbar">
-                <button onclick="switchAdminTab('orders')" id="admTab-orders" class="px-3 py-2 rounded-xl bg-emerald-600 text-white shadow whitespace-nowrap">Buyurtmalar</button>
-                <button onclick="switchAdminTab('vendors')" id="admTab-vendors" class="px-3 py-2 rounded-xl hover:bg-slate-100 whitespace-nowrap">Sotuvchilar & Istisno</button>
-                <button onclick="switchAdminTab('users')" id="admTab-users" class="px-3 py-2 rounded-xl hover:bg-slate-100 whitespace-nowrap">Foydalanuvchilar</button>
-                <button onclick="switchAdminTab('top')" id="admTab-top" class="px-3 py-2 rounded-xl hover:bg-slate-100 whitespace-nowrap">Top Tovar Tahlili</button>
-                <button onclick="switchAdminTab('settings')" id="admTab-settings" class="px-3 py-2 rounded-xl hover:bg-slate-100 whitespace-nowrap">⚙️ Sozlamalar</button>
-            </div>
-
-            <div id="admContent-orders" class="space-y-3">
-                <h3 class="font-bold text-xs text-slate-400 uppercase">Barcha Kelgan Buyurtmalar</h3>
-                <div id="adminOrdersList" class="space-y-2"></div>
-            </div>
-
-            <div id="admContent-vendors" class="space-y-3 hidden">
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
-                    <h3 class="font-bold text-xs text-slate-800 border-b pb-2 flex items-center gap-1.5">
-                        <i class="fa-solid fa-percent text-emerald-600"></i> Sotuvchilar Komissiyasi va Istisno Sozlamasi
-                    </h3>
-                    <div id="adminVendorsList" class="space-y-2"></div>
-                </div>
-            </div>
-
-            <div id="admContent-users" class="space-y-3 hidden">
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
-                    <h3 class="font-bold text-xs text-slate-800 border-b pb-2">Ro'yxatdan O'tgan Mijozlar</h3>
-                    <div id="adminUsersList" class="space-y-2"></div>
-                </div>
-
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
-                    <h3 class="font-bold text-xs text-slate-800 border-b pb-2">Ro'yxatdan O'tgan Kuryerlar</h3>
-                    <div id="adminCouriersList" class="space-y-2"></div>
-                </div>
-            </div>
-
-            <div id="admContent-top" class="space-y-3 hidden">
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
-                    <h3 class="font-bold text-xs text-slate-800 border-b pb-2 flex items-center gap-1.5">
-                        <i class="fa-solid fa-chart-line text-emerald-600"></i> Vodil Bo'yicha Eng Ko'p Sotilayotgan Tovar Reytingi
-                    </h3>
-                    <div id="adminTopProductsList" class="space-y-2"></div>
-                </div>
-            </div>
-
-            <div id="admContent-settings" class="space-y-3 hidden">
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
-                    <h3 class="font-bold text-sm text-slate-800 border-b pb-2">Platforma Sozlamalari</h3>
-                    
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Ilova Nomi (Brending):</label>
-                        <input type="text" id="setAppName" value="TezVodil" class="w-full p-2.5 border rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Ilova Taglavhasi (Slogan):</label>
-                        <input type="text" id="setAppSub" value="Vodil bo'ylab tezkor dostavka" class="w-full p-2.5 border rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Bosh Admin Paroli:</label>
-                        <input type="text" id="setAdminPass" value="tezvodil2026" class="w-full p-2.5 border rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Standart Sotuvchi Komissiyasi (%):</label>
-                        <input type="number" step="0.1" id="setDefaultCommission" value="2.5" class="w-full p-2.5 border rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Buyurtma km narxi (so'm):</label>
-                        <input type="number" id="setOrderRate" value="4000" class="w-full p-2.5 border rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Tashqari km narxi (so'm):</label>
-                        <input type="number" id="setExtraRate" value="1600" class="w-full p-2.5 border rounded-xl">
-                    </div>
-
-                    <div class="border-t pt-3 space-y-2">
-                        <h4 class="font-bold text-emerald-800 text-xs">👤 "Ilova Haqida" bo'limi Sozlamalari:</h4>
-                        <div>
-                            <label class="block font-semibold mb-1 text-slate-600">Dasturchi Ismi:</label>
-                            <input type="text" id="setDevName" value="Fattoxov Abdulloh" class="w-full p-2.5 border rounded-xl">
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-1 text-slate-600">Dasturchi Rasmi Fayli (Masalan: dev.jpg):</label>
-                            <input type="text" id="setDevPhoto" value="dev.jpg" class="w-full p-2.5 border rounded-xl">
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-1 text-slate-600">O'qish joyi (Ta'lim):</label>
-                            <input type="text" id="setDevEducation" value="Toshkent menejment va iqtisodiyot instituti Fargʻona filiali (Bakalavr)" class="w-full p-2.5 border rounded-xl">
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-1 text-slate-600">Dasturchi Telefon Raqami:</label>
-                            <input type="text" id="setDevPhone" value="+998 90 123 45 67" class="w-full p-2.5 border rounded-xl">
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-1 text-slate-600">Mualliflik Ogohlantirish Matni:</label>
-                            <textarea id="setDevLegalText" rows="3" class="w-full p-2.5 border rounded-xl">Ushbu dastur kodi, funksionalligi yoki "TezVodil" brendini ruxsatsiz nusxalash, o'zlashtirish va shu shaklda mualliflik huquqini buzgan holda analog loyihalar yaratish O'zbekiston Respublikasining "Mualliflik huquqi va turdosh huquqlar to'g'risida"gi Qonuni hamda Jinoyat Kodeksining 149-moddasiga ko'ra Jinoiy Javobgarlikka sabab bo'ladi.</textarea>
-                        </div>
-                    </div>
-
-                    <button onclick="saveSettings()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl shadow hover:bg-slate-800 transition">
-                        Barcha Sozlamalarni Saqlash
+                <button id="navMoreBtn" class="text-slate-400 hover:text-emerald-600 text-center text-[10px] font-bold flex flex-col items-center">
+                    <i class="fa-solid fa-border-all text-base mb-0.5"></i>
+                    <span>Rejimlar</span>
+                </button>
+                <div id="moreMenuDropdown" class="absolute bottom-12 right-0 bg-slate-900 text-white rounded-2xl p-2 w-40 shadow-2xl space-y-1 hidden border border-slate-800">
+                    <button id="menuVendorBtn" class="w-full text-left px-3 py-2 text-xs font-bold hover:bg-slate-800 rounded-xl flex items-center gap-2">
+                        <i class="fa-solid fa-store text-amber-400"></i> Do'kon Rejimi
+                    </button>
+                    <button id="menuProfileBtn" class="w-full text-left px-3 py-2 text-xs font-bold hover:bg-slate-800 rounded-xl flex items-center gap-2 border-t border-slate-800 pt-2">
+                        <i class="fa-solid fa-user text-blue-400"></i> Profilim
+                    </button>
+                    <button id="menuDevBtn" class="w-full text-left px-3 py-2 text-xs font-bold hover:bg-slate-800 rounded-xl flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info text-emerald-400"></i> Ilova haqida
                     </button>
                 </div>
             </div>
-        </div>
-    </main>
 
-    <!-- BOTTOM BAR -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-2xl z-40 px-2 py-2">
-        <div class="max-w-md mx-auto flex justify-around items-center">
-            <button onclick="showHomeSection()" class="flex flex-col items-center gap-0.5 text-emerald-600 font-bold transition active:scale-95">
-                <i class="fa-solid fa-house text-lg"></i>
-                <span class="text-[10px]">Asosiy</span>
-            </button>
-            <button onclick="openVendorModal()" class="flex flex-col items-center gap-0.5 text-slate-600 hover:text-emerald-600 font-bold transition active:scale-95">
-                <i class="fa-solid fa-store text-lg"></i>
-                <span class="text-[10px]">Sotuvchi</span>
-            </button>
-            <a href="courier.html" class="flex flex-col items-center gap-0.5 text-slate-600 hover:text-emerald-600 font-bold transition active:scale-95">
-                <i class="fa-solid fa-motorcycle text-lg"></i>
-                <span class="text-[10px]">Kuryer</span>
-            </a>
-            <button onclick="openProfileModal()" class="flex flex-col items-center gap-0.5 text-slate-600 hover:text-emerald-600 font-bold transition active:scale-95">
-                <i class="fa-solid fa-user text-lg"></i>
-                <span id="bottomProfileText" class="text-[10px]">Profil</span>
-            </button>
-            <button onclick="openDeveloperModal()" class="flex flex-col items-center gap-0.5 text-slate-600 hover:text-emerald-600 font-bold transition active:scale-95">
-                <i class="fa-solid fa-circle-info text-lg text-emerald-600"></i>
-                <span class="text-[10px]">Ilova haqida</span>
-            </button>
-        </div>
-    </nav>
+        </nav>
+    </div>
 
-    <!-- MODAL -->
+    <!-- SAVATCHA MODALI -->
+    <div id="cartModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-shopping-bag text-emerald-600"></i> Savatcha
+                </h3>
+                <button id="closeCartBtn" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="cartItemsList" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
+            <div class="border-t pt-3 space-y-2">
+                <div class="flex justify-between text-xs font-bold text-slate-700">
+                    <span>Jami mahsulotlar:</span>
+                    <span id="cartSubtotal" class="text-emerald-600">0 so'm</span>
+                </div>
+                <button id="checkoutBarBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3 rounded-2xl shadow text-xs transition">
+                    Buyurtmani rasmiylashtirish
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODALI (XARITA VA DOSTAVKA) -->
+    <div id="checkoutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl max-h-[90vh] flex flex-col overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-location-dot text-emerald-600"></i> Yetkazish manzili</h3>
+                <button id="closeCheckoutBtn" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <form id="orderSubmitForm" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Manzil tavsifi</label>
+                    <input type="text" id="custAddress" required placeholder="Masalan: Vodil markazi, 12-uy" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold">
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-bold text-slate-700">Xaritada belgilang:</label>
+                        <button type="button" id="getGpsBtn" class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-lg font-bold">GPS Orqali Aniqlash</button>
+                    </div>
+                    <div id="map" class="w-full h-44 rounded-xl border border-slate-200 shadow-inner"></div>
+                </div>
+                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100 flex justify-between text-xs font-bold text-slate-700">
+                    <span>Masofa: <b id="distDisplay">0 km</b></span>
+                    <span>Yetkazib berish: <b id="deliveryPriceDisplay" class="text-emerald-700">0 so'm</b></span>
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3 rounded-2xl shadow text-xs transition">
+                    Buyurtmani Tasdiqlash
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PROFIL MODALI -->
+    <div id="profileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-user text-emerald-600"></i> Mijoz Profili</h3>
+                <button id="closeProfileBtn" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <div id="profileFormView" class="space-y-3">
+                <input type="text" id="userNameInput" required placeholder="Ismingiz" class="w-full bg-slate-50 border px-3 py-2 rounded-xl text-xs font-bold">
+                <input type="tel" id="userPhoneInput" required value="+998 " class="w-full bg-slate-50 border px-3 py-2 rounded-xl text-xs font-bold">
+                <button id="saveProfileBtn" class="w-full bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">Saqlash</button>
+            </div>
+
+            <div id="profileInfoView" class="space-y-3 hidden">
+                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
+                    <p class="font-bold text-xs text-slate-800" id="dispUserName">Mijoz</p>
+                    <p class="text-xs text-slate-500" id="dispUserPhone">+998</p>
+                </div>
+                <div class="space-y-2">
+                    <h4 class="font-bold text-xs text-slate-700">Mening Buyurtmalar Tarixim:</h4>
+                    <div id="userOrdersHistory" class="space-y-2 max-h-40 overflow-y-auto"></div>
+                </div>
+                <button id="logoutProfileBtn" class="w-full bg-red-100 text-red-700 font-bold py-2 rounded-xl text-xs">Chiqish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BUYURTMALAR MODALI -->
+    <div id="ordersModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-receipt text-emerald-600"></i> Buyurtmalarim</h3>
+                <button id="closeOrdersBtn" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="clientOrdersList" class="space-y-3 overflow-y-auto flex-1 pr-1"></div>
+            <button id="closeOrdersModalBtn" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs shadow">Yopish</button>
+        </div>
+    </div>
+
+    <!-- SOTUVCHI MODALI -->
+    <div id="vendorModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl max-h-[90vh] flex flex-col overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-store text-amber-500"></i> Do'kon Kabineti</h3>
+                <button id="closeVendorBtn" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <div id="vendorLoginForm" class="space-y-3">
+                <input type="text" id="vendorStoreNameInput" placeholder="Do'kon nomi" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold">
+                <input type="password" id="vendorPasswordInput" placeholder="Parol" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold">
+                <button id="vendorLoginBtn" class="w-full bg-slate-900 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">Kirish / Ro'yxatdan o'tish</button>
+            </div>
+
+            <div id="vendorDashboard" class="space-y-4 hidden">
+                <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl flex justify-between items-center">
+                    <div>
+                        <h4 id="vDashTitle" class="font-black text-xs text-amber-900">Do'kon</h4>
+                        <p id="vSalesStat" class="text-[10px] text-amber-700 font-bold">Savdo: 0 so'm</p>
+                    </div>
+                    <button id="logoutVendorBtn" class="text-[10px] bg-red-100 text-red-700 px-2.5 py-1 rounded-lg font-bold">Chiqish</button>
+                </div>
+
+                <form id="addProductForm" class="border border-slate-200 p-3.5 rounded-2xl space-y-3">
+                    <h4 class="font-extrabold text-xs text-slate-800">📦 Yangi Mahsulot Joylash</h4>
+                    <input type="text" id="vName" required placeholder="Mahsulot nomi" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold">
+                    <input type="number" id="vPrice" required placeholder="Narxi (So'm)" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold">
+                    <input type="text" id="vStore" placeholder="Do'kon brendi" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold">
+                    
+                    <div class="space-y-1">
+                        <label class="block text-[11px] font-bold text-slate-600">Mahsulot rasmi URL yoki fayl:</label>
+                        <input type="text" id="vImage" placeholder="https://..." class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold">
+                    </div>
+
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">Joylash</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN MODALI -->
+    <div id="adminModal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center hidden p-3">
+        <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl max-h-[92vh] flex flex-col overflow-hidden border border-slate-200">
+            
+            <div class="flex justify-between items-center border-b pb-3">
+                <div class="flex items-center gap-2">
+                    <div class="bg-emerald-600 text-white w-8 h-8 rounded-xl flex items-center justify-center font-black text-sm shadow">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-slate-900 text-sm leading-tight">TezVodil Admin Portal</h3>
+                        <p class="text-[10px] text-slate-400 font-semibold">Tizimni Boshqarish Markazi</p>
+                    </div>
+                </div>
+                <button id="closeAdminBtn" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <!-- AUTH -->
+            <div id="adminLoginForm" class="space-y-3 py-6 max-w-xs mx-auto text-center">
+                <i class="fa-solid fa-lock text-3xl text-emerald-600 mb-1"></i>
+                <p class="text-xs text-slate-500 font-bold">Admin kirish parolini kiriting:</p>
+                <input type="password" id="adminPasswordInput" placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-2xl text-xs font-bold text-center tracking-widest focus:outline-none focus:border-emerald-600">
+                <button id="adminLoginCheckBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 rounded-2xl text-xs shadow-lg transition">Kirish</button>
+            </div>
+
+            <!-- DASHBOARD -->
+            <div id="adminDashboard" class="space-y-4 hidden flex-1 flex flex-col overflow-hidden">
+                <div class="grid grid-cols-4 gap-1 bg-slate-100 p-1 rounded-2xl text-[9px] font-extrabold text-slate-600">
+                    <button id="admTabBtn-orders" class="py-2 rounded-xl bg-emerald-600 text-white shadow transition">Buyurtmalar</button>
+                    <button id="admTabBtn-users" class="py-2 rounded-xl hover:bg-white transition">Mijozlar</button>
+                    <button id="admTabBtn-products" class="py-2 rounded-xl hover:bg-white transition">Tovarlar</button>
+                    <button id="admTabBtn-settings" class="py-2 rounded-xl hover:bg-white transition">Sozlamalar</button>
+                </div>
+
+                <div id="admContent-orders" class="space-y-2 overflow-y-auto flex-1 pr-1"><div id="adminOrdersList" class="space-y-2"></div></div>
+                <div id="admContent-users" class="space-y-2 overflow-y-auto flex-1 pr-1 hidden">
+                    <p class="text-xs font-bold text-slate-500">Jami mijozlar: <span id="userCount">0</span> ta</p>
+                    <div id="adminUsersList" class="space-y-2"></div>
+                </div>
+                <div id="admContent-products" class="space-y-2 overflow-y-auto flex-1 pr-1 hidden"><div id="adminProductsList" class="space-y-2"></div></div>
+                <div id="admContent-settings" class="space-y-2 overflow-y-auto flex-1 pr-1 hidden">
+                    <div class="bg-slate-50 p-3 rounded-2xl border space-y-2 text-xs">
+                        <h5 class="font-bold">Dastur Sozlamalari</h5>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-500">1 km Yetkazish Narxi:</label>
+                            <input type="number" id="setOrderRate" class="w-full border p-2 rounded-xl text-xs font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-500">Qo'shimcha Tarikf Narxi:</label>
+                            <input type="number" id="setExtraRate" class="w-full border p-2 rounded-xl text-xs font-bold">
+                        </div>
+                        <button id="saveSettingsBtn" class="w-full bg-emerald-600 text-white py-2 rounded-xl font-bold">Saqlash</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ILOVA HAQIDA MODALI -->
     <div id="developerModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white w-full max-w-sm rounded-3xl p-6 text-center space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeDeveloperModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+            <button id="closeDevModalBtn" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
             
@@ -309,7 +330,7 @@
 
             <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-2xl text-left space-y-1.5 text-xs">
                 <p class="font-bold text-emerald-900 flex items-center gap-1.5">
-                    <i class="fa-solid fa-graduation-cap text-emerald-600 text-sm"></i> O'qish joyi va Ta'lim:
+                    <i class="fa-solid fa-graduation-cap text-emerald-600 text-sm"></i> Ta'lim:
                 </p>
                 <p id="modalDevEducation" class="text-slate-700 font-medium leading-snug">
                     Toshkent menejment va iqtisodiyot instituti Fargʻona filiali (Bakalavr)
@@ -317,8 +338,8 @@
                 
                 <div class="pt-2 border-t border-emerald-200/60 flex items-center justify-between">
                     <span class="font-bold text-slate-700">📞 Bog'lanish:</span>
-                    <a id="modalDevPhoneLink" href="tel:+998901234567" class="font-black text-emerald-700 hover:underline">
-                        <span id="modalDevPhone">+998 90 123 45 67</span>
+                    <a id="modalDevPhoneLink" href="tel:+998200005788" class="font-black text-emerald-700 hover:underline">
+                        <span id="modalDevPhone">+998 20 000 57 88</span>
                     </a>
                 </div>
             </div>
@@ -328,182 +349,15 @@
                     <i class="fa-solid fa-gavel"></i> Mualliflik Huquqi Himoyalangan:
                 </p>
                 <p id="modalDevLegalText" class="text-[10px] text-red-600 leading-snug">
-                    Ushbu dastur kodi, funksionalligi yoki "TezVodil" brendini ruxsatsiz nusxalash, o'zlashtirish va shu shaklda mualliflik huquqini buzgan holda analog loyihalar yaratish O'zbekiston Respublikasining "Mualliflik huquqi va turdosh huquqlar to'g'risida"gi Qonuni hamda Jinoyat Kodeksining 149-moddasiga ko'ra Jinoiy Javobgarlikka sabab bo'ladi.
+                    Ushbu dastur kodi, funksionalligi yoki "TezVodil" brendini ruxsatsiz nusxalash va mualliflik huquqini buzgan holda analog loyihalar yaratish Qonunan man etiladi.
                 </p>
             </div>
 
-            <button onclick="closeDeveloperModal()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow hover:bg-emerald-700 transition">Yopish</button>
+            <button id="closeDevModalBottomBtn" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow hover:bg-emerald-700 transition">Yopish</button>
         </div>
     </div>
 
-    <!-- SCRIPT -->
-    <script>
-        let deferredPrompt = null;
-        const installBtn = document.getElementById('installAppBtn');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.classList.remove('hidden');
-        });
-
-        async function installPWAApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
-                installBtn.classList.add('hidden');
-            } else {
-                alert("Ilova allaqachon o'rnatilgan yoki brauzeringiz bu qurilmada avtomatik o'rnatishni qo'llab-quvvatlamaydi. Brauzer menyusidan 'Asosiy ekranga qo'shish' ni tanlang.");
-            }
-        }
-
-        window.addEventListener('appinstalled', () => {
-            installBtn.classList.add('hidden');
-            deferredPrompt = null;
-        });
-
-        const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
-        let settings = JSON.parse(localStorage.getItem('tv_settings')) || { 
-            appName: "TezVodil",
-            appSub: "Vodil bo'ylab tezkor dostavka",
-            adminPass: "tezvodil2026",
-            defaultCommission: 2.5,
-            orderRate: 4000, 
-            extraRate: 1600,
-            devName: "Fattoxov Abdulloh",
-            devPhoto: "dev.jpg",
-            devEducation: "Toshkent menejment va iqtisodiyot instituti Fargʻona filiali (Bakalavr)",
-            devPhone: "+998 90 123 45 67",
-            devLegalText: "Ushbu dastur kodi, funksionalligi yoki \"TezVodil\" brendini ruxsatsiz nusxalash, o'zlashtirish va shu shaklda mualliflik huquqini buzgan holda analog loyihalar yaratish O'zbekiston Respublikasining \"Mualliflik huquqi va turdosh huquqlar to'g'risida\"gi Qonuni hamda Jinoyat Kodeksining 149-moddasiga ko'ra Jinoiy Javobgarlikka sabab bo'ladi."
-        };
-
-        let products = JSON.parse(localStorage.getItem('tv_products')) || [];
-        let cart = [];
-        let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
-        let usersList = JSON.parse(localStorage.getItem('tv_users')) || [];
-        let vendorsList = JSON.parse(localStorage.getItem('tv_vendors')) || [];
-        let currentUser = JSON.parse(localStorage.getItem('tv_current_user')) || null;
-        let currentVendor = JSON.parse(localStorage.getItem('tv_current_vendor')) || null;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            applySettingsToUI();
-            renderProducts(products);
-            updateProfileUI();
-        });
-
-        function applySettingsToUI() {
-            document.getElementById('appHeaderTitle').innerText = settings.appName || "TezVodil";
-            document.getElementById('appHeaderSub').innerText = settings.appSub || "Vodil bo'ylab tezkor dostavka";
-            document.getElementById('pageTitle').innerText = (settings.appName || "TezVodil") + " - Onlayn Do'kon";
-            
-            document.getElementById('setAppName').value = settings.appName || "TezVodil";
-            document.getElementById('setAppSub').value = settings.appSub || "Vodil bo'ylab tezkor dostavka";
-            document.getElementById('setAdminPass').value = settings.adminPass || "tezvodil2026";
-            document.getElementById('setDefaultCommission').value = settings.defaultCommission || 2.5;
-            document.getElementById('setOrderRate').value = settings.orderRate || 4000;
-            document.getElementById('setExtraRate').value = settings.extraRate || 1600;
-
-            document.getElementById('setDevName').value = settings.devName || "";
-            document.getElementById('setDevPhoto').value = settings.devPhoto || "dev.jpg";
-            document.getElementById('setDevEducation').value = settings.devEducation || "";
-            document.getElementById('setDevPhone').value = settings.devPhone || "";
-            document.getElementById('setDevLegalText').value = settings.devLegalText || "";
-
-            document.getElementById('modalDevName').innerText = settings.devName || "";
-            document.getElementById('modalDevPhoto').src = settings.devPhoto || "dev.jpg";
-            document.getElementById('modalDevEducation').innerText = settings.devEducation || "";
-            document.getElementById('modalDevPhone').innerText = settings.devPhone || "";
-            document.getElementById('modalDevPhoneLink').href = `tel:${(settings.devPhone || "").replace(/\s+/g, '')}`;
-            document.getElementById('modalDevLegalText').innerText = settings.devLegalText || "";
-        }
-
-        function showHomeSection() {
-            closeAdminPanel();
-            closeVendorPanel();
-        }
-
-        function openDeveloperModal() {
-            document.getElementById('developerModal').classList.remove('hidden');
-        }
-
-        function closeDeveloperModal() {
-            document.getElementById('developerModal').classList.add('hidden');
-        }
-
-        function renderProducts(items) {
-            const grid = document.getElementById('productsGrid');
-            if (!grid) return;
-            grid.innerHTML = '';
-            if (items.length === 0) {
-                grid.innerHTML = `<p class="col-span-full text-center text-slate-400 py-6 text-xs">Hozircha mahsulotlar yo'q</p>`;
-                return;
-            }
-            items.forEach(p => {
-                const mainImg = p.images ? p.images[0] : p.image;
-                grid.innerHTML += `
-                    <div class="bg-white border border-slate-200 rounded-2xl p-2.5 shadow-sm hover:shadow-md transition flex flex-col justify-between group cursor-pointer">
-                        <div>
-                            <div class="relative overflow-hidden rounded-xl mb-2 bg-slate-100">
-                                <img src="${mainImg}" class="w-full h-28 object-cover">
-                            </div>
-                            <span class="text-[9px] bg-emerald-50 text-emerald-800 font-bold px-2 py-0.5 rounded-full">${p.store}</span>
-                            <h3 class="font-bold text-xs mt-1.5 text-slate-800 line-clamp-1">${p.name}</h3>
-                        </div>
-                        <div class="mt-2 flex items-center justify-between">
-                            <span class="text-xs font-black text-emerald-700">${p.price.toLocaleString()} so'm</span>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function checkAdminPassword() {
-            const pass = prompt("Bosh Admin parolini kiriting:");
-            if (pass === (settings.adminPass || "tezvodil2026")) openAdminPanel();
-            else if (pass !== null) alert("Parol noto'g'ri!");
-        }
-
-        function openAdminPanel() {
-            document.getElementById('section-client').classList.add('hidden');
-            document.getElementById('section-admin').classList.remove('hidden');
-        }
-
-        function closeAdminPanel() {
-            document.getElementById('section-admin').classList.add('hidden');
-            document.getElementById('section-client').classList.remove('hidden');
-        }
-
-        function switchAdminTab(tab) {
-            ['orders', 'vendors', 'users', 'top', 'settings'].forEach(t => {
-                document.getElementById(`admContent-${t}`).classList.add('hidden');
-                document.getElementById(`admTab-${t}`).className = "px-3 py-2 rounded-xl hover:bg-slate-100 whitespace-nowrap";
-            });
-            document.getElementById(`admContent-${tab}`).classList.remove('hidden');
-            document.getElementById(`admTab-${tab}`).className = "px-3 py-2 rounded-xl bg-emerald-600 text-white shadow whitespace-nowrap";
-        }
-
-        function saveSettings() {
-            settings.appName = document.getElementById('setAppName').value.trim();
-            settings.appSub = document.getElementById('setAppSub').value.trim();
-            settings.adminPass = document.getElementById('setAdminPass').value.trim();
-            settings.defaultCommission = parseFloat(document.getElementById('setDefaultCommission').value) || 2.5;
-            settings.orderRate = parseInt(document.getElementById('setOrderRate').value) || 4000;
-            settings.extraRate = parseInt(document.getElementById('setExtraRate').value) || 1600;
-
-            settings.devName = document.getElementById('setDevName').value.trim();
-            settings.devPhoto = document.getElementById('setDevPhoto').value.trim();
-            settings.devEducation = document.getElementById('setDevEducation').value.trim();
-            settings.devPhone = document.getElementById('setDevPhone').value.trim();
-            settings.devLegalText = document.getElementById('setDevLegalTest').value.trim();
-
-            localStorage.setItem('tv_settings', JSON.stringify(settings));
-            applySettingsToUI();
-            alert("Sozlamalar saqlandi!");
-        }
-
-        function openProfileModal() { alert("Profil"); }
-        function openVendorModal() { alert("Sotuvchi paneli"); }
-    </script>
+    <!-- ASOSIY JS SCRIPT BOG'LANISHI -->
+    <script src="app.js"></script>
 </body>
 </html>
