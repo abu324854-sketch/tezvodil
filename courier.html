@@ -30,7 +30,7 @@
                 </div>
             </div>
 
-            <!-- DINAMIK TAKSOMETR -->
+            <!-- REAL-TIME TAKSOMETR -->
             <div class="bg-slate-900 border border-emerald-500/50 px-3 py-1.5 rounded-2xl text-right shadow-inner">
                 <span class="text-[9px] text-slate-400 font-bold block uppercase tracking-wider">Taksometr</span>
                 <span id="taximeterAmount" class="text-sm font-black text-yellow-400">0 so'm</span>
@@ -69,7 +69,7 @@
                     <b id="cTotalDistance" class="text-slate-200">0.0 km</b>
                 </div>
                 <div class="bg-slate-900/60 p-2 rounded-xl">
-                    <span class="text-slate-400 block">Bugungi Daromad:</span>
+                    <span class="text-slate-400 block">Sof Daromad (2% Soliqsiz):</span>
                     <b id="cTodayEarnings" class="text-emerald-400">0 so'm</b>
                 </div>
             </div>
@@ -149,7 +149,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIKA (БЕЗ ОШИБОК СИНТАКСИСА) -->
+    <!-- JAVASCRIPT LOGIKA -->
     <script>
         const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
         let courierMap = null;
@@ -163,9 +163,9 @@
         let currentTaximeterAmount = 0;
         let lastPosition = null;
 
-        const BASE_STORE_FEE = 2000;
-        const BASE_CLIENT_FEE = 4900;
-        const KM_RATE = 1500;
+        const BASE_START_FEE = 2000; // Boshlang'ich minimal ochilish tarifi
+        const KM_RATE = 2500;         // Har bir bosib o'tilgan km uchun tarif
+        const TAX_RATE = 0.02;        // 2% Soliq ushlanmasi
 
         let courierData = JSON.parse(localStorage.getItem('tv_courier_profile')) || {
             name: "Kuryer Biriktirilmagan",
@@ -175,22 +175,25 @@
         };
 
         let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
+        let announcedOrderIds = new Set(); // Ovoz chiqarilgan buyurtmalar ID lari
 
         document.addEventListener('DOMContentLoaded', () => {
             initCourierProfile();
             initCourierMap();
             renderOrdersList();
             startGPSWatch();
-            setInterval(checkNewOrdersAlert, 4000);
+            setInterval(checkNewOrdersAlert, 3000);
         });
 
+        // OVOZLI GAPIRISH (NAVIGATSIYA VA BILDIRISHNOMA)
         function speakText(text) {
             if ('speechSynthesis' in window) {
                 try {
                     window.speechSynthesis.cancel();
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.lang = 'uz-UZ';
-                    utterance.rate = 0.9;
+                    utterance.rate = 0.95;
+                    utterance.pitch = 1.0;
                     window.speechSynthesis.speak(utterance);
                 } catch(e) {
                     console.log("TTS Error:", e);
@@ -220,7 +223,7 @@
             localStorage.setItem('tv_courier_profile', JSON.stringify(courierData));
             initCourierProfile();
             closeCourierProfileModal();
-            speakText("Profil malumotlaringiz saqlandi");
+            speakText("Profil ma'lumotlaringiz saqlandi.");
         }
 
         function toggleCourierStatus() {
@@ -232,6 +235,8 @@
 
             isOnline = !isOnline;
             updateStatusUI();
+            if (isOnline) speakText("Kuryer rejimi faollashtirildi. Ishni boshladik.");
+            else speakText("Kuryer rejimi o'chirildi.");
         }
 
         function updateStatusUI() {
@@ -282,11 +287,11 @@
 
                     if (activeTripOrder) {
                         pathHistory.push(newLatLng);
-                        routePolyline.setLatLngs(pathHistory);
+                        if (routePolyline) routePolyline.setLatLngs(pathHistory);
 
                         if (lastPosition) {
                             const d = calcDistance(lastPosition.lat, lastPosition.lng, lat, lng);
-                            if (d > 0.01) {
+                            if (d > 0.005) { // 5 metrdan ortiq harakatlansa
                                 tripDistanceKM += d;
                                 updateTaximeterDisplay();
                             }
@@ -306,9 +311,15 @@
         }
 
         function updateTaximeterDisplay() {
-            currentTaximeterAmount = BASE_STORE_FEE + BASE_CLIENT_FEE + Math.round(tripDistanceKM * KM_RATE);
+            if (!activeTripOrder) {
+                document.getElementById('taximeterAmount').innerText = "0 so'm";
+                document.getElementById('cTotalDistance').innerText = "0.0 km";
+                return;
+            }
+
+            currentTaximeterAmount = BASE_START_FEE + Math.round(tripDistanceKM * KM_RATE);
             document.getElementById('taximeterAmount').innerText = currentTaximeterAmount.toLocaleString() + " so'm";
-            document.getElementById('cTotalDistance').innerText = tripDistanceKM.toFixed(1) + " km";
+            document.getElementById('cTotalDistance').innerText = tripDistanceKM.toFixed(2) + " km";
         }
 
         function acceptOrder(id) {
@@ -331,12 +342,14 @@
                 activeTripOrder = targetId;
                 pathHistory = [];
                 tripDistanceKM = 0;
+                lastPosition = null;
+
                 updateTaximeterDisplay();
 
                 const navInst = document.getElementById('navInstruction');
-                if (navInst) navInst.innerText = "Dokonga qarab yurilmoqda...";
+                if (navInst) navInst.innerText = "Do'konga qarab yurilmoqda...";
 
-                speakText("Buyurtma qabul qilindi. Dokonga harakatlaning");
+                speakText("Buyurtma qabul qilindi. Do'konga qarab to'g'ri harakatlaning.");
                 renderOrdersList();
             } else {
                 alert("Buyurtma topilmadi!");
@@ -346,9 +359,10 @@
         function startClientDelivery(id) {
             const navInst = document.getElementById('navInstruction');
             if (navInst) navInst.innerText = "Mijoz manziliga ketilmoqda...";
-            speakText("Endi mijoz manziliga boring");
+            speakText("Tovarlarni oldingiz. Endi mijoz manziliga boring.");
         }
 
+        // BUYURTMANI YAKUNLASH VA 2% SOLIQ USHLASH
         function completeOrder(id) {
             orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
             const targetId = Number(id);
@@ -356,15 +370,24 @@
 
             if (o) {
                 o.status = "Yetkazib berildi";
-                o.finalFee = currentTaximeterAmount > 0 ? currentTaximeterAmount : (BASE_STORE_FEE + BASE_CLIENT_FEE);
+                const totalGross = currentTaximeterAmount > 0 ? currentTaximeterAmount : 5000;
+                
+                // 2% Soliq ushlab qolish
+                const taxAmount = Math.round(totalGross * TAX_RATE);
+                const netEarning = totalGross - taxAmount;
 
-                courierData.todayEarnings += o.finalFee;
+                o.finalFee = totalGross;
+                o.netEarning = netEarning;
+                o.taxPaid = taxAmount;
+
+                courierData.todayEarnings += netEarning;
 
                 localStorage.setItem('tv_orders', JSON.stringify(orders));
                 localStorage.setItem('tv_courier_profile', JSON.stringify(courierData));
 
                 activeTripOrder = null;
                 pathHistory = [];
+                tripDistanceKM = 0;
                 if (routePolyline) routePolyline.setLatLngs([]);
                 
                 document.getElementById('taximeterAmount').innerText = "0 so'm";
@@ -372,7 +395,7 @@
                 if (navInst) navInst.innerText = "Buyurtma yakunlandi";
 
                 initCourierProfile();
-                speakText("Buyurtma yakunlandi va tarixga otkazildi");
+                speakText("Buyurtma yakunlandi. Ikki foiz soliq ushlanib, sof daromad hisobingizga o'tkazildi.");
                 renderOrdersList();
             }
         }
@@ -391,15 +414,19 @@
             }
         }
 
-        let lastOrdersCount = 0;
+        // YANGI BUYURTMALARNI TEKSHIRISH VA OVOZLI MANZILNI AYTISH
         function checkNewOrdersAlert() {
             orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
             const waitingOrders = orders.filter(o => o.status === 'Kutilmoqda');
 
-            if (isOnline && waitingOrders.length > lastOrdersCount) {
-                speakText("Etibor bering yangi buyurtma tushdi");
+            if (isOnline && waitingOrders.length > 0) {
+                waitingOrders.forEach(o => {
+                    if (!announcedOrderIds.has(o.id)) {
+                        announcedOrderIds.add(o.id);
+                        speakText("E'tibor bering, yangi buyurtma! Manzil: " + o.address);
+                    }
+                });
             }
-            lastOrdersCount = waitingOrders.length;
             renderOrdersList();
         }
 
@@ -423,7 +450,7 @@
                                     '<span class="text-[9px] bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded-full font-bold">ID: #' + o.id.toString().slice(-4) + '</span>' +
                                     '<h4 class="font-extrabold text-xs text-white mt-1">👤 ' + o.customer + ' (' + o.phone + ')</h4>' +
                                 '</div>' +
-                                '<span class="text-xs font-black text-yellow-400">+' + (BASE_STORE_FEE + BASE_CLIENT_FEE).toLocaleString() + ' so\'m</span>' +
+                                '<span class="text-xs font-black text-yellow-400">Taksometr bo\'yicha</span>' +
                             '</div>' +
                             '<p class="text-[11px] text-slate-300"><i class="fa-solid fa-location-dot text-red-400"></i> Manzil: <b>' + o.address + '</b></p>' +
                             '<div class="pt-1">' +
@@ -445,11 +472,11 @@
                     historyCont.innerHTML = '<p class="text-xs text-slate-500 text-center py-6">Tarix bo\'sh</p>';
                 } else {
                     historyCont.innerHTML = historyOrders.map(o => {
-                        const fee = o.finalFee || (BASE_STORE_FEE + BASE_CLIENT_FEE);
+                        const fee = o.netEarning || o.finalFee || 5000;
                         return '<div class="bg-slate-800/60 border border-slate-700/50 p-3 rounded-2xl flex justify-between items-center text-xs">' +
                             '<div>' +
                                 '<p class="font-bold text-white">👤 ' + o.customer + '</p>' +
-                                '<p class="text-[10px] text-slate-400">' + o.address + '</p>' +
+                                '<p class="text-[10px] text-slate-400">' + o.address + ' (2% soliq ushlandi)</p>' +
                             '</div>' +
                             '<span class="font-black text-emerald-400">+' + fee.toLocaleString() + ' so\'m</span>' +
                         '</div>';
