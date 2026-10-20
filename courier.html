@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TezVodil - Kuryer Paneli & GPS Navigatsiya</title>
+    <title>TezVodil - Kuryer Paneli</title>
+    
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#059669">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
@@ -30,7 +32,7 @@
                 <button onclick="openHistoryModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-xl font-bold flex items-center gap-1.5 shadow transition">
                     <i class="fa-solid fa-chart-line"></i> <span>Statistika</span>
                 </button>
-                <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-xs px-3 py-2 rounded-xl border border-slate-700 font-bold">
+                <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-xs p-2 rounded-xl border border-slate-700 font-bold">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
             </div>
@@ -39,7 +41,7 @@
 
     <main class="max-w-md mx-auto p-4 space-y-4">
 
-        <!-- KUNLIK DAROMAD KARTASI -->
+        <!-- DAROMAD KARTASI -->
         <div class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-4 rounded-2xl shadow-lg flex justify-between items-center">
             <div>
                 <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-100">Bugungi Jami Daromad</p>
@@ -51,70 +53,26 @@
             </div>
         </div>
 
-        <!-- JONLI MARSHRUTLI XARITA VA TAKSOMETR -->
-        <div id="taximeterBox" class="bg-slate-900 text-white p-5 rounded-3xl shadow-2xl border-2 border-emerald-500/50 relative overflow-hidden hidden space-y-3">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <span class="text-xs font-extrabold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span> <span id="meterStageTitle">Do'konga ketilmoqda...</span>
-                </span>
-                <span id="meterRateBadge" class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold">1,800 so'm/km</span>
-            </div>
-
-            <!-- XARITA -->
-            <div class="relative">
-                <div id="courierNavMap" class="w-full h-52 rounded-2xl border border-slate-700 overflow-hidden shadow-inner"></div>
-                <div id="targetAddrInfo" class="absolute bottom-2 left-2 right-2 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-700 text-[10px] text-slate-300 font-semibold truncate">
-                    📍 Nishon: Do'kon manzili
-                </div>
-            </div>
-
-            <div class="py-1 text-center space-y-0.5">
-                <p class="text-xs text-slate-400 font-medium">Jami Dostavka Summasi:</p>
-                <div class="text-3xl font-black text-emerald-400 tracking-tight" id="liveFareDisplay">0 so'm</div>
-            </div>
-
-            <div class="bg-slate-800/60 p-2.5 rounded-2xl border border-slate-700/50 text-[11px] space-y-1">
-                <div class="flex justify-between text-slate-300">
-                    <span>🏪 Do'kongacha (1,800 s/km):</span>
-                    <span class="font-bold text-amber-400" id="storeFareDisplay">0 so'm (0.00 km)</span>
-                </div>
-                <div class="flex justify-between text-slate-300">
-                    <span>🏠 Mijozgacha (4,800 s/km):</span>
-                    <span class="font-bold text-emerald-400" id="customerFareDisplay">0 so'm (0.00 km)</span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3 pt-1 border-t border-slate-800 text-center">
-                <div class="bg-slate-800/80 p-2.5 rounded-2xl border border-slate-700/60">
-                    <p class="text-[9px] text-slate-400 font-bold uppercase">Jami masofa</p>
-                    <p id="liveDistDisplay" class="text-base font-black text-yellow-400 mt-0.5">0.00 km</p>
-                </div>
-                <div class="bg-slate-800/80 p-2.5 rounded-2xl border border-slate-700/60">
-                    <p class="text-[9px] text-slate-400 font-bold uppercase">Tezlik (Tezometr)</p>
-                    <p id="liveSpeedDisplay" class="text-base font-black text-cyan-400 mt-0.5">0 km/h</p>
-                </div>
-            </div>
-
-            <div class="pt-2 space-y-2" id="meterActionButtons"></div>
-        </div>
-
-        <!-- BUYURTMALAR RO'YXATI -->
+        <!-- BUYURTMALAR RO'YXATI VA HAR BIRIDA INDIVIDUAL TAKSOMETR -->
         <div class="space-y-3">
-            <h2 class="text-xs font-black uppercase text-slate-500 tracking-wider flex items-center justify-between">
-                <span>Yangi Buyurtmalar</span>
-                <button onclick="loadOrders()" class="text-emerald-600 text-xs font-bold hover:underline"><i class="fa-solid fa-rotate-right"></i> Yangilash</button>
-            </h2>
+            <div class="flex justify-between items-center">
+                <h2 class="text-xs font-black uppercase text-slate-500 tracking-wider">Yangi Buyurtmalar</h2>
+                <button onclick="loadOrders()" class="text-emerald-600 text-xs font-bold hover:underline flex items-center gap-1">
+                    <i class="fa-solid fa-rotate-right"></i> Yangilash
+                </button>
+            </div>
+            
             <div id="courierActiveOrdersList" class="space-y-3"></div>
         </div>
 
     </main>
 
-    <!-- TARIX VA STATISTIKA MODALI -->
+    <!-- STATISTIKA MODALI -->
     <div id="historyModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl max-h-[85vh] flex flex-col">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-chart-line text-emerald-600 text-base"></i> Bajarilganlar & Statistika
+                    <i class="fa-solid fa-chart-line text-emerald-600 text-base"></i> Bajarilganlar Tarixi
                 </h3>
                 <button onclick="closeHistoryModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
@@ -126,245 +84,161 @@
     <script>
         const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
         let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
-        let vendorsList = JSON.parse(localStorage.getItem('tv_vendors')) || [];
-        
-        let activeOrder = null;
+        let activeOrderId = null;
         let watchId = null;
         let lastCoords = null;
-        let cMap = null, courierMarker = null, targetMarker = null, routePolyline = null;
+        let cMap = null, cMarker = null, rLine = null;
 
         let deliveryStage = 'to_store';
-        let distToStoreKm = 0, distToCustomerKm = 0;
-        let storeFare = 0, customerFare = 0;
-
-        const STORE_RATE_PER_KM = 1800;
-        const CUSTOMER_RATE_PER_KM = 4800;
-
-        // OVOZLI NOTIFICATION
-        function playAlertSound() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-                gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.3);
-            } catch(e){}
-        }
+        let distStoreKm = 0, distCustKm = 0;
+        let fareStore = 0, fareCust = 0;
 
         document.addEventListener('DOMContentLoaded', () => {
             loadOrders();
-            calculateEarningStats();
+            calculateStats();
         });
 
-        function calculateEarningStats() {
+        function calculateStats() {
             orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
             const delivered = orders.filter(o => o.status === 'Yetkazildi');
-            const totalSum = delivered.reduce((acc, o) => acc + (o.actualDeliveryFee || 0), 0);
-            document.getElementById('todayEarning').innerText = totalSum.toLocaleString() + " so'm";
+            const total = delivered.reduce((sum, o) => sum + (o.actualDeliveryFee || 0), 0);
+            document.getElementById('todayEarning').innerText = total.toLocaleString() + " so'm";
             document.getElementById('todayCount').innerText = delivered.length + " ta";
         }
 
         function loadOrders() {
-            const oldLen = orders.filter(o => o.status === 'Yangi').length;
             orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
-            const newLen = orders.filter(o => o.status === 'Yangi').length;
-
-            if (newLen > oldLen) playAlertSound(); // Yangi buyurtmada ovoz chiqarish
-
             const container = document.getElementById('courierActiveOrdersList');
-            if (!container) return;
-
             const activeOrders = orders.filter(o => o.status !== 'Yetkazildi');
 
             if (activeOrders.length === 0) {
                 container.innerHTML = `
                     <div class="bg-white p-6 rounded-2xl text-center text-slate-400 border border-slate-200 shadow-sm">
                         <i class="fa-solid fa-box-open text-3xl mb-2 text-slate-300"></i>
-                        <p class="text-xs font-bold">Hozircha yangi buyurtmalar yo'q</p>
+                        <p class="text-xs font-bold">Hozircha yangi buyurtmalar mavjud emas</p>
                     </div>`;
                 return;
             }
 
             container.innerHTML = activeOrders.map(o => `
-                <div class="bg-white border ${o.status === 'Yo\'lda' ? 'border-amber-400 ring-2 ring-amber-400/20' : 'border-slate-200'} rounded-2xl p-4 shadow-sm space-y-3">
+                <div class="bg-white border ${activeOrderId === o.id ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200'} rounded-2xl p-4 shadow-sm space-y-3">
                     <div class="flex justify-between items-start">
                         <div>
                             <span class="text-[10px] bg-emerald-100 text-emerald-800 font-black px-2 py-0.5 rounded-full">#${o.id}</span>
-                            <h3 class="font-extrabold text-sm text-slate-800 mt-1">${o.name}</h3>
-                            <p class="text-xs text-emerald-700 font-bold"><i class="fa-solid fa-phone text-xs mr-1"></i> ${o.phone}</p>
+                            <h3 class="font-extrabold text-sm text-slate-800 mt-1">${o.name || "Mijoz"}</h3>
+                            <p class="text-xs text-emerald-700 font-bold"><i class="fa-solid fa-phone text-xs mr-1"></i> ${o.phone || "Telefon yo'q"}</p>
                         </div>
-                        <span class="text-xs font-black px-2.5 py-1 rounded-xl bg-blue-100 text-blue-800 border border-blue-300">${o.status || 'Yangi'}</span>
+                        <span class="text-xs font-black px-2.5 py-1 rounded-xl bg-blue-100 text-blue-800">${o.status || 'Yangi'}</span>
                     </div>
 
                     <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs space-y-1">
-                        <p class="text-slate-600 font-medium">📍 Manzil: <strong>${o.address}</strong></p>
+                        <p class="text-slate-600 font-medium">📍 Manzil: <strong>${o.address || 'Manzil kiritilmagan'}</strong></p>
                         <p class="text-slate-600 font-medium">💳 To'lov: <strong>${o.paymentType || 'Naqd'}</strong></p>
                         <p class="text-slate-600 font-medium">💰 Tovar Summasi: <strong>${(o.total || 0).toLocaleString()} so'm</strong></p>
                     </div>
 
-                    ${getActionButton(o)}
+                    ${renderOrderControls(o)}
                 </div>
             `).join('');
-        }
 
-        function getActionButton(order) {
-            if (activeOrder && activeOrder.id === order.id) {
-                return `<button disabled class="w-full bg-amber-500 text-white font-bold py-2.5 rounded-xl text-xs shadow opacity-90 flex items-center justify-center gap-1.5"><i class="fa-solid fa-spinner animate-spin"></i> GPS Navigatsiya ishlamoqda...</button>`;
+            if (activeOrderId && cMap) {
+                setTimeout(() => cMap.invalidateSize(), 200);
             }
-            return `<button onclick="acceptAndStartDelivery(${order.id})" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-extrabold py-3 rounded-xl text-xs shadow transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-location-arrow text-sm"></i> Do'konga Ketdim (1,800 s/km)
-                    </button>`;
         }
 
-        function acceptAndStartDelivery(orderId) {
-            const idx = orders.findIndex(o => o.id === orderId);
-            if (idx === -1) return;
+        function renderOrderControls(o) {
+            if (activeOrderId === o.id) {
+                return `
+                    <div class="bg-slate-900 text-white p-3 rounded-2xl space-y-2 border border-slate-800 mt-2">
+                        <div class="flex justify-between items-center text-[11px] font-bold border-b border-slate-800 pb-1.5">
+                            <span class="text-emerald-400">${deliveryStage === 'to_store' ? '🏪 Do\'konga ketilmoqda (1,800 s/km)' : '🏠 Mijozga ketilmoqda (4,800 s/km)'}</span>
+                            <span class="text-yellow-400" id="liveFare">0 so'm</span>
+                        </div>
+                        <div id="cNavMap" class="w-full h-40 rounded-xl border border-slate-700"></div>
+                        
+                        ${deliveryStage === 'to_store' ? `
+                            <button onclick="switchToCustomerStage()" class="w-full bg-amber-500 text-slate-900 font-extrabold py-2.5 rounded-xl text-xs shadow">
+                                Tovarni Oldim (Mijozga Ketish)
+                            </button>
+                        ` : `
+                            <button onclick="finishDelivery(${o.id})" class="w-full bg-emerald-600 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">
+                                Buyurtmani Yetkazdim (Tugatish)
+                            </button>
+                        `}
+                    </div>
+                `;
+            }
 
-            if (!navigator.geolocation) return alert("GPS xizmati yo'q!");
+            return `
+                <button onclick="startDelivery(${o.id})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 rounded-xl text-xs shadow flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-location-arrow"></i> Do'konga Ketdim (Taksometrni yoqish)
+                </button>
+            `;
+        }
 
-            activeOrder = orders[idx];
-            orders[idx].status = "Yo'lda";
-            localStorage.setItem('tv_orders', JSON.stringify(orders));
-
+        function startDelivery(id) {
+            if (!navigator.geolocation) return alert("GPS faol emas!");
+            activeOrderId = id;
             deliveryStage = 'to_store';
-            distToStoreKm = 0; distToCustomerKm = 0;
-            storeFare = 0; customerFare = 0;
+            distStoreKm = 0; distCustKm = 0;
+            fareStore = 0; fareCust = 0;
             lastCoords = null;
 
-            updateTaximeterUI();
-            document.getElementById('taximeterBox').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const idx = orders.findIndex(o => o.id === id);
+            if (idx !== -1) {
+                orders[idx].status = "Yo'lda";
+                localStorage.setItem('tv_orders', JSON.stringify(orders));
+            }
+
+            loadOrders();
 
             setTimeout(() => {
-                if (!cMap) {
-                    cMap = L.map('courierNavMap').setView([VODIL_CENTER.lat, VODIL_CENTER.lng], 15);
+                const mapEl = document.getElementById('cNavMap');
+                if (mapEl) {
+                    cMap = L.map('cNavMap').setView([VODIL_CENTER.lat, VODIL_CENTER.lng], 15);
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(cMap);
-                } else {
-                    cMap.invalidateSize();
                 }
-                updateRouteMap();
-            }, 200);
+            }, 300);
 
-            watchId = navigator.geolocation.watchPosition(updatePosition, handleGpsError, { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 });
-            loadOrders();
-        }
-
-        function getTargetCoords() {
-            if (!activeOrder) return VODIL_CENTER;
-            if (deliveryStage === 'to_store') {
-                const storeName = activeOrder.items && activeOrder.items[0] ? activeOrder.items[0].store : null;
-                const vObj = vendorsList.find(v => v.storeName === storeName);
-                return (vObj && vObj.coords) ? vObj.coords : VODIL_CENTER;
-            } else {
-                return activeOrder.customerCoords || VODIL_CENTER;
-            }
-        }
-
-        function updateRouteMap() {
-            if (!cMap) return;
-            const targetCoords = getTargetCoords();
-            const infoBox = document.getElementById('targetAddrInfo');
-
-            if (deliveryStage === 'to_store') {
-                const storeName = activeOrder.items && activeOrder.items[0] ? activeOrder.items[0].store : "Do'kon";
-                infoBox.innerHTML = `🏪 <strong>Nishon:</strong> ${storeName} Do'koni`;
-            } else {
-                infoBox.innerHTML = `🏠 <strong>Nishon:</strong> ${activeOrder.name} (${activeOrder.address})`;
-            }
-
-            if (targetMarker) cMap.removeLayer(targetMarker);
-            targetMarker = L.marker([targetCoords.lat, targetCoords.lng]).addTo(cMap).bindPopup(deliveryStage === 'to_store' ? '🏪 Do'kon' : '🏠 Mijoz').openPopup();
-
-            if (lastCoords) {
-                if (courierMarker) courierMarker.setLatLng([lastCoords.lat, lastCoords.lng]);
-                else courierMarker = L.marker([lastCoords.lat, lastCoords.lng]).addTo(cMap);
-
-                // Kuryer koordinatasini mijoz jonli ko'rishi uchun LocalStorage'ga uzatish
-                activeOrder.liveCourierCoords = lastCoords;
-                const oIdx = orders.findIndex(o => o.id === activeOrder.id);
-                if (oIdx !== -1) {
-                    orders[oIdx].liveCourierCoords = lastCoords;
-                    localStorage.setItem('tv_orders', JSON.stringify(orders));
-                }
-
-                if (routePolyline) cMap.removeLayer(routePolyline);
-                const lineColor = deliveryStage === 'to_store' ? '#f59e0b' : '#10b981';
-                routePolyline = L.polyline([[lastCoords.lat, lastCoords.lng], [targetCoords.lat, targetCoords.lng]], { color: lineColor, weight: 5, opacity: 0.8, dashArray: '8, 8' }).addTo(cMap);
-                cMap.fitBounds(routePolyline.getBounds(), { padding: [25, 25] });
-            }
+            watchId = navigator.geolocation.watchPosition(updateGPS, err => console.warn(err), { enableHighAccuracy: true });
         }
 
         function switchToCustomerStage() {
             deliveryStage = 'to_customer';
-            updateTaximeterUI();
-            updateRouteMap();
-            alert("Tovarni oldingiz! Mijozgacha bo'lgan masofa hisoblanmoqda (4,800 so'm/km).");
+            lastCoords = null;
+            loadOrders();
         }
 
-        function updatePosition(position) {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            const speedKmH = position.coords.speed ? (position.coords.speed * 3.6) : 0;
+        function updateGPS(pos) {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
 
-            document.getElementById('liveSpeedDisplay').innerText = Math.round(speedKmH) + " km/h";
+            if (cMap) {
+                if (cMarker) cMarker.setLatLng([lat, lng]);
+                else cMarker = L.marker([lat, lng]).addTo(cMap);
+                cMap.setView([lat, lng]);
+            }
 
             if (lastCoords) {
-                const distDelta = calculateDistanceKm(lastCoords.lat, lastCoords.lng, lat, lng);
-                if (distDelta > 0.005) {
+                const delta = calcDistKm(lastCoords.lat, lastCoords.lng, lat, lng);
+                if (delta > 0.005) {
                     if (deliveryStage === 'to_store') {
-                        distToStoreKm += distDelta;
-                        storeFare = Math.round(distToStoreKm * STORE_RATE_PER_KM);
+                        distStoreKm += delta;
+                        fareStore = Math.round(distStoreKm * 1800);
                     } else {
-                        distToCustomerKm += distDelta;
-                        customerFare = Math.round(distToCustomerKm * CUSTOMER_RATE_PER_KM);
+                        distCustKm += delta;
+                        fareCust = Math.round(distCustKm * 4800);
                     }
                 }
             }
 
             lastCoords = { lat, lng };
-            updateRouteMap();
-
-            const totalDist = distToStoreKm + distToCustomerKm;
-            const totalFare = storeFare + customerFare;
-
-            document.getElementById('storeFareDisplay').innerText = `${storeFare.toLocaleString()} so'm (${distToStoreKm.toFixed(2)} km)`;
-            document.getElementById('customerFareDisplay').innerText = `${customerFare.toLocaleString()} so'm (${distToCustomerKm.toFixed(2)} km)`;
-            document.getElementById('liveDistDisplay').innerText = totalDist.toFixed(2) + " km";
-            document.getElementById('liveFareDisplay').innerText = totalFare.toLocaleString() + " so'm";
+            const totalFare = fareStore + fareCust;
+            const fareEl = document.getElementById('liveFare');
+            if (fareEl) fareEl.innerText = totalFare.toLocaleString() + " so'm";
         }
 
-        function updateTaximeterUI() {
-            const stageTitle = document.getElementById('meterStageTitle');
-            const rateBadge = document.getElementById('meterRateBadge');
-            const actionContainer = document.getElementById('meterActionButtons');
-
-            if (deliveryStage === 'to_store') {
-                stageTitle.innerText = "Do'konga ketilmoqda...";
-                rateBadge.innerText = "1,800 so'm/km";
-                rateBadge.className = "text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold";
-                actionContainer.innerHTML = `
-                    <button onclick="switchToCustomerStage()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold py-3.5 rounded-2xl shadow-lg transition active:scale-98 flex items-center justify-center gap-2 text-sm">
-                        <i class="fa-solid fa-box-check text-base"></i> Tovarni Oldim (Mijozga Ketish - 4,800 s/km)
-                    </button>`;
-            } else {
-                stageTitle.innerText = "Mijozga ketilmoqda...";
-                rateBadge.innerText = "4,800 so'm/km";
-                rateBadge.className = "text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold";
-                actionContainer.innerHTML = `
-                    <button onclick="finishOrderDelivery()" class="w-full bg-red-600 hover:bg-red-700 text-white font-extrabold py-3.5 rounded-2xl shadow-lg transition active:scale-98 flex items-center justify-center gap-2 text-sm">
-                        <i class="fa-solid fa-flag-checkered text-base"></i> Buyurtmani Yetkazdim (Tugatish)
-                    </button>`;
-            }
-        }
-
-        function handleGpsError(err) { console.warn("GPS error:", err); }
-
-        function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+        function calcDistKm(lat1, lon1, lat2, lon2) {
             const R = 6371;
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -372,59 +246,44 @@
             return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         }
 
-        function finishOrderDelivery() {
-            if (!activeOrder) return;
-            if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+        function finishDelivery(id) {
+            if (watchId) navigator.geolocation.clearWatch(watchId);
+            const totalFare = fareStore + fareCust;
 
-            const totalDist = (distToStoreKm + distToCustomerKm).toFixed(2);
-            const totalFare = storeFare + customerFare;
-
-            const idx = orders.findIndex(o => o.id === activeOrder.id);
+            const idx = orders.findIndex(o => o.id === id);
             if (idx !== -1) {
                 orders[idx].status = "Yetkazildi";
-                orders[idx].actualDistanceKm = totalDist;
                 orders[idx].actualDeliveryFee = totalFare;
                 localStorage.setItem('tv_orders', JSON.stringify(orders));
             }
 
-            alert(`Buyurtma yetkazildi!\nJami Dostavka Narxi: ${totalFare.toLocaleString()} so'm`);
-            activeOrder = null;
-            document.getElementById('taximeterBox').classList.add('hidden');
-            calculateEarningStats();
+            alert(`Buyurtma yetkazildi!\nDostavka narxi: ${totalFare.toLocaleString()} so'm`);
+            activeOrderId = null;
+            calculateStats();
             loadOrders();
         }
 
-        function openHistoryModal() {
-            document.getElementById('historyModal').classList.remove('hidden');
-            renderHistoryOrders();
-        }
+        function openHistoryModal() { document.getElementById('historyModal').classList.remove('hidden'); renderHistory(); }
+        function closeHistoryModal() { document.getElementById('historyModal').classList.add('hidden'); }
 
-        function closeHistoryModal() {
-            document.getElementById('historyModal').classList.add('hidden');
-        }
-
-        function renderHistoryOrders() {
+        function renderHistory() {
             orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
             const container = document.getElementById('historyOrdersList');
-            if (!container) return;
-            const deliveredOrders = orders.filter(o => o.status === 'Yetkazildi');
+            const delivered = orders.filter(o => o.status === 'Yetkazildi');
 
-            if (deliveredOrders.length === 0) {
-                container.innerHTML = `<div class="text-center py-8 text-slate-400"><p class="text-xs font-bold">Hozircha yetkazilganlar yo'q</p></div>`;
+            if (delivered.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6 font-bold">Yetkazilgan buyurtmalar yo'q</p>`;
                 return;
             }
 
-            container.innerHTML = deliveredOrders.map(o => `
-                <div class="bg-emerald-50/60 border border-emerald-200 p-3 rounded-2xl text-xs space-y-1.5">
-                    <div class="flex justify-between items-center font-bold">
-                        <span class="text-slate-800">#${o.id} - ${o.name}</span>
+            container.innerHTML = delivered.map(o => `
+                <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-xs space-y-1">
+                    <div class="flex justify-between font-bold">
+                        <span>#${o.id} - ${o.name || 'Mijoz'}</span>
                         <span class="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full text-[10px]">Yetkazildi</span>
                     </div>
-                    <p class="text-slate-600">📍 Manzil: ${o.address}</p>
-                    <div class="flex justify-between pt-1 border-t border-emerald-200/60 text-[11px]">
-                        <span class="text-slate-500 font-semibold">Masofa: ${o.actualDistanceKm || '0.00'} km</span>
-                        <span class="font-black text-emerald-800">Dostavka: ${(o.actualDeliveryFee || 0).toLocaleString()} so'm</span>
-                    </div>
+                    <p class="text-slate-600">📍 Manzil: ${o.address || ''}</p>
+                    <p class="text-emerald-800 font-bold">Dostavka: ${(o.actualDeliveryFee || 0).toLocaleString()} so'm</p>
                 </div>
             `).join('');
         }
