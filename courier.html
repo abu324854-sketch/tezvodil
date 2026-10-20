@@ -19,7 +19,417 @@
 
     <!-- HEADER -->
     <header class="bg-slate-800/90 backdrop-blur-md text-white sticky top-0 z-30 border-b border-slate-700/80 shadow-lg">
+        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-cent<!DOCTYPE html>
+<html lang="uz" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TezVodil - Kuryer Navigatsiyasi</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-full flex flex-col justify-between antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- HEADER & TAKSOMETR PANEL -->
+    <header class="bg-slate-800/90 backdrop-blur-md text-white sticky top-0 z-30 border-b border-slate-700/80 shadow-lg">
         <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <a href="index.html" class="bg-slate-700 hover:bg-slate-600 p-2 rounded-xl text-xs font-bold text-slate-300">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 class="text-sm font-black text-emerald-400 leading-tight">TezVodil Kuryer</h1>
+                    <p id="courierStatusTag" class="text-[10px] text-slate-400 font-bold">Offline (Dam olishda)</p>
+                </div>
+            </div>
+
+            <!-- DINAMIK TAKSOMETR -->
+            <div class="bg-slate-900 border border-emerald-500/50 px-3 py-1.5 rounded-2xl text-right shadow-inner">
+                <span class="text-[9px] text-slate-400 font-bold block uppercase tracking-wider">Taksometr</span>
+                <span id="taximeterAmount" class="text-sm font-black text-yellow-400">0 so'm</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ASOSIY BO'LIM -->
+    <main class="max-w-md mx-auto w-full px-4 py-3 space-y-4 flex-1 pb-24">
+
+        <!-- KURYER PROFILI CARD -->
+        <div id="courierProfileCard" class="bg-slate-800 border border-slate-700/80 rounded-2xl p-3.5 shadow-md space-y-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center font-black text-white shadow">
+                        <i class="fa-solid fa-motorcycle text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 id="cProfileName" class="font-extrabold text-xs text-white">Kuryer Ismi</h2>
+                        <p id="cProfilePhone" class="text-[10px] text-slate-400 font-medium">+998 -- --- -- --</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="openCourierProfileModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 p-2 rounded-xl text-xs shadow">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button onclick="toggleCourierStatus()" id="cStatusBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-3 py-2 rounded-xl shadow transition">
+                        Ishni Boshlash
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-[10px] pt-2 border-t border-slate-700/50">
+                <div class="bg-slate-900/60 p-2 rounded-xl">
+                    <span class="text-slate-400 block">Bosib o'tilgan masofa:</span>
+                    <b id="cTotalDistance" class="text-slate-200">0.0 km</b>
+                </div>
+                <div class="bg-slate-900/60 p-2 rounded-xl">
+                    <span class="text-slate-400 block">Bugungi Daromad:</span>
+                    <b id="cTodayEarnings" class="text-emerald-400">0 so'm</b>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAVIGATSIYA XARITASI (LEAFLET + ROUTING) -->
+        <div class="bg-slate-800 border border-slate-700/80 rounded-2xl p-2 shadow-md space-y-2">
+            <div class="flex justify-between items-center px-2">
+                <span class="text-xs font-extrabold text-slate-300 flex items-center gap-1.5">
+                    <i class="fa-solid fa-route text-emerald-400"></i> GPS Navigatsiya & Yo'nalish
+                </span>
+                <span id="navInstruction" class="text-[10px] bg-emerald-900/80 text-emerald-300 px-2 py-0.5 rounded-lg font-bold">
+                    GPS kutilmoqda...
+                </span>
+            </div>
+            <div id="courierMap" class="w-full h-56 rounded-xl border border-slate-700 shadow-inner z-10"></div>
+        </div>
+
+        <!-- ZAKAZLAR VA TARIX TAB -->
+        <div class="space-y-2">
+            <div class="flex gap-2 bg-slate-800 p-1 rounded-xl text-xs font-bold">
+                <button onclick="switchTab('active')" id="tabActiveBtn" class="flex-1 py-2 rounded-lg bg-emerald-600 text-white">Faol Buyurtmalar</button>
+                <button onclick="switchTab('history')" id="tabHistoryBtn" class="flex-1 py-2 rounded-lg text-slate-400">Tarix</button>
+            </div>
+
+            <div id="tabActiveContent" class="space-y-3"></div>
+            <div id="tabHistoryContent" class="space-y-3 hidden"></div>
+        </div>
+    </main>
+
+    <!-- PROFIL MODALI -->
+    <div id="courierProfileModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center hidden p-4 pointer-events-auto">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <h3 class="font-extrabold text-white text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-id-card text-emerald-400"></i> Kuryer Profili
+                </h3>
+                <button onclick="closeCourierProfileModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <form onsubmit="saveCourierProfile(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-400 font-bold mb-1">To'liq Ism-Sharifingiz:</label>
+                    <input type="text" id="cInputName" required placeholder="Ali Valiyev" class="w-full bg-slate-900 border border-slate-700 px-3 py-2.5 rounded-xl text-white font-semibold focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-slate-400 font-bold mb-1">Telefon Raqamingiz:</label>
+                    <input type="tel" id="cInputPhone" required value="+998 " class="w-full bg-slate-900 border border-slate-700 px-3 py-2.5 rounded-xl text-white font-semibold focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-slate-400 font-bold mb-1">Transport Turi:</label>
+                    <select id="cInputVehicle" class="w-full bg-slate-900 border border-slate-700 px-3 py-2.5 rounded-xl text-white font-semibold focus:outline-none focus:border-emerald-500">
+                        <option value="Moped / Skuter">Moped / Skuter</option>
+                        <option value="Velosiped">Velosiped</option>
+                        <option value="Avtomobil">Avtomobil</option>
+                        <option value="Piyoda">Piyoda</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3 rounded-xl shadow transition">
+                    Ma'lumotlarni Saqlash
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIKA -->
+    <script>
+        const VODIL_CENTER = { lat: 40.1764, lng: 71.7258 };
+        let courierMap = null;
+        let courierMarker = null;
+        let routePolyline = null;
+        let pathHistory = [];
+
+        let isOnline = false;
+        let activeTripOrder = null;
+        let tripDistanceKM = 0;
+        let currentTaximeterAmount = 0;
+        let lastPosition = null;
+
+        const BASE_STORE_FEE = 2000;   // Do'konga borish narxi
+        const BASE_CLIENT_FEE = 4900;  // Mijozga yetkazish bazaviy narxi
+        const KM_RATE = 1500;          // Har bir km uchun taksometr qo'shimcha haqi
+
+        let courierData = JSON.parse(localStorage.getItem('tv_courier_profile')) || {
+            name: "Kuryer Biriktirilmagan",
+            phone: "+998 20 000 00 00",
+            vehicle: "Moped / Skuter",
+            todayEarnings: 0
+        };
+
+        let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initCourierProfile();
+            initCourierMap();
+            renderOrdersList();
+            startGPSWatch();
+        });
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'uz-UZ';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function initCourierProfile() {
+            document.getElementById('cProfileName').innerText = courierData.name;
+            document.getElementById('cProfilePhone').innerText = courierData.phone;
+            document.getElementById('cTodayEarnings').innerText = `${courierData.todayEarnings.toLocaleString()} so'm`;
+            
+            document.getElementById('cInputName').value = courierData.name !== "Kuryer Biriktirilmagan" ? courierData.name : "";
+            document.getElementById('cInputPhone').value = courierData.phone !== "+998 20 000 00 00" ? courierData.phone : "+998 ";
+            document.getElementById('cInputVehicle').value = courierData.vehicle;
+        }
+
+        function openCourierProfileModal() { document.getElementById('courierProfileModal').classList.remove('hidden'); }
+        function closeCourierProfileModal() { document.getElementById('courierProfileModal').classList.add('hidden'); }
+
+        function saveCourierProfile(e) {
+            e.preventDefault();
+            courierData.name = document.getElementById('cInputName').value.trim();
+            courierData.phone = document.getElementById('cInputPhone').value.trim();
+            courierData.vehicle = document.getElementById('cInputVehicle').value;
+
+            localStorage.setItem('tv_courier_profile', JSON.stringify(courierData));
+            initCourierProfile();
+            closeCourierProfileModal();
+            speakText(`Profil ma'lumotlaringiz saqlandi.`);
+        }
+
+        function toggleCourierStatus() {
+            if (courierData.name === "Kuryer Biriktirilmagan") {
+                alert("Iltimos, avval kuryer profilingizni to'ldiring!");
+                openCourierProfileModal();
+                return;
+            }
+
+            isOnline = !isOnline;
+            const btn = document.getElementById('cStatusBtn');
+            const tag = document.getElementById('courierStatusTag');
+
+            if (isOnline) {
+                btn.className = "bg-red-600 hover:bg-red-500 text-white font-extrabold text-xs px-3 py-2 rounded-xl shadow transition";
+                btn.innerText = "Ishni Yakunlash";
+                tag.innerText = "Online (Aktiv)";
+                tag.className = "text-[10px] text-emerald-400 font-bold";
+                speakText("Kuryer rejimi faollashtirildi. Tayyormiz!");
+            } else {
+                btn.className = "bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-3 py-2 rounded-xl shadow transition";
+                btn.innerText = "Ishni Boshlash";
+                tag.innerText = "Offline (Dam olishda)";
+                tag.className = "text-[10px] text-slate-400 font-bold";
+                speakText("Kuryer rejimi o'chirildi.");
+            }
+        }
+
+        function initCourierMap() {
+            if (courierMap) return;
+            courierMap = L.map('courierMap').setView([VODIL_CENTER.lat, VODIL_CENTER.lng], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(courierMap);
+            
+            courierMarker = L.marker([VODIL_CENTER.lat, VODIL_CENTER.lng]).addTo(courierMap);
+            routePolyline = L.polyline([], { color: '#10B981', weight: 5, opacity: 0.8 }).addTo(courierMap);
+        }
+
+        // REAL-TIME GPS KUZATUV VA CHIZIQ CHIZISH
+        function startGPSWatch() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(pos => {
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
+                    const newLatLng = [lat, lng];
+
+                    if (courierMap && courierMarker) {
+                        courierMarker.setLatLng(newLatLng);
+                        courierMap.setView(newLatLng, 16);
+                    }
+
+                    if (activeTripOrder) {
+                        pathHistory.push(newLatLng);
+                        routePolyline.setLatLngs(pathHistory);
+
+                        if (lastPosition) {
+                            const d = calcDistance(lastPosition.lat, lastPosition.lng, lat, lng);
+                            if (d > 0.01) { // 10 metrdan ortiq harakatlansa
+                                tripDistanceKM += d;
+                                updateTaximeterDisplay();
+                            }
+                        }
+                        lastPosition = { lat, lng };
+                    }
+                }, err => console.log(err), { enableHighAccuracy: true, maximumAge: 1000 });
+            }
+        }
+
+        function calcDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+
+        function updateTaximeterDisplay() {
+            currentTaximeterAmount = BASE_STORE_FEE + BASE_CLIENT_FEE + Math.round(tripDistanceKM * KM_RATE);
+            document.getElementById('taximeterAmount').innerText = `${currentTaximeterAmount.toLocaleString()} so'm`;
+            document.getElementById('cTotalDistance').innerText = `${tripDistanceKM.toFixed(1)} km`;
+        }
+
+        function acceptOrder(id) {
+            if (!isOnline) return alert("Avval ishni boshlang!");
+            const o = orders.find(x => x.id === id);
+            if (o) {
+                o.status = 'Kuryer yo\'lda';
+                o.courierName = courierData.name;
+                o.courierPhone = courierData.phone;
+                localStorage.setItem('tv_orders', JSON.stringify(orders));
+
+                activeTripOrder = id;
+                pathHistory = [];
+                tripDistanceKM = 0;
+                updateTaximeterDisplay();
+
+                document.getElementById('navInstruction').innerText = "Do'konga qarab yurilmoqda...";
+                speakText("Buyurtma qabul qilindi. Do'konga qarab to'g'ri harakatlaning!");
+                renderOrdersList();
+            }
+        }
+
+        function startClientDelivery(id) {
+            document.getElementById('navInstruction').innerText = "Mijoz manziliga ketilmoqda...";
+            speakText("Tovarlarni do'kondan oldingiz. Endi 200 metrdan keyin o'ngga burilib, mijoz manziliga boring!");
+        }
+
+        function completeOrder(id) {
+            const o = orders.find(x => x.id === id);
+            if (o) {
+                o.status = 'Yetkazib berildi';
+                o.finalFee = currentTaximeterAmount > 0 ? currentTaximeterAmount : (BASE_STORE_FEE + BASE_CLIENT_FEE);
+                
+                courierData.todayEarnings += o.finalFee;
+
+                localStorage.setItem('tv_orders', JSON.stringify(orders));
+                localStorage.setItem('tv_courier_profile', JSON.stringify(courierData));
+
+                activeTripOrder = null;
+                pathHistory = [];
+                routePolyline.setLatLngs([]);
+                document.getElementById('taximeterAmount').innerText = "0 so'm";
+                document.getElementById('navInstruction').innerText = "Buyurtma yakunlandi";
+
+                initCourierProfile();
+                speakText(`Buyurtma muvaffaqiyatli yakunlandi va tarixga o'tkazildi. Hisobingizga ${o.finalFee} so'm qo'shildi.`);
+                renderOrdersList();
+            }
+        }
+
+        function switchTab(tab) {
+            if (tab === 'active') {
+                document.getElementById('tabActiveContent').classList.remove('hidden');
+                document.getElementById('tabHistoryContent').classList.add('hidden');
+                document.getElementById('tabActiveBtn').className = "flex-1 py-2 rounded-lg bg-emerald-600 text-white";
+                document.getElementById('tabHistoryBtn').className = "flex-1 py-2 rounded-lg text-slate-400";
+            } else {
+                document.getElementById('tabActiveContent').classList.add('hidden');
+                document.getElementById('tabHistoryContent').classList.remove('hidden');
+                document.getElementById('tabActiveBtn').className = "flex-1 py-2 rounded-lg text-slate-400";
+                document.getElementById('tabHistoryBtn').className = "flex-1 py-2 rounded-lg bg-emerald-600 text-white";
+            }
+        }
+
+        function renderOrdersList() {
+            orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
+            const activeCont = document.getElementById('tabActiveContent');
+            const historyCont = document.getElementById('tabHistoryContent');
+
+            const activeOrders = orders.filter(o => o.status === 'Kutilmoqda' || (o.status === 'Kuryer yo\'lda' && o.courierPhone === courierData.phone));
+            const historyOrders = orders.filter(o => o.status === 'Yetkazib berildi' && o.courierPhone === courierData.phone);
+
+            if (activeCont) {
+                if (activeOrders.length === 0) {
+                    activeCont.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">Faol buyurtmalar yo'q</p>`;
+                } else {
+                    activeCont.innerHTML = activeOrders.map(o => `
+                        <div class="bg-slate-800 border border-slate-700 p-3.5 rounded-2xl space-y-3 shadow-lg">
+                            <div class="flex justify-between items-start border-b border-slate-700/80 pb-2">
+                                <div>
+                                    <span class="text-[9px] bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded-full font-bold">ID: #${o.id.toString().slice(-4)}</span>
+                                    <h4 class="font-extrabold text-xs text-white mt-1">👤 ${o.customer} (${o.phone})</h4>
+                                </div>
+                                <span class="text-xs font-black text-yellow-400">
+                                    +${(BASE_STORE_FEE + BASE_CLIENT_FEE).toLocaleString()} so'm
+                                </span>
+                            </div>
+                            <p class="text-[11px] text-slate-300"><i class="fa-solid fa-location-dot text-red-400"></i> Manzil: <b>${o.address}</b></p>
+                            <div class="pt-1">
+                                ${o.status === 'Kutilmoqda' ? `
+                                    <button onclick="acceptOrder(\${o.id})" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">
+                                        Buyurtmani Qabul Qilish
+                                    </button>
+                                ` : `
+                                    <div class="flex gap-2">
+                                        <button onclick="startClientDelivery(\${o.id})" class="flex-1 bg-yellow-600 hover:bg-yellow-500 text-slate-900 font-extrabold py-2.5 rounded-xl text-xs">
+                                            Mijozga Ketish
+                                        </button>
+                                        <button onclick="completeOrder(\${o.id})" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-2.5 rounded-xl text-xs">
+                                            Topshirildi
+                                        </button>
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            if (historyCont) {
+                if (historyOrders.length === 0) {
+                    historyCont.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">Tarix bo'sh</p>`;
+                } else {
+                    historyCont.innerHTML = historyOrders.map(o => `
+                        <div class="bg-slate-800/60 border border-slate-700/50 p-3 rounded-2xl flex justify-between items-center text-xs">
+                            <div>
+                                <p class="font-bold text-white">👤 ${o.customer}</p>
+                                <p class="text-[10px] text-slate-400">${o.address}</p>
+                            </div>
+                            <span class="font-black text-emerald-400">+${(o.finalFee || (BASE_STORE_FEE + BASE_CLIENT_FEE)).toLocaleString()} so'm</span>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+    </script>
+</body>
+</html>er">
             <div class="flex items-center gap-2">
                 <a href="index.html" class="bg-slate-700 hover:bg-slate-600 p-2 rounded-xl text-xs font-bold text-slate-300">
                     <i class="fa-solid fa-arrow-left"></i>
