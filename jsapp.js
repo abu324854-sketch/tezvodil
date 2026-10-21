@@ -5,6 +5,9 @@ let userCoords = { lat: 40.1764, lng: 71.7258 };
 let calculatedDistance = 0;
 let calculatedDeliveryFee = 5600;
 
+// Firebase Realtime Database ulanishi
+const db = firebase.database();
+
 let settings = JSON.parse(localStorage.getItem('tv_settings')) || { 
     orderRate: 4000, 
     extraRate: 1600,
@@ -15,15 +18,11 @@ let settings = JSON.parse(localStorage.getItem('tv_settings')) || {
     devLegalText: "Ushbu dastur kodi, funksionalligi yoki 'TezVodil' brendini ruxsatsiz nusxalash O'zbekiston Respublikasining Mualliflik huquqi to'g'risidagi Qonuniga muvofiq javobgarlikka sabab bo'ladi."
 };
 
-let products = JSON.parse(localStorage.getItem('tv_products')) || [
-    { id: 1, name: "Sut 1L (Tabiiy)", store: "Fayz Market", price: 11000, image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=300", category: "Milliy Taomlar" },
-    { id: 2, name: "Qora Daftar 36v", store: "Bilim Kantselyariya", price: 4000, image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300", category: "Barchasi" }
-];
-
+let products = [];
 let cart = [];
 let favorites = JSON.parse(localStorage.getItem('tv_favorites')) || [];
-let orders = JSON.parse(localStorage.getItem('tv_orders')) || [];
-let usersList = JSON.parse(localStorage.getItem('tv_users')) || [];
+let orders = [];
+let usersList = [];
 let vendorsList = JSON.parse(localStorage.getItem('tv_vendors')) || [];
 let currentUser = JSON.parse(localStorage.getItem('tv_current_user')) || null;
 let currentVendor = JSON.parse(localStorage.getItem('tv_current_vendor')) || null;
@@ -32,7 +31,7 @@ let currentCategory = 'Barchasi';
 let showOnlyFavorites = false;
 
 document.addEventListener('DOMContentLoaded', () => {
-    renderProducts(products);
+    initFirebaseRealtimeSync();
     updateProfileUI();
     updateFavUI();
     updateCartUI();
@@ -103,6 +102,43 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPWAInstall();
 });
 
+// FIREBASE ORQALI REAL-TIME MA'LUMOTLARNI TINGLASH
+function initFirebaseRealtimeSync() {
+    db.ref('products').on('value', snapshot => {
+        const data = snapshot.val();
+        if (data) {
+            products = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        } else {
+            const defaultProducts = [
+                { name: "Sut 1L (Tabiiy)", store: "Fayz Market", price: 11000, image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=300", category: "Milliy Taomlar" },
+                { name: "Qora Daftar 36v", store: "Bilim Kantselyariya", price: 4000, image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300", category: "Barchasi" }
+            ];
+            defaultProducts.forEach(p => db.ref('products').push(p));
+        }
+        applyFilters();
+        if (currentVendor) updateVendorDashboard();
+    });
+
+    db.ref('orders').on('value', snapshot => {
+        const data = snapshot.val();
+        if (data) {
+            orders = Object.keys(data).map(key => ({ firebaseKey: key, ...data[key] }));
+        } else {
+            orders = [];
+        }
+        if (currentVendor) updateVendorDashboard();
+        renderAdminOrders();
+    });
+
+    db.ref('users').on('value', snapshot => {
+        const data = snapshot.val();
+        if (data) {
+            usersList = Object.values(data);
+        }
+        renderAdminUsers();
+    });
+}
+
 function bindClick(id, func) {
     const el = document.getElementById(id);
     if (el) el.addEventListener('click', func);
@@ -169,7 +205,7 @@ function renderProducts(items) {
         const isFav = favorites.includes(p.id);
         grid.innerHTML += `
             <div class="bg-white border border-slate-100 rounded-2xl p-2.5 shadow-sm flex flex-col justify-between space-y-2 hover:shadow-md transition relative">
-                <button onclick="toggleFavorite(${p.id})" class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm w-7 h-7 rounded-full flex items-center justify-center shadow text-xs z-10">
+                <button onclick="toggleFavorite('${p.id}')" class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm w-7 h-7 rounded-full flex items-center justify-center shadow text-xs z-10">
                     <i class="${isFav ? 'fa-solid text-red-500' : 'fa-regular text-slate-400'} fa-heart"></i>
                 </button>
                 <img src="${p.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300'}" class="w-full h-24 object-cover rounded-xl mb-1">
@@ -179,7 +215,7 @@ function renderProducts(items) {
                 </div>
                 <div class="mt-2 flex items-center justify-between">
                     <span class="text-xs font-black text-emerald-700">${(p.price || 0).toLocaleString()} so'm</span>
-                    <button onclick="addToCart(${p.id})" class="bg-emerald-600 text-white w-7 h-7 rounded-lg text-xs shadow hover:bg-emerald-700 transition"><i class="fa-solid fa-plus"></i></button>
+                    <button onclick="addToCart('${p.id}')" class="bg-emerald-600 text-white w-7 h-7 rounded-lg text-xs shadow hover:bg-emerald-700 transition"><i class="fa-solid fa-plus"></i></button>
                 </div>
             </div>
         `;
@@ -272,10 +308,11 @@ function saveProfile() {
     currentUser = { name, phone, joinedDate: new Date().toLocaleDateString() };
     localStorage.setItem('tv_current_user', JSON.stringify(currentUser));
 
-    if (!usersList.some(u => u.phone === phone)) {
-        usersList.push(currentUser);
-        localStorage.setItem('tv_users', JSON.stringify(usersList));
-    }
+    db.ref('users').orderByChild('phone').equalTo(phone).once('snapshot', snap => {
+        if (!snap.exists()) {
+            db.ref('users').push(currentUser);
+        }
+    });
 
     updateProfileUI();
     openProfileModal();
@@ -374,13 +411,12 @@ function submitOrder(e) {
         status: 'Kutilmoqda'
     };
 
-    orders.push(newOrder);
-    localStorage.setItem('tv_orders', JSON.stringify(orders));
-
-    alert("Buyurtmangiz muvaffaqiyatli qabul qilindi!");
-    cart = [];
-    updateCartUI();
-    closeCheckoutModal();
+    db.ref('orders').push(newOrder).then(() => {
+        alert("Buyurtmangiz muvaffaqiyatli qabul qilindi va kuryerlarga yuborildi!");
+        cart = [];
+        updateCartUI();
+        closeCheckoutModal();
+    });
 }
 
 function openOrdersModal() {
@@ -426,6 +462,11 @@ function renderUserOrdersHistory() {
 function openVendorModal() {
     document.getElementById('moreMenuDropdown').classList.add('hidden');
     document.getElementById('vendorModal').classList.remove('hidden');
+    if (currentVendor) {
+        document.getElementById('vendorLoginForm').classList.add('hidden');
+        document.getElementById('vendorDashboard').classList.remove('hidden');
+        updateVendorDashboard();
+    }
 }
 
 function closeVendorModal() { document.getElementById('vendorModal').classList.add('hidden'); }
@@ -435,41 +476,90 @@ function loginOrCreateVendor() {
     const pwd = document.getElementById('vendorPasswordInput').value.trim();
     if (!storeName || !pwd) return alert("Ma'lumotlarni to'liq kiriting!");
 
-    let v = vendorsList.find(x => x.storeName === storeName);
-    if (v) {
-        if (v.password !== pwd) return alert("Parol noto'g'ri!");
-        currentVendor = v;
-    } else {
-        currentVendor = { storeName, password: pwd };
-        vendorsList.push(currentVendor);
-        localStorage.setItem('tv_vendors', JSON.stringify(vendorsList));
-    }
+    currentVendor = { storeName, password: pwd };
+    localStorage.setItem('tv_current_vendor', JSON.stringify(currentVendor));
+
     document.getElementById('vendorLoginForm').classList.add('hidden');
     document.getElementById('vendorDashboard').classList.remove('hidden');
-    document.getElementById('vDashTitle').innerText = currentVendor.storeName;
+    updateVendorDashboard();
 }
 
 function logoutVendor() {
     currentVendor = null;
+    localStorage.removeItem('tv_current_vendor');
     document.getElementById('vendorLoginForm').classList.remove('hidden');
     document.getElementById('vendorDashboard').classList.add('hidden');
+}
+
+function updateVendorDashboard() {
+    if (!currentVendor) return;
+    const myProducts = products.filter(p => p.store === currentVendor.storeName);
+    let totalSales = 0;
+    let completedOrdersCount = 0;
+    orders.forEach(o => {
+        if (o.items) {
+            o.items.forEach(item => {
+                if (item.store === currentVendor.storeName) {
+                    totalSales += (item.price * item.qty);
+                    completedOrdersCount += item.qty;
+                }
+            });
+        }
+    });
+    document.getElementById('vDashTitle').innerText = currentVendor.storeName;
+    document.getElementById('vSalesStat').innerText = `${totalSales.toLocaleString()} so'm`;
+    document.getElementById('vOrdersStat').innerText = `${completedOrdersCount} ta`;
+    document.getElementById('vProductsStat').innerText = `${myProducts.length} ta`;
+    renderVendorProducts(myProducts);
+}
+
+function renderVendorProducts(myProducts) {
+    const container = document.getElementById('vendorProductsList');
+    if (!container) return;
+    if (myProducts.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400 text-center py-3">Hali mahsulot qo'shmagansiz</p>`;
+        return;
+    }
+    container.innerHTML = myProducts.map(p => `
+        <div class="bg-white p-2 rounded-xl border border-slate-200 text-xs flex justify-between items-center shadow-sm">
+            <div class="flex items-center gap-2">
+                <img src="${p.image}" class="w-10 h-10 object-cover rounded-lg">
+                <div>
+                    <p class="font-bold text-slate-800">${p.name}</p>
+                    <p class="text-emerald-600 font-bold">${p.price.toLocaleString()} so'm</p>
+                </div>
+            </div>
+            <button onclick="deleteVendorProduct('${p.id}')" class="text-red-500 hover:text-red-700 font-bold text-xs p-1">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
+    `).join('');
+}
+
+function deleteVendorProduct(id) {
+    if (confirm("Ushbu mahsulotni o'chirmoqchimisiz?")) {
+        db.ref('products/' + id).remove().then(() => {
+            renderProducts(products);
+            updateVendorDashboard();
+        });
+    }
 }
 
 function addNewProduct(e) {
     e.preventDefault();
     const np = {
-        id: Date.now(),
         name: document.getElementById('vName').value,
         price: parseInt(document.getElementById('vPrice').value),
-        store: document.getElementById('vStore').value || currentVendor?.storeName || "Do'kon",
+        store: currentVendor ? currentVendor.storeName : "Do'kon",
         image: document.getElementById('vImage').value || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300",
         category: "Barchasi"
     };
-    products.push(np);
-    localStorage.setItem('tv_products', JSON.stringify(products));
-    alert("Mahsulot qo'shildi!");
-    renderProducts(products);
-    document.getElementById('addProductForm').reset();
+
+    db.ref('products').push(np).then(() => {
+        alert("Mahsulot muvaffaqiyatli qo'shildi!");
+        document.getElementById('addProductForm').reset();
+        updateVendorDashboard();
+    });
 }
 
 function openAdminModal() { document.getElementById('adminModal').classList.remove('hidden'); }
@@ -544,22 +634,21 @@ function renderAdminProducts() {
                 <p class="font-bold">${p.name}</p>
                 <p class="text-slate-500">${p.store} - ${p.price.toLocaleString()} so'm</p>
             </div>
-            <button onclick="deleteProduct(${p.id})" class="text-red-500 text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
+            <button onclick="deleteProduct('${p.id}')" class="text-red-500 text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
         </div>
     `).join('');
 }
 
 function deleteProduct(id) {
-    products = products.filter(p => p.id !== id);
-    localStorage.setItem('tv_products', JSON.stringify(products));
-    renderProducts(products);
-    renderAdminProducts();
+    db.ref('products/' + id).remove().then(() => {
+        renderProducts(products);
+        renderAdminProducts();
+    });
 }
 
 function saveSettings() {
     settings.orderRate = parseInt(document.getElementById('setOrderRate').value) || 4000;
     settings.extraRate = parseInt(document.getElementById('setExtraRate').value) || 1600;
-    localStorage.setItem('tv_settings', JSON.stringify(settings));
     alert("Sozlamalar saqlandi!");
 }
 
